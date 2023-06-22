@@ -4,4 +4,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("DatabaseService")
   .add("DateTimeService")
   .add("LoggerService")
+  .add("MigrationRunner")
   .build();
