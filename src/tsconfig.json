@@ -4,6 +4,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@config": ["./Config/index"],
+      "@config/*": ["./Config/*"],
+      "@data": ["./Data"],
+      "@data/*": ["./Data/*"],
+      "@dto/*": ["./Core/Dto/*"],
+      "@services/*": ["./Core/Services/*"]
+    }
   }
 }

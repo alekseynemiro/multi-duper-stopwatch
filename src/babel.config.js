@@ -29,5 +29,16 @@ module.exports = {
         "loose": true,
       },
     ],
+    [
+      require.resolve("babel-plugin-module-resolver"),
+      {
+        "alias": {
+          "@config": "./Config",
+          "@data": "./Data",
+          "@dto": "./Core/Dto",
+          "@services": "./Core/Services",
+        },
+      },
+    ],
   ],
 };
