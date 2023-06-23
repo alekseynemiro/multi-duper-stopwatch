@@ -3,7 +3,7 @@ import {
   GetAllResult,
   GetResult,
   UpdateProjectRequest,
-} from "../../Dto/Projects";
+} from "@dto/Projects";
 import { ProjectId } from "./Types";
 
 export interface IProjectService {

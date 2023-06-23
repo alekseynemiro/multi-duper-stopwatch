@@ -4,7 +4,7 @@ import {
   MarkRequest,
   MarkResult,
   PauseRequest,
-} from "../../Dto/Sessions";
+} from "@dto/Sessions";
 
 export interface ISessionService {
 

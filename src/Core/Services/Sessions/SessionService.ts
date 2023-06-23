@@ -1,6 +1,5 @@
-import { inject, injectable } from "inversify";
-import { ServiceIdentifier } from "../../../Config";
-import { Goal, IDatabaseService, Session, SessionLog, SessionState } from "../../../Data";
+import { ServiceIdentifier } from "@config";
+import { Goal, IDatabaseService, Session, SessionLog, SessionState } from "@data";
 import {
   CreateSessionResult,
   FinishRequest,
@@ -8,7 +7,8 @@ import {
   MarkRequest,
   MarkResult,
   PauseRequest,
-} from "../../Dto/Sessions";
+} from "@dto/Sessions";
+import { inject, injectable } from "inversify";
 import { IDateTimeService } from "../DateTime";
 import { IGuidService } from "../Guid";
 import { ISessionService } from "./ISessionService";

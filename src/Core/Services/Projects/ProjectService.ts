@@ -1,6 +1,5 @@
-import { inject, injectable } from "inversify";
-import { ServiceIdentifier } from "../../../Config";
-import { Goal, GoalInProject, IDatabaseService, Project } from "../../../Data";
+import { ServiceIdentifier } from "@config";
+import { Goal, GoalInProject, IDatabaseService, Project } from "@data";
 import {
   CreateProjectRequest,
   GetAllResult,
@@ -8,9 +7,10 @@ import {
   GetResult,
   GetResultGoal,
   UpdateProjectRequest,
-} from "../../Dto/Projects";
-import { IDateTimeService } from "../DateTime";
-import { IGuidService } from "../Guid";
+} from "@dto/Projects";
+import { IDateTimeService } from "@services/DateTime";
+import { IGuidService } from "@services/Guid";
+import { inject, injectable } from "inversify";
 import { IProjectService } from "./IProjectService";
 import { ProjectId } from "./Types";
 
