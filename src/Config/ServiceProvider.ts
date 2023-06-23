@@ -5,6 +5,8 @@ import { IGuidService } from "../Core/Services/Guid";
 import { GuidService } from "../Core/Services/Guid/GuidService";
 import { ILoggerService } from "../Core/Services/Logger";
 import { LoggerService } from "../Core/Services/Logger/LoggerService";
+import { IProjectService } from "../Core/Services/Projects";
+import { ProjectService } from "../Core/Services/Projects/ProjectService";
 import { IMigrationRunner } from "../Data";
 import { DatabaseService } from "../Data/DatabaseService";
 import { IDatabaseService } from "../Data/IDatabaseService";
@@ -17,6 +19,7 @@ serviceProvider.bind<IDatabaseService>(ServiceIdentifier.DatabaseService).to(Dat
 serviceProvider.bind<IDateTimeService>(ServiceIdentifier.DateTimeService).to(DateTimeService).inSingletonScope();
 serviceProvider.bind<IGuidService>(ServiceIdentifier.GuidService).to(GuidService).inSingletonScope();
 serviceProvider.bind<ILoggerService>(ServiceIdentifier.LoggerService).to(LoggerService).inSingletonScope();
+serviceProvider.bind<IProjectService>(ServiceIdentifier.ProjectService).to(ProjectService).inSingletonScope();
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 
 export { serviceProvider };

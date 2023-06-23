@@ -6,4 +6,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("GuidService")
   .add("LoggerService")
   .add("MigrationRunner")
+  .add("ProjectService")
   .build();
