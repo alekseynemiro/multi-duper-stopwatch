@@ -1,5 +1,6 @@
 module.exports = {
   "preset": "react-native",
+  "testRegex": ".*Tests.ts$",
   "moduleFileExtensions": [
     "ts",
     "tsx",
