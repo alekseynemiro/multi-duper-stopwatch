@@ -17,4 +17,11 @@ export const styles = StyleSheet.create({
   highlight: {
     fontWeight: "700",
   },
+  hr: {
+    marginTop: 10,
+    marginBottom: 10,
+    borderWidth: 0.5,
+    borderBottomColor: "black",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 });
