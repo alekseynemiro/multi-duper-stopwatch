@@ -12,7 +12,8 @@
       "@data": ["./Data"],
       "@data/*": ["./Data/*"],
       "@dto/*": ["./Core/Dto/*"],
-      "@services/*": ["./Core/Services/*"]
+      "@styles": ["./Styles"],
+      "@styles/*": ["./Styles/*"]
     }
   }
 }
