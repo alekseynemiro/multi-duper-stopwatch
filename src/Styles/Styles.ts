@@ -24,4 +24,18 @@ export const styles = StyleSheet.create({
     borderBottomColor: "black",
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  table: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+   },
+   tableRow: {
+    flex: 1,
+    alignSelf: "stretch",
+    flexDirection: "row",
+  },
+  tableCell: {
+    flex: 1,
+    alignSelf: "stretch",
+  },
 });
