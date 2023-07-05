@@ -7,6 +7,8 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
+      "@components": ["./Components"],
+      "@components/*": ["./Components/*"],
       "@config": ["./Config/index"],
       "@config/*": ["./Config/*"],
       "@data": ["./Data"],

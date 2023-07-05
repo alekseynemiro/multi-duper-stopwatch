@@ -33,6 +33,7 @@ module.exports = {
       require.resolve("babel-plugin-module-resolver"),
       {
         "alias": {
+          "@components": "./Components",
           "@config": "./Config",
           "@data": "./Data",
           "@dto": "./Core/Dto",
