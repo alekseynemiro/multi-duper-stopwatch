@@ -4,14 +4,15 @@ import { View } from "react-native-windows";
 import { ButtonProps } from "./ButtonProps";
 import { buttonStyles } from "./ButtonStyles";
 
-export function Button({ title, variant, onPress  }: ButtonProps): JSX.Element {
+export function Button({ title, variant, style, onPress  }: ButtonProps): JSX.Element {
   return (
     <View style={buttonStyles.container}>
       <TouchableOpacity
-        style={{
-          ...buttonStyles.button,
-          ...buttonStyles[variant ?? "primary"],
-        }}
+        style={[
+          buttonStyles.button,
+          buttonStyles[variant ?? "primary"],
+          style,
+        ]}
         onPress={onPress}
       >
         <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
