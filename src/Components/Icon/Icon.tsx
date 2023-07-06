@@ -1,5 +1,5 @@
 import React from "react";
-import ReactNativeIcon from "react-native-vector-icons/FontAwesome";
+import ReactNativeIcon from "react-native-vector-icons/FontAwesome5";
 import { colors } from "@styles";
 import { iconMap } from "./IconMap";
 import { IconProps } from "./IconProps";
@@ -15,7 +15,7 @@ export function Icon({ name, variant, size }: IconProps): JSX.Element {
 
   return (
     <ReactNativeIcon
-      name={iconMap.get(name) ?? "exclamation"}
+      name={iconMap.get(name) ?? name}
       size={size ?? 18}
       color={color}
     />
