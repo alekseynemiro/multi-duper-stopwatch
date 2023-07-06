@@ -1,1 +1,4 @@
-export type IconName = "delete" | "color";
+export type IconName =
+  | "delete"
+  | "color"
+  | "grip-lines";
