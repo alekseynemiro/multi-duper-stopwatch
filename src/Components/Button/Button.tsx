@@ -4,7 +4,15 @@ import { View } from "react-native-windows";
 import { ButtonProps } from "./ButtonProps";
 import { buttonStyles } from "./ButtonStyles";
 
-export function Button({ title, variant, style, onPress  }: ButtonProps): JSX.Element {
+export function Button(props: ButtonProps): JSX.Element {
+  const {
+    children,
+    title,
+    variant,
+    style,
+    onPress,
+  } = props;
+
   return (
     <View style={buttonStyles.container}>
       <TouchableOpacity
@@ -15,9 +23,22 @@ export function Button({ title, variant, style, onPress  }: ButtonProps): JSX.El
         ]}
         onPress={onPress}
       >
-        <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
-          {title}
-        </Text>
+        {
+          title
+          && (
+            <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
+              {title}
+            </Text>
+          )
+        }
+        {
+          children
+          && (
+            <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
+              {children}
+            </Text>
+          )
+        }
       </TouchableOpacity>
     </View>
   );
