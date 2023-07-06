@@ -7,6 +7,7 @@ const warning = "#ffc107";
 const success = "#198754";
 const info = "#0dcaf0";
 const border = black;
+const text = black;
 
 export const colors = {
   white,
@@ -20,6 +21,7 @@ export const colors = {
   info,
 
   border,
+  text,
 
   primaryContrast: white,
   secondaryContrast: white,
