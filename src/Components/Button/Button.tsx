@@ -10,11 +10,11 @@ export function Button({ title, variant, onPress  }: ButtonProps): JSX.Element {
       <TouchableOpacity
         style={{
           ...buttonStyles.button,
-          ...buttonStyles[variant ?? "default"],
+          ...buttonStyles[variant ?? "primary"],
         }}
         onPress={onPress}
       >
-        <Text style={buttonStyles[`${variant ?? "default"}Title`]}>
+        <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
           {title}
         </Text>
       </TouchableOpacity>

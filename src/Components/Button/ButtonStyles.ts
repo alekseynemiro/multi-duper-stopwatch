@@ -11,9 +11,6 @@ export const buttonStyles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
-  default: {
-    backgroundColor: colors.default,
-  },
   primary: {
     backgroundColor: colors.primary,
   },
@@ -31,9 +28,6 @@ export const buttonStyles = StyleSheet.create({
   },
   info: {
     backgroundColor: colors.info,
-  },
-  defaultTitle: {
-    color: colors.defaultContrast,
   },
   primaryTitle: {
     color: colors.primaryContrast,
