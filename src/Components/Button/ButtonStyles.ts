@@ -3,7 +3,6 @@ import { colors } from "@styles";
 
 export const buttonStyles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     paddingHorizontal: 10,
   },
