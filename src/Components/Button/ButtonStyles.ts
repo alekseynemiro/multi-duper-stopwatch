@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@styles";
 
 export const buttonStyles = StyleSheet.create({
   container: {
@@ -11,45 +12,45 @@ export const buttonStyles = StyleSheet.create({
     padding: 10,
   },
   default: {
-    backgroundColor: "#e2e3e5",
+    backgroundColor: colors.default,
   },
   primary: {
-    backgroundColor: "#0d6efd",
-    color: "#ffffff",
+    backgroundColor: colors.primary,
   },
   secondary: {
-    backgroundColor: "#6c757d",
+    backgroundColor: colors.secondary,
   },
   danger: {
-    backgroundColor: "#dc3545",
+    backgroundColor: colors.danger,
   },
   warning: {
-    backgroundColor: "#ffc107",
+    backgroundColor: colors.warning,
   },
   success: {
-    backgroundColor: "#198754",
+    backgroundColor: colors.success,
   },
   info: {
-    backgroundColor: "#0dcaf0",
+    backgroundColor: colors.info,
   },
   defaultTitle: {
+    color: colors.defaultContrast,
   },
   primaryTitle: {
-    color: "#ffffff",
+    color: colors.primaryContrast,
   },
   secondaryTitle: {
-    color: "#ffffff",
+    color: colors.secondaryContrast,
   },
   dangerTitle: {
-    color: "#ffffff",
+    color: colors.dangerContrast,
   },
   warningTitle: {
-    color: "#000000",
+    color: colors.warningContrast,
   },
   successTitle: {
-    color: "#ffffff",
+    color: colors.secondaryContrast,
   },
   infoTitle: {
-    color: "#000000",
+    color: colors.infoContrast,
   },
 });
