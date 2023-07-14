@@ -52,7 +52,7 @@ export class DatabaseService implements IDatabaseService {
 
   public async open(): Promise<void> {
     if (!this._dataSource.isInitialized) {
-      await this.open();
+      await this._dataSource.initialize();
     }
   }
 

@@ -62,7 +62,7 @@ export class DatabaseService implements IDatabaseService {
     this._loggerService.debug("DatabaseService.open");
 
     if (!this._dataSource.isInitialized) {
-      await this.open();
+      await this._dataSource.initialize();
     }
   }
 
@@ -72,6 +72,7 @@ export class DatabaseService implements IDatabaseService {
   }
 
   public async execute<TResult>(action: { (): Promise<TResult> }): Promise<TResult> {
+    this._loggerService.debug("DatabaseService.execute");
     await this.open();
     return await action();
   }
