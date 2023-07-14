@@ -9,6 +9,7 @@ const info = "#0dcaf0";
 const background = white;
 const border = black;
 const text = black;
+const error = danger;
 
 export const colors = {
   white,
@@ -24,6 +25,7 @@ export const colors = {
   background,
   border,
   text,
+  error,
 
   primaryContrast: white,
   secondaryContrast: white,
