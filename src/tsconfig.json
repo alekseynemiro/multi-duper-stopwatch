@@ -15,7 +15,8 @@
       "@data/*": ["./Data/*"],
       "@dto/*": ["./Core/Dto/*"],
       "@styles": ["./Styles"],
-      "@styles/*": ["./Styles/*"]
+      "@styles/*": ["./Styles/*"],
+      "@utils/*": ["./Utils/*"]
     }
   }
 }

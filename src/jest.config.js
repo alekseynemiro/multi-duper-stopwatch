@@ -15,6 +15,7 @@ module.exports = {
     "^@dto(.*)$": "<rootDir>/Core/Dto/$1",
     "^@services(.*)$": "<rootDir>/Core/Services/$1",
     "^@styles(.*)$": "<rootDir>/Styles/$1",
+    "^@utils(.*)$": "<rootDir>/Utils/$1",
   },
   "cacheDirectory": ".jest/cache",
 };

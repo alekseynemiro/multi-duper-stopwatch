@@ -39,6 +39,7 @@ module.exports = {
           "@dto": "./Core/Dto",
           "@services": "./Core/Services",
           "@styles": "./Styles",
+          "@utils": "./Utils",
         },
       },
     ],
