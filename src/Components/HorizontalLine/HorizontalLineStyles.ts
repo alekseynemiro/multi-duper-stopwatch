@@ -3,9 +3,8 @@ import { colors } from "@styles";
 
 export const horizontalLineStyles = StyleSheet.create({
   default: {
-    marginTop: 10,
-    marginBottom: 10,
-    borderWidth: 0.5,
+    marginVertical: 16,
+    borderWidth: 1,
     borderBottomColor: colors.border,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
