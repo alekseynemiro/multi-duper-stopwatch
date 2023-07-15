@@ -34,4 +34,7 @@ export const styles = StyleSheet.create({
   contentView: {
     padding: 24,
   },
+  w100: {
+    width: "100%",
+  },
 });
