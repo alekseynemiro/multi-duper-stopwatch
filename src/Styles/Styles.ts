@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignSelf: "stretch",
     flexDirection: "row",
+    marginBottom: 8,
   },
   tableCell: {
     flex: 1,
