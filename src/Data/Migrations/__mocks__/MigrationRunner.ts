@@ -29,7 +29,9 @@ export class MigrationRunner implements IMigrationRunner {
       // eslint-disable-next-line dot-notation
       const dataSource = (this._databaseService as any)["_dataSource"] as DataSource;
 
-      await dataSource.initialize();
+      if (!dataSource.isInitialized) {
+        await dataSource.initialize();
+      }
 
       await dataSource.dropDatabase();
 
