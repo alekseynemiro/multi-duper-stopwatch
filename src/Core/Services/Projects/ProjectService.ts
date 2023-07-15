@@ -116,7 +116,7 @@ export class ProjectService implements IProjectService {
             } else {
               const newGoal = new Goal();
 
-              newGoal.id = this._guidService.newGuid(),
+              newGoal.id = this._guidService.newGuid();
               newGoal.color = goal.color;
               newGoal.name = goal.name;
               newGoal.isGlobal = false;
