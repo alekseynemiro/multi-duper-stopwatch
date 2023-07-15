@@ -2,6 +2,8 @@ import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
 export class InitialMigration implements MigrationInterface {
 
+  private readonly _version: number = 20230614_1550;
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -250,6 +252,32 @@ export class InitialMigration implements MigrationInterface {
         ],
       })
     );
+
+    await queryRunner.createTable(
+      new Table({
+        name: "Migrations",
+        columns: [
+          {
+            name: "Version",
+            type: "int",
+            isNullable: false,
+          },
+          {
+            name: "MigrationDate",
+            type: "int",
+            isNullable: false,
+          },
+        ],
+      })
+    );
+
+    await queryRunner.query(
+      "INSERT INTO Migrations (Version, MigrationDate) VALUES (?, ?);",
+      [
+        this._version,
+        new Date().getTime(),
+      ]
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -260,6 +288,7 @@ export class InitialMigration implements MigrationInterface {
     await queryRunner.dropTable("Projects");
     await queryRunner.dropTable("Settings");
     await queryRunner.dropTable("Infos");
+    await queryRunner.dropTable("Migrations");
   }
 
 }

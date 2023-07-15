@@ -23,7 +23,7 @@ export class MigrationRunner implements IMigrationRunner {
 
   public async run(): Promise<void> {
     try {
-      this._loggerService.debug("MigrationRunner.run");
+      this._loggerService.debug(MigrationRunner.name, this.run.name);
 
       // TODO: another way
       // eslint-disable-next-line dot-notation
@@ -34,17 +34,74 @@ export class MigrationRunner implements IMigrationRunner {
       }
 
       const queryRunner = dataSource.createQueryRunner();
-      const initialMigration = new InitialMigration();
 
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-      await initialMigration.up(queryRunner);
-      await queryRunner.commitTransaction();
-      await queryRunner.release();
+      this._loggerService.debug(
+        MigrationRunner.name,
+        this.run.name,
+        "Checking for the existence of the Migrations table."
+      );
 
-      this._loggerService.debug("MigrationRunner.run complete");
+      const hasMigrationsTable = await queryRunner.query(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='Migrations';"
+      );
+
+      if (hasMigrationsTable.length) {
+        this._loggerService.debug(
+          MigrationRunner.name,
+          this.run.name,
+          "Migrations table found."
+        );
+
+        const migrations = await queryRunner.query(
+          "SELECT * FROM Migrations ORDER BY MigrationDate DESC;"
+        );
+
+        this._loggerService.debug(
+          MigrationRunner.name,
+          this.run.name,
+          migrations
+        );
+
+        // TODO: Migrations
+        this._loggerService.debug(
+          MigrationRunner.name,
+          this.run.name,
+          "No other action is required."
+        );
+      } else {
+        this._loggerService.debug(
+          MigrationRunner.name,
+          this.run.name,
+          "Migrations table not found."
+        );
+
+        this._loggerService.debug(
+          MigrationRunner.name,
+          this.run.name,
+          "InitialMigration"
+        );
+
+        const initialMigration = new InitialMigration();
+
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        await initialMigration.up(queryRunner);
+        await queryRunner.commitTransaction();
+        await queryRunner.release();
+      }
+
+      this._loggerService.debug(
+        MigrationRunner.name,
+        this.run.name,
+        "Complete"
+      );
     } catch (error) {
-      this._loggerService.error("MigrationRunner.run", error);
+      this._loggerService.error(
+        MigrationRunner.name,
+        this.run.name,
+        error
+      );
+
       throw error;
     }
   }
