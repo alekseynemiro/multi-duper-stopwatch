@@ -39,7 +39,7 @@ export class DatabaseService implements IDatabaseService {
   ) {
     const dataSource = new DataSource({
       type: "react-native",
-      database: "test",
+      database: "table_20230715_1227",
       location: "default",
       logger: "debug",
       synchronize: false,
@@ -59,7 +59,7 @@ export class DatabaseService implements IDatabaseService {
   }
 
   public async open(): Promise<void> {
-    this._loggerService.debug("DatabaseService.open");
+    this._loggerService.debug(DatabaseService.name, this.open.name);
 
     if (!this._dataSource.isInitialized) {
       await this._dataSource.initialize();
@@ -67,12 +67,12 @@ export class DatabaseService implements IDatabaseService {
   }
 
   public close(): Promise<void> {
-    this._loggerService.debug("DatabaseService.close");
+    this._loggerService.debug(DatabaseService.name, this.close.name);
     return this._dataSource.destroy();
   }
 
   public async execute<TResult>(action: { (): Promise<TResult> }): Promise<TResult> {
-    this._loggerService.debug("DatabaseService.execute");
+    this._loggerService.debug(DatabaseService.name, this.execute.name);
     await this.open();
     return await action();
   }
