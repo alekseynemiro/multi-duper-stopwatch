@@ -14,6 +14,7 @@
       "@data": ["./Data"],
       "@data/*": ["./Data/*"],
       "@dto/*": ["./Core/Dto/*"],
+      "@pages/*": ["./Pages/*"],
       "@styles": ["./Styles"],
       "@styles/*": ["./Styles/*"],
       "@utils/*": ["./Utils/*"]

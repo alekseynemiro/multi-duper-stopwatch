@@ -37,6 +37,7 @@ module.exports = {
           "@config": "./Config",
           "@data": "./Data",
           "@dto": "./Core/Dto",
+          "@pages": "./Pages",
           "@services": "./Core/Services",
           "@styles": "./Styles",
           "@utils": "./Utils",
