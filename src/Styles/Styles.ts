@@ -31,4 +31,7 @@ export const styles = StyleSheet.create({
   tableCell: {
     alignSelf: "stretch",
   },
+  contentView: {
+    padding: 24,
+  },
 });
