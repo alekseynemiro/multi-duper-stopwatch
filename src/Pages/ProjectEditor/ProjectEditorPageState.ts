@@ -8,4 +8,6 @@ export type ProjectEditorPageState = {
 
   activeCode?: string | undefined;
 
+  showLoadingIndicator: boolean;
+
 };

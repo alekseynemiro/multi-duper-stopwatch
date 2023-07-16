@@ -10,4 +10,6 @@ export type GoalModel = {
 
   color: ColorPalette;
 
+  isDeleted: boolean;
+
 };
