@@ -90,6 +90,7 @@ export class ProjectService implements IProjectService {
   public async create(request: CreateProjectRequest): Promise<void> {
     return this._databaseService.execute(
       async(): Promise<void> => {
+        // TODO: Use transaction
         const now = this._dateTimeService.now;
         const project = new Project();
 
@@ -102,15 +103,15 @@ export class ProjectService implements IProjectService {
         if (request.goals?.length > 0) {
           for (const goal of request.goals) {
             const globalGoal = goal.id
-            ? await this._databaseService.goals().findOneByOrFail({ id: goal.id, isGlobal: true })
-            : undefined;
+              ? await this._databaseService.goals().findOneByOrFail({ id: goal.id, isGlobal: true })
+              : undefined;
 
             if (globalGoal) {
               const goalInProject = new GoalInProject();
 
               goalInProject.id = this._guidService.newGuid();
-              goalInProject.project = project;
-              goalInProject.goal = globalGoal;
+              goalInProject.project.id = project.id;
+              goalInProject.goalId = globalGoal.id;
               goalInProject.position = goal.position;
 
               await this._databaseService.goalsInProjects().save(goalInProject);
@@ -128,8 +129,8 @@ export class ProjectService implements IProjectService {
               const goalInProject = new GoalInProject();
 
               goalInProject.id = this._guidService.newGuid();
-              goalInProject.project = project;
-              goalInProject.goal = createdGoal;
+              goalInProject.projectId = project.id;
+              goalInProject.goalId = createdGoal.id;
               goalInProject.position = goal.position;
 
               await this._databaseService.goalsInProjects().save(goalInProject);
