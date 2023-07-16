@@ -12,6 +12,18 @@ export class GoalInProject {
   })
   public id!: string;
 
+  @Column({
+    name: "GoalId",
+    nullable: false,
+  })
+  public goalId!: string;
+
+  @Column({
+    name: "ProjectId",
+    nullable: false,
+  })
+  public projectId!: string;
+
   @ManyToOne(
     () => Goal,
     x => x.goalsInProjects,

@@ -11,6 +11,7 @@ import {
 import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
 import { inject, injectable } from "inversify";
+import { In } from "typeorm";
 import { IProjectService } from "./IProjectService";
 import { ProjectId } from "./Types";
 
@@ -150,14 +151,108 @@ export class ProjectService implements IProjectService {
   public async update(request: UpdateProjectRequest): Promise<void> {
     return this._databaseService.execute(
       async (): Promise<void> => {
+        // TODO: Use transaction
+        const now = this._dateTimeService.now;
         const project = await this._databaseService.projects()
-          .findOneByOrFail({
-            id: request.id,
+          .findOneOrFail({
+            where: {
+              id: request.id,
+            },
+            relations: {
+              goalsInProjects: true,
+            },
           });
 
         project.name = request.name;
 
         await this._databaseService.projects().save(project);
+
+        if (request.goalsToDelete?.length) {
+          // delete references
+          const goalsInProjectsToDelete = await this._databaseService.goalsInProjects().find({
+            where: {
+              projectId: project.id,
+              goalId: In(request.goalsToDelete),
+            },
+          });
+
+          await this._databaseService.goalsInProjects().delete(
+            goalsInProjectsToDelete.map(
+              (x: GoalInProject): string => {
+                return x.id;
+              }
+            )
+          );
+
+          // delete private goals
+          const privateGoalsToDelete = await this._databaseService.goals().find({
+            where: {
+              id: In(request.goalsToDelete),
+              isGlobal: false,
+            },
+          });
+
+          await this._databaseService.goals().delete(
+            privateGoalsToDelete.map((x: Goal): string => x.id)
+          );
+        }
+
+        if (request.goals?.length > 0) {
+          for (const goal of request.goals) {
+            const goalInProject = project.goalsInProjects?.find(
+              (x: GoalInProject): boolean => {
+                return x.goal.id === goal.id;
+              }
+            );
+
+            const linked = !!goalInProject;
+
+            const globalGoal = goal.id && !linked
+              ? await this._databaseService.goals().findOneByOrFail({ id: goal.id, isGlobal: true })
+              : undefined;
+
+            if (globalGoal) {
+              const newGoalInProject = new GoalInProject();
+
+              newGoalInProject.id = this._guidService.newGuid();
+              newGoalInProject.projectId = project.id;
+              newGoalInProject.goalId = globalGoal.id;
+              newGoalInProject.position = goal.position;
+
+              await this._databaseService.goalsInProjects().save(newGoalInProject);
+            } else {
+              if (linked) {
+                // update an existing reference
+                goalInProject.goal.color = goal.color;
+                goalInProject.goal.name = goal.name;
+                goalInProject.position = goal.position;
+
+                await this._databaseService.goalsInProjects().save(goalInProject);
+                await this._databaseService.goals().save(goalInProject.goal);
+              } else {
+                // create new goal and reference
+                const newGoal = new Goal();
+
+                newGoal.id = this._guidService.newGuid();
+                newGoal.color = goal.color;
+                newGoal.name = goal.name;
+                newGoal.isGlobal = false;
+                newGoal.createdDate = now;
+
+                const createdGoal = await this._databaseService.goals().save(newGoal);
+
+                const newGoalInProject = new GoalInProject();
+
+                newGoalInProject.id = this._guidService.newGuid();
+                newGoalInProject.projectId = project.id;
+                newGoalInProject.goalId = createdGoal.id;
+                newGoalInProject.position = goal.position;
+
+                await this._databaseService.goalsInProjects().save(newGoalInProject);
+              }
+            }
+          }
+        }
       }
     );
   }

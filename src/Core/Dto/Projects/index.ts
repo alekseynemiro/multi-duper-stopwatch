@@ -5,3 +5,4 @@ export type { GetAllResultItem } from "./GetAllResultItem";
 export type { GetResult } from "./GetResult";
 export type { GetResultGoal } from "./GetResultGoal";
 export type { UpdateProjectRequest } from "./UpdateProjectRequest";
+export type { UpdateProjectRequestGoal } from "./UpdateProjectRequestGoal";
