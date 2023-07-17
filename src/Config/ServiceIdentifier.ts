@@ -8,4 +8,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("MigrationRunner")
   .add("ProjectService")
   .add("SessionService")
+  .add("StopwatchService")
   .build();

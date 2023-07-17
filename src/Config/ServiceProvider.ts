@@ -1,3 +1,5 @@
+import { IStopwatchService } from "@services/Stopwatch";
+import { StopwatchService } from "@services/Stopwatch/StopwatchService";
 import { Container } from "inversify";
 import { IDateTimeService } from "../Core/Services/DateTime";
 import { DateTimeService } from "../Core/Services/DateTime/DateTimeService";
@@ -24,5 +26,6 @@ serviceProvider.bind<ILoggerService>(ServiceIdentifier.LoggerService).to(LoggerS
 serviceProvider.bind<IProjectService>(ServiceIdentifier.ProjectService).to(ProjectService).inSingletonScope();
 serviceProvider.bind<ISessionService>(ServiceIdentifier.SessionService).to(SessionService).inSingletonScope();
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
+serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 
 export { serviceProvider };
