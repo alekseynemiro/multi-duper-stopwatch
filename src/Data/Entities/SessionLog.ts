@@ -12,7 +12,7 @@ export class SessionLog {
     name: "ElapsedTime",
     nullable: false,
   })
-  public elapsedTime!: string;
+  public elapsedTime!: number;
 
   @Column({
     name: "Distance",

@@ -6,8 +6,6 @@ export type MarkResult = {
 
   isPaused: boolean;
 
-  isNewMarker: boolean;
-
   details?: MarkDetailsResult;
 
 };

@@ -8,7 +8,7 @@ export type MarkDetailsResult = {
 
   goalColor: ColorPalette;
 
-  elapsedTime: string;
+  elapsedTime: number;
 
   distance: number;
 
