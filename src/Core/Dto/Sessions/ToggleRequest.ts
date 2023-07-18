@@ -1,8 +1,8 @@
-export type PauseRequest = {
+export type ToggleRequest = {
 
   sessionId: string;
 
-  elapsedTime: string;
+  goalId: string;
 
   distance: number;
 

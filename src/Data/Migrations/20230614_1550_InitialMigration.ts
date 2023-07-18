@@ -132,6 +132,11 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "GoalId",
+            type: "text",
+            isNullable: false,
+          },
+          {
             name: "State",
             type: "int",
             isNullable: false,
@@ -142,17 +147,17 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "PauseDate",
-            type: "int",
-            isNullable: true,
-          },
-          {
-            name: "ResumeDate",
-            type: "int",
-            isNullable: true,
-          },
-          {
             name: "FinishDate",
+            type: "int",
+            isNullable: true,
+          },
+          {
+            name: "GoalStartDate",
+            type: "int",
+            isNullable: false,
+          },
+          {
+            name: "GoalFinishDate",
             type: "int",
             isNullable: true,
           },

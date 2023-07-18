@@ -1,6 +1,6 @@
 import { ColorPalette } from "../../../Data";
 
-export type MarkDetailsResult = {
+export type ToggleDetailsResult = {
 
   id: string;
 

@@ -3,10 +3,9 @@ import { IDatabaseService, Session, SessionLog, SessionState } from "@data";
 import {
   CreateSessionResult,
   FinishRequest,
-  MarkDetailsResult,
-  MarkRequest,
-  MarkResult,
-  PauseRequest,
+  ToggleDetailsResult,
+  ToggleRequest,
+  ToggleResult,
 } from "@dto/Sessions";
 import { ILoggerService } from "@services/Logger";
 import { inject, injectable } from "inversify";
@@ -37,11 +36,14 @@ export class SessionService implements ISessionService {
     this._loggerService = loggerService;
   }
 
-  public async create(projectId: string): Promise<CreateSessionResult> {
+  public async create(projectId: string, goalId: string): Promise<CreateSessionResult> {
     this._loggerService.debug(
       SessionService.name,
       this.create.name,
-      projectId
+      "projectId",
+      projectId,
+      "goalId",
+      goalId
     );
 
     return this._databaseService.execute(
@@ -49,13 +51,18 @@ export class SessionService implements ISessionService {
         const project = await this._databaseService.projects()
           .findOneByOrFail({ id: projectId });
 
+        const goal = await this._databaseService.goals()
+          .findOneByOrFail({ id: goalId });
+
         const now = this._dateTimeService.now;
         const session = new Session();
 
         session.id = this._guidService.newGuid();
         session.project = project;
+        session.goal = goal;
         session.state = SessionState.Run;
         session.startDate = now;
+        session.goalStartDate = now;
         session.createdDate = now;
 
         this._databaseService.sessions().insert(session);
@@ -69,137 +76,165 @@ export class SessionService implements ISessionService {
     );
   }
 
-  public async mark(request: MarkRequest): Promise<MarkResult> {
+  public async toggle(request: ToggleRequest): Promise<ToggleResult> {
     const now = this._dateTimeService.now;
 
     this._loggerService.debug(
       SessionService.name,
-      this.mark.name,
+      this.toggle.name,
       request
     );
 
     return this._databaseService.execute(
-      async(): Promise<MarkResult> => {
+      async(): Promise<ToggleResult> => {
+        let log: SessionLog | undefined;
+
         const session = await this._databaseService.sessions()
           .findOneOrFail({
             where: {
               id: request.sessionId,
             },
+            relations: {
+              goal: true,
+            } as any, // to fix: Type '{ goal: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
           });
 
-        if (session.state !== SessionState.Run) {
-          throw new Error(`The session must be running (${SessionState.Run}). Current state: ${session.state}.`);
+        if (![SessionState.Run, SessionState.Paused].includes(session.state)) {
+          throw new Error([
+            "The session must be running or paused.",
+            `Current state: ${SessionState[session.state]}.`,
+          ].join(" "));
         }
 
         const goal = await this._databaseService.goals()
           .findOneByOrFail({ id: request.goalId });
 
-        const lastLog = await this._databaseService.sessionLogs().findOne({
-          where: {
-            session,
-          },
-          order: {
-            createdDate: "DESC",
-          },
-        });
+        const startDate = session.goalStartDate;
+        let elapsedTime = now.getTime() - startDate.getTime();
 
-        const startDate = lastLog ? lastLog.finishDate : session.startDate;
+        if (session.state === SessionState.Paused && session.goal.id !== goal.id) {
+          elapsedTime = (session.goalFinishDate as Date).getTime() - session.goalStartDate.getTime();
+        }
 
-        const log: SessionLog = {
-          id: this._guidService.newGuid(),
-          session,
-          goal,
-          distance: request.distance,
-          avgSpeed: request.avgSpeed,
-          maxSpeed: request.maxSpeed,
-          elapsedTime: now.getTime() - startDate.getTime(),
-          startDate,
-          finishDate: now,
-          createdDate: now,
-        };
+        if (session.state === SessionState.Run) {
+          if (session.goal.id === goal.id) {
+            this._loggerService.debug(
+              SessionService.name,
+              this.toggle.name,
+              "sessionId",
+              request.sessionId,
+              "goalId",
+              request.goalId,
+              `Pause and add log because the current status ${SessionState[SessionState.Run]} and goals are same.`,
+              "Elapsed time",
+              elapsedTime
+            );
 
-        this._databaseService.sessionLogs().insert(log);
+            log = {
+              id: this._guidService.newGuid(),
+              session,
+              goal: { ...session.goal }, // to kill reference
+              distance: request.distance,
+              avgSpeed: request.avgSpeed,
+              maxSpeed: request.maxSpeed,
+              elapsedTime,
+              startDate,
+              finishDate: now,
+              createdDate: now,
+            };
 
-        const result: MarkResult = {
+            this._databaseService.sessionLogs().insert(log);
+
+            session.state = SessionState.Paused;
+            session.goalFinishDate = now;
+          } else {
+            this._loggerService.debug(
+              SessionService.name,
+              this.toggle.name,
+              "sessionId",
+              request.sessionId,
+              "goalId",
+              request.goalId,
+              `Add log for goal ${session.goal.id} because the current status ${SessionState[SessionState.Run]} and goals are different.`,
+              "Elapsed time",
+              elapsedTime
+            );
+
+            log = {
+              id: this._guidService.newGuid(),
+              session,
+              goal: { ...session.goal }, // to kill reference
+              distance: request.distance,
+              avgSpeed: request.avgSpeed,
+              maxSpeed: request.maxSpeed,
+              elapsedTime,
+              startDate,
+              finishDate: now,
+              createdDate: now,
+            };
+
+            this._databaseService.sessionLogs().insert(log);
+
+            session.goal = goal;
+            session.goalStartDate = now;
+            session.finishDate = undefined;
+          }
+        } else if (session.state === SessionState.Paused) {
+          if (session.goal.id !== goal.id) {
+            this._loggerService.debug(
+              SessionService.name,
+              this.toggle.name,
+              "sessionId",
+              request.sessionId,
+              "goalId",
+              request.goalId,
+              `Run because the current status ${SessionState[SessionState.Paused]} and goals are different.`,
+              "Elapsed time",
+              elapsedTime
+            );
+
+            session.goal = goal;
+            session.finishDate = undefined;
+          } else {
+            this._loggerService.debug(
+              SessionService.name,
+              this.toggle.name,
+              "sessionId",
+              request.sessionId,
+              "goalId",
+              request.goalId,
+              `Run because the current status ${SessionState[SessionState.Paused]} and goals are same.`
+            );
+          }
+
+          session.state = SessionState.Run;
+          session.goalStartDate = now;
+          session.finishDate = undefined;
+        } else {
+          throw new Error(`The state ${session.state} is not supported.`);
+        }
+
+        await this._databaseService.sessions().save(session);
+
+        const result: ToggleResult = {
           isPaused: (session.state as SessionState) === SessionState.Paused, // This comparison appears to be unintentional because the types 'SessionState.Run' and 'SessionState.Paused' have no overlap.
           isRunning: session.state === SessionState.Run,
           details: log
             ? {
               id: log.id,
-              goalName: goal.name,
-              goalColor: goal.color,
+              goalName: log.goal.name,
+              goalColor: log.goal.color,
               avgSpeed: log.avgSpeed,
               maxSpeed: log.maxSpeed,
               distance: log.distance,
               elapsedTime: log.elapsedTime,
               finishDate: log.finishDate,
               startDate: log.startDate,
-            } as MarkDetailsResult
+            } as ToggleDetailsResult
             : undefined,
         };
 
         return result;
-      }
-    );
-  }
-
-  public async pause(request: PauseRequest): Promise<void> {
-    const now = this._dateTimeService.now;
-
-    this._loggerService.debug(
-      SessionService.name,
-      this.pause.name,
-      request
-    );
-
-    return this._databaseService.execute(
-      async(): Promise<void> => {
-        const session = await this._databaseService.sessions()
-        .findOneOrFail({
-          where: {
-            id: request.sessionId,
-          },
-        });
-
-        if (session.state !== SessionState.Run) {
-          throw new Error(`The session must be running (${SessionState.Run}). Current state: ${session.state}.`);
-        }
-
-        session.pauseDate = now;
-        session.resumeDate = undefined;
-        session.state = SessionState.Paused;
-
-        await this._databaseService.sessions().save(session);
-      }
-    );
-  }
-
-  public async resume(sessionId: string): Promise<void> {
-    const now = this._dateTimeService.now;
-
-    this._loggerService.debug(
-      SessionService.name,
-      this.resume.name,
-      sessionId
-    );
-
-    return this._databaseService.execute(
-      async(): Promise<void> => {
-        const session = await this._databaseService.sessions()
-          .findOneOrFail({
-            where: {
-              id: sessionId,
-            },
-          });
-
-        if (session.state !== SessionState.Paused) {
-          throw new Error(`The session must be paused (${SessionState.Paused}). Current state: ${session.state}.`);
-        }
-
-        session.resumeDate = now;
-        session.state = SessionState.Run;
-
-        await this._databaseService.sessions().save(session);
       }
     );
   }
@@ -216,15 +251,40 @@ export class SessionService implements ISessionService {
     return this._databaseService.execute(
       async(): Promise<void> => {
         const session = await this._databaseService.sessions()
-        .findOneOrFail({
-          where: {
-            id: request.sessionId,
-          },
-        });
+          .findOneOrFail({
+            where: {
+              id: request.sessionId,
+            },
+            relations: {
+              goal: true,
+            } as any, // to fix: Type '{ goal: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+          });
 
         if (session.state === SessionState.Finished) {
-          throw new Error(`The session has already finished (${SessionState.Finished}).`);
+          throw new Error("The session has already finished.");
         }
+
+        const startDate = session.goalStartDate;
+        let elapsedTime = now.getTime() - startDate.getTime();
+
+        if (session.state === SessionState.Paused) {
+          elapsedTime = (session.goalFinishDate as Date).getTime() - session.goalStartDate.getTime();
+        }
+
+        const log: SessionLog = {
+          id: this._guidService.newGuid(),
+          session,
+          goal: { ...session.goal }, // to kill reference
+          distance: request.distance,
+          avgSpeed: request.avgSpeed,
+          maxSpeed: request.maxSpeed,
+          elapsedTime,
+          startDate,
+          finishDate: now,
+          createdDate: now,
+        };
+
+        this._databaseService.sessionLogs().insert(log);
 
         session.state = SessionState.Finished;
         session.finishDate = now;

@@ -1,20 +1,15 @@
 import {
   CreateSessionResult,
   FinishRequest,
-  MarkRequest,
-  MarkResult,
-  PauseRequest,
+  ToggleRequest,
+  ToggleResult,
 } from "@dto/Sessions";
 
 export interface ISessionService {
 
-  create(projectId: string): Promise<CreateSessionResult>;
+  create(projectId: string, goalId: string): Promise<CreateSessionResult>;
 
-  mark(request: MarkRequest): Promise<MarkResult>;
-
-  pause(request: PauseRequest): Promise<void>;
-
-  resume(sessionId: string): Promise<void>;
+  toggle(request: ToggleRequest): Promise<ToggleResult>;
 
   finish(request: FinishRequest): Promise<void>;
 
