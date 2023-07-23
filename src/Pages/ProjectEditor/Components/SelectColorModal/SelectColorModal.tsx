@@ -21,16 +21,16 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
               <Text>Click to color for select:</Text>
               <View style={selectColorModalStyles.colorListContainer}>
                 {
-                  colors.palette.map((x: string): JSX.Element => {
+                  colors.palette.map((x: typeof colors.palette[0]): JSX.Element => {
                     return (
                       <TouchableOpacity
-                        key={x}
+                        key={x.color}
                         style={{
                           ...selectColorModalStyles.color,
-                          backgroundColor: x,
+                          backgroundColor: x.color,
                         }}
                         onPress={(): void => {
-                          props.onSelect(props.goalCode, getColorByCode(x));
+                          props.onSelect(props.goalCode, getColorByCode(x.color));
                         }}
                       />
                     );
