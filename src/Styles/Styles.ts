@@ -42,4 +42,10 @@ export const styles = StyleSheet.create({
   w100: {
     width: "100%",
   },
+  pt8: {
+    paddingTop: 8,
+  },
+  pb8: {
+    paddingBottom: 8,
+  },
 });
