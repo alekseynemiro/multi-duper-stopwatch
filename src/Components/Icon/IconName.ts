@@ -3,4 +3,5 @@ export type IconName =
   | "delete"
   | "color"
   | "grip-lines"
-  | "play";
+  | "play"
+  | "pause";
