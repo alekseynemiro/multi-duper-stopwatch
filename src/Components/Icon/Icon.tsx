@@ -4,7 +4,7 @@ import { colors } from "@styles";
 import { iconMap } from "./IconMap";
 import { IconProps } from "./IconProps";
 
-export function Icon({ name, variant, size }: IconProps): JSX.Element {
+export function Icon({ name, variant, size, style }: IconProps): JSX.Element {
   let color = colors.text;
 
   if (variant) {
@@ -18,6 +18,7 @@ export function Icon({ name, variant, size }: IconProps): JSX.Element {
       name={iconMap.get(name) ?? name}
       size={size ?? 18}
       color={color}
+      style={style}
     />
   );
 }

@@ -1,3 +1,5 @@
+import { StyleProp } from "react-native";
+import { TextStyle } from "react-native";
 import { IconName } from "./IconName";
 import { IconVariant } from "./IconVariant";
 
@@ -8,5 +10,7 @@ export type IconProps = {
   variant?: IconVariant;
 
   size?: number;
+
+  style?: StyleProp<TextStyle>;
 
 };
