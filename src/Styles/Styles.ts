@@ -48,4 +48,10 @@ export const styles = StyleSheet.create({
   pb8: {
     paddingBottom: 8,
   },
+  flexRow: {
+    flexDirection: "row",
+  },
+  flexColumn: {
+    flexDirection: "column",
+  },
 });
