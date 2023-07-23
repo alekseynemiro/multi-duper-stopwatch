@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "./Colors";
 
 export const styles = StyleSheet.create({
   sectionContainer: {
@@ -30,6 +31,10 @@ export const styles = StyleSheet.create({
   },
   tableCell: {
     alignSelf: "stretch",
+  },
+  border: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border,
   },
   contentView: {
     padding: 24,
