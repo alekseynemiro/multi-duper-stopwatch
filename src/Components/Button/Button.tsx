@@ -10,6 +10,7 @@ export function Button(props: ButtonProps): JSX.Element {
     title,
     variant,
     style,
+    titleStyle,
     onPress,
   } = props;
 
@@ -34,7 +35,12 @@ export function Button(props: ButtonProps): JSX.Element {
         {
           children
           && (
-            <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
+            <Text
+              style={[
+                buttonStyles[`${variant ?? "primary"}Title`],
+                titleStyle,
+              ]}
+            >
               {children}
             </Text>
           )

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 export type ButtonProps = {
 
@@ -10,6 +10,8 @@ export type ButtonProps = {
   children?: ReactNode;
 
   style?: StyleProp<ViewStyle>;
+
+  titleStyle?: StyleProp<TextStyle>;
 
   onPress(): void;
 
