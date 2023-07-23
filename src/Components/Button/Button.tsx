@@ -11,6 +11,7 @@ export function Button(props: ButtonProps): JSX.Element {
     variant,
     style,
     titleStyle,
+    childWrapperStyle,
     onPress,
   } = props;
 
@@ -27,7 +28,12 @@ export function Button(props: ButtonProps): JSX.Element {
         {
           title
           && (
-            <Text style={buttonStyles[`${variant ?? "primary"}Title`]}>
+            <Text
+              style={[
+                buttonStyles[`${variant ?? "primary"}Title`],
+                titleStyle,
+              ]}
+            >
               {title}
             </Text>
           )
@@ -35,14 +41,11 @@ export function Button(props: ButtonProps): JSX.Element {
         {
           children
           && (
-            <Text
-              style={[
-                buttonStyles[`${variant ?? "primary"}Title`],
-                titleStyle,
-              ]}
+            <View
+              style={childWrapperStyle}
             >
               {children}
-            </Text>
+            </View>
           )
         }
       </TouchableOpacity>

@@ -11,6 +11,8 @@ export type ButtonProps = {
 
   style?: StyleProp<ViewStyle>;
 
+  childWrapperStyle?: StyleProp<ViewStyle>;
+
   titleStyle?: StyleProp<TextStyle>;
 
   onPress(): void;
