@@ -3,6 +3,7 @@ import { IDatabaseService, Session, SessionLog, SessionState } from "@data";
 import {
   CreateSessionResult,
   FinishRequest,
+  PauseRequest,
   ToggleDetailsResult,
   ToggleRequest,
   ToggleResult,
@@ -235,6 +236,74 @@ export class SessionService implements ISessionService {
         };
 
         return result;
+      }
+    );
+  }
+
+  public pause(request: PauseRequest): Promise<void> {
+    const now = this._dateTimeService.now;
+
+    this._loggerService.debug(
+      SessionService.name,
+      this.pause.name,
+      request.sessionId
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<void> => {
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: request.sessionId,
+            },
+            relations: {
+              goal: true,
+            } as any, // to fix: Type '{ goal: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+          });
+
+        if (session.state === SessionState.Paused) {
+          this._loggerService.debug(
+            SessionService.name,
+            this.pause.name,
+            "sessionId",
+            request.sessionId,
+            "Unable to pause the session because the session is already paused.",
+          );
+          return;
+        }
+
+        const startDate = session.goalStartDate;
+        let elapsedTime = now.getTime() - startDate.getTime();
+
+        this._loggerService.debug(
+          SessionService.name,
+          this.pause.name,
+          "sessionId",
+          request.sessionId,
+          `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
+          "Elapsed time",
+          elapsedTime
+        );
+
+        const log: SessionLog = {
+          id: this._guidService.newGuid(),
+          session,
+          goal: { ...session.goal }, // to kill reference
+          distance: request.distance,
+          avgSpeed: request.avgSpeed,
+          maxSpeed: request.maxSpeed,
+          elapsedTime,
+          startDate,
+          finishDate: now,
+          createdDate: now,
+        };
+
+        this._databaseService.sessionLogs().insert(log);
+
+        session.state = SessionState.Paused;
+        session.goalFinishDate = now;
+
+        await this._databaseService.sessions().save(session);
       }
     );
   }
