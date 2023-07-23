@@ -18,6 +18,8 @@
       "@services/*": ["./Core/Services/*"],
       "@styles": ["./Styles"],
       "@styles/*": ["./Styles/*"],
+      "@types": ["./Types"],
+      "@types/*": ["./Types/*"],
       "@utils/*": ["./Utils/*"]
     }
   }

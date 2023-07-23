@@ -1,4 +1,4 @@
-import { TimeSpan } from "./TimeSpan";
+import { TimeSpan } from "@types";
 
 export type StopwatchTickEventArgs = {
 

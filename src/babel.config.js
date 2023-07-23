@@ -40,6 +40,7 @@ module.exports = {
           "@pages": "./Pages",
           "@services": "./Core/Services",
           "@styles": "./Styles",
+          "@types": "./Types",
           "@utils": "./Utils",
         },
       },
