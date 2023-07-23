@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native-windows";
+import { View } from "react-native";
 import { horizontalLineStyles } from "./HorizontalLineStyles";
 
 export function HorizontalLine(): JSX.Element {
