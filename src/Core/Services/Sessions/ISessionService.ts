@@ -1,4 +1,5 @@
 import {
+  CreateSessionRequest,
   CreateSessionResult,
   FinishRequest,
   PauseRequest,
@@ -8,7 +9,7 @@ import {
 
 export interface ISessionService {
 
-  create(projectId: string, goalId: string): Promise<CreateSessionResult>;
+  create(request: CreateSessionRequest): Promise<CreateSessionResult>;
 
   toggle(request: ToggleRequest): Promise<ToggleResult>;
 

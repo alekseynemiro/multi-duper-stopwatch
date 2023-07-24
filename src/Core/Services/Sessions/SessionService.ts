@@ -1,6 +1,7 @@
 import { ServiceIdentifier } from "@config";
 import { IDatabaseService, Session, SessionLog, SessionState } from "@data";
 import {
+  CreateSessionRequest,
   CreateSessionResult,
   FinishRequest,
   PauseRequest,
@@ -37,34 +38,33 @@ export class SessionService implements ISessionService {
     this._loggerService = loggerService;
   }
 
-  public async create(projectId: string, goalId: string): Promise<CreateSessionResult> {
+  public async create(request: CreateSessionRequest): Promise<CreateSessionResult> {
     this._loggerService.debug(
       SessionService.name,
       this.create.name,
       "projectId",
-      projectId,
+      request.projectId,
       "goalId",
-      goalId
+      request.goalId
     );
 
     return this._databaseService.execute(
       async(): Promise<CreateSessionResult> => {
         const project = await this._databaseService.projects()
-          .findOneByOrFail({ id: projectId });
+          .findOneByOrFail({ id: request.projectId });
 
         const goal = await this._databaseService.goals()
-          .findOneByOrFail({ id: goalId });
+          .findOneByOrFail({ id: request.goalId });
 
-        const now = this._dateTimeService.now;
         const session = new Session();
 
         session.id = this._guidService.newGuid();
         session.project = project;
         session.goal = goal;
         session.state = SessionState.Run;
-        session.startDate = now;
-        session.goalStartDate = now;
-        session.createdDate = now;
+        session.startDate = request.date;
+        session.goalStartDate = request.date;
+        session.createdDate = this._dateTimeService.now;
 
         this._databaseService.sessions().insert(session);
 

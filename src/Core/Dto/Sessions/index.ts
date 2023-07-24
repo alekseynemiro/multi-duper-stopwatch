@@ -1,3 +1,4 @@
+export type { CreateSessionRequest } from "./CreateSessionRequest";
 export type { CreateSessionResult } from "./CreateSessionResult";
 export type { FinishRequest } from "./FinishRequest";
 export type { PauseRequest } from "./PauseRequest";
