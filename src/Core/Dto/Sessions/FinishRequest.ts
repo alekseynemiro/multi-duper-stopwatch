@@ -10,4 +10,6 @@ export type FinishRequest = {
 
   maxSpeed: number;
 
+  date: Date;
+
 };

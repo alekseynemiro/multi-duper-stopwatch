@@ -305,8 +305,6 @@ export class SessionService implements ISessionService {
   }
 
   public async finish(request: FinishRequest): Promise<void> {
-    const now = this._dateTimeService.now;
-
     this._loggerService.debug(
       SessionService.name,
       this.finish.name,
@@ -330,7 +328,7 @@ export class SessionService implements ISessionService {
         }
 
         const startDate = session.goalStartDate;
-        let elapsedTime = now.getTime() - startDate.getTime();
+        let elapsedTime = request.date.getTime() - startDate.getTime();
 
         if (session.state === SessionState.Paused) {
           elapsedTime = (session.goalFinishDate as Date).getTime() - session.goalStartDate.getTime();
@@ -345,14 +343,14 @@ export class SessionService implements ISessionService {
           maxSpeed: request.maxSpeed,
           elapsedTime,
           startDate,
-          finishDate: now,
-          createdDate: now,
+          finishDate: request.date,
+          createdDate: this._dateTimeService.now,
         };
 
         this._databaseService.sessionLogs().insert(log);
 
         session.state = SessionState.Finished;
-        session.finishDate = now;
+        session.finishDate = request.date;
 
         await this._databaseService.sessions().save(session);
       }
