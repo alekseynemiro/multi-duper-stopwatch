@@ -6,6 +6,7 @@ const danger = "#dc3545";
 const warning = "#ffc107";
 const success = "#198754";
 const info = "#0dcaf0";
+const light = "#f8f9fa";
 const background = white;
 const border = black;
 const text = black;
@@ -21,6 +22,7 @@ export const colors = {
   warning,
   success,
   info,
+  light,
 
   background,
   border,
@@ -33,6 +35,7 @@ export const colors = {
   warningContrast: black,
   successContrast: white,
   infoContrast: black,
+  lightContrast: black,
 
   shadowColor: black,
 
