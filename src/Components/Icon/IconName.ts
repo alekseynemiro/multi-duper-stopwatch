@@ -8,4 +8,7 @@ export type IconName =
   | "exit"
   | "project-list"
   | "create-project"
-  | "create-goal";
+  | "create-goal"
+  | "goal-list"
+  | "statistics"
+  | "application-settings";
