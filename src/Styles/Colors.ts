@@ -9,6 +9,7 @@ const info = "#0dcaf0";
 const light = "#f8f9fa";
 const background = white;
 const border = black;
+const borderLight = "#e9ecef";
 const text = black;
 const error = danger;
 
@@ -25,7 +26,10 @@ export const colors = {
   light,
 
   background,
+
   border,
+  borderLight,
+
   text,
   error,
 
