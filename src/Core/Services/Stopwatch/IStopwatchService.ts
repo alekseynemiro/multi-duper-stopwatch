@@ -10,6 +10,12 @@ export interface IStopwatchService {
 
   reset(): void;
 
+  snap(): void;
+
+  setOffset(): void;
+
+  clearOffset(): void;
+
   addTickListener(callback: StopwatchTickEvent): void;
 
   removeTickListener(callback: StopwatchTickEvent): void;

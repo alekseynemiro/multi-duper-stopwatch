@@ -23,6 +23,10 @@ export class StopwatchService implements IStopwatchService {
 
   private _start: number = 0;
 
+  private _snapped = 0;
+
+  private _offset: number = 0;
+
   public get elapsed(): number {
     return this._elapsed;
   }
@@ -80,6 +84,28 @@ export class StopwatchService implements IStopwatchService {
     this._start = this._dateTimeService.now.getTime();
   }
 
+  public snap(): void {
+    this._snapped = this._elapsed;
+  }
+
+  public setOffset(): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.setOffset.name
+    );
+
+    this._offset = this._snapped;
+  }
+
+  public clearOffset(): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.clearOffset.name
+    );
+
+    this._offset = 0;
+  }
+
   public addTickListener(callback: StopwatchTickEvent): void {
     this._loggerService.debug(
       StopwatchService.name,
@@ -105,9 +131,13 @@ export class StopwatchService implements IStopwatchService {
   }
 
   private timerHandler(): void {
-    const elapsed = this._elapsed + (this._dateTimeService.now.getTime() - this._start);
-    this._elapsed = elapsed;
-    this._start = this._dateTimeService.now.getTime();
+    const now = this._dateTimeService.now;
+
+    this._elapsed = this._elapsed + (now.getTime() - this._start);
+
+    const elapsed = this._elapsed - this._offset;
+
+    this._start = now.getTime();
 
     const milliseconds = Math.floor((elapsed % 1000) / 10); // <-- round to hundredths for display convenience
     const seconds = Math.floor((elapsed / 1000) % 60);
