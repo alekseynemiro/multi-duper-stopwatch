@@ -5,4 +5,5 @@ export type IconName =
   | "grip-lines"
   | "play"
   | "pause"
-  | "exit";
+  | "exit"
+  | "project-list";
