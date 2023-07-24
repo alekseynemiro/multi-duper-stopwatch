@@ -7,4 +7,5 @@ export type IconName =
   | "pause"
   | "exit"
   | "project-list"
-  | "create-project";
+  | "create-project"
+  | "create-goal";
