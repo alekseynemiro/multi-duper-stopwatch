@@ -9,4 +9,5 @@ export const iconMap = new Map<IconName, string>()
   .set("create-goal", "file")
   .set("goal-list", "tags")
   .set("statistics", "chart-bar")
-  .set("application-settings", "cog");
+  .set("application-settings", "cog")
+  .set("finish", "flag-checkered");

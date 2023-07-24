@@ -11,4 +11,5 @@ export type IconName =
   | "create-goal"
   | "goal-list"
   | "statistics"
-  | "application-settings";
+  | "application-settings"
+  | "finish";
