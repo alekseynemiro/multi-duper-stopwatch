@@ -10,4 +10,6 @@ export type PauseRequest = {
 
   maxSpeed: number;
 
+  date: Date;
+
 };
