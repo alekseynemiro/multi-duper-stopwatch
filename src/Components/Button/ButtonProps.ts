@@ -3,7 +3,7 @@ import { StyleProp, TextStyle, ViewStyle } from "react-native";
 
 export type ButtonProps = {
 
-  variant?: "primary" | "secondary" | "warning" | "danger" | "success" | "info";
+  variant?: "primary" | "secondary" | "warning" | "danger" | "success" | "info" | "light";
 
   title?: ReactNode;
 

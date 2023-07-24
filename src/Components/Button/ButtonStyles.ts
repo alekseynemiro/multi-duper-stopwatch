@@ -28,6 +28,11 @@ export const buttonStyles = StyleSheet.create({
   info: {
     backgroundColor: colors.info,
   },
+  light: {
+    backgroundColor: colors.light,
+    borderColor: colors.borderLight,
+    borderWidth: 1,
+  },
   primaryTitle: {
     color: colors.primaryContrast,
   },
@@ -45,5 +50,8 @@ export const buttonStyles = StyleSheet.create({
   },
   infoTitle: {
     color: colors.infoContrast,
+  },
+  lightTitle: {
+    color: colors.lightContrast,
   },
 });
