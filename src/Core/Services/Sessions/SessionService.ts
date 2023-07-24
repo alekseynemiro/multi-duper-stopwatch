@@ -78,8 +78,6 @@ export class SessionService implements ISessionService {
   }
 
   public async toggle(request: ToggleRequest): Promise<ToggleResult> {
-    const now = this._dateTimeService.now;
-
     this._loggerService.debug(
       SessionService.name,
       this.toggle.name,
@@ -111,7 +109,7 @@ export class SessionService implements ISessionService {
           .findOneByOrFail({ id: request.goalId });
 
         const startDate = session.goalStartDate;
-        let elapsedTime = now.getTime() - startDate.getTime();
+        let elapsedTime = request.date.getTime() - startDate.getTime();
 
         if (session.state === SessionState.Paused && session.goal.id !== goal.id) {
           elapsedTime = (session.goalFinishDate as Date).getTime() - session.goalStartDate.getTime();
@@ -140,14 +138,14 @@ export class SessionService implements ISessionService {
               maxSpeed: request.maxSpeed,
               elapsedTime,
               startDate,
-              finishDate: now,
-              createdDate: now,
+              finishDate: request.date,
+              createdDate: this._dateTimeService.now,
             };
 
             this._databaseService.sessionLogs().insert(log);
 
             session.state = SessionState.Paused;
-            session.goalFinishDate = now;
+            session.goalFinishDate = request.date;
           } else {
             this._loggerService.debug(
               SessionService.name,
@@ -170,14 +168,14 @@ export class SessionService implements ISessionService {
               maxSpeed: request.maxSpeed,
               elapsedTime,
               startDate,
-              finishDate: now,
-              createdDate: now,
+              finishDate: request.date,
+              createdDate: this._dateTimeService.now,
             };
 
             this._databaseService.sessionLogs().insert(log);
 
             session.goal = goal;
-            session.goalStartDate = now;
+            session.goalStartDate = request.date;
             session.finishDate = undefined;
           }
         } else if (session.state === SessionState.Paused) {
@@ -209,7 +207,7 @@ export class SessionService implements ISessionService {
           }
 
           session.state = SessionState.Run;
-          session.goalStartDate = now;
+          session.goalStartDate = request.date;
           session.finishDate = undefined;
         } else {
           throw new Error(`The state ${session.state} is not supported.`);

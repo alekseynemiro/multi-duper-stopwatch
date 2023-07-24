@@ -10,4 +10,6 @@ export type ToggleRequest = {
 
   maxSpeed: number;
 
+  date: Date;
+
 };
