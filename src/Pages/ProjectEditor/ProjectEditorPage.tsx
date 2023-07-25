@@ -6,7 +6,7 @@ import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Label } from "@components/Label";
 import { TextInputField } from "@components/TextInputField";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { ColorPalette } from "@data";
 import {
   CreateProjectRequest,
@@ -18,10 +18,10 @@ import {
 import { IGuidService } from "@services/Guid";
 import { IProjectService } from "@services/Projects";
 import { styles } from "@styles";
+import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
 import { Goal, GoalChangeEventArgs, SelectColorModal } from "./Components";
 import { GoalModel, ProjectModel } from "./Models";
-import { ProjectEditorPageProps } from "./ProjectEditorPageProps";
 import { ProjectEditorPageState } from "./ProjectEditorPageState";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
@@ -29,7 +29,10 @@ import { ProjectModelValidator } from "./Validators";
 const guidService = serviceProvider.get<IGuidService>(ServiceIdentifier.GuidService);
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
 
-export function ProjectEditorPage({ navigation, route }: ProjectEditorPageProps): JSX.Element {
+export function ProjectEditorPage(): JSX.Element {
+  const navigation = useNavigation();
+  const route = useRoute<Routes.Project>();
+
   const mounted = useRef(false);
   const loaded = useRef(false);
 

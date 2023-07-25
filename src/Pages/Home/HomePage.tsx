@@ -6,13 +6,13 @@ import {
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { GetResultGoal } from "@dto/Projects";
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { IDateTimeService } from "@services/DateTime";
 import { IProjectService } from "@services/Projects";
 import { ISessionService } from "@services/Sessions";
 import { IStopwatchService } from "@services/Stopwatch";
+import { useRoute } from "@utils/NavigationUtils";
 import {
   HorizontalListLayout,
   HorizontalListLayoutGoalPressEventArgs,
@@ -27,7 +27,7 @@ const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.Se
 const dateTimeService = serviceProvider.get<IDateTimeService>(ServiceIdentifier.DateTimeService);
 
 export function HomePage(): JSX.Element {
-  const route = useRoute<RouteProp<{ Home: { projectId: string } }, "Home">>();
+  const route = useRoute<Routes.Home>();
 
   const mounted = useRef(false);
   const loaded = useRef(false);
@@ -129,7 +129,7 @@ export function HomePage(): JSX.Element {
               });
 
               const session = await sessionService.create({
-                projectId,
+                projectId: projectId as string,
                 goalId,
                 date,
               });
