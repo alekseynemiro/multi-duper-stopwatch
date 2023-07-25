@@ -25,14 +25,14 @@ export class StopwatchService implements IStopwatchService {
 
   private _snapped = 0;
 
-  private _offset: number = 0;
+  private _offset: number | undefined = undefined;
 
   public get elapsed(): number {
     return this._elapsed;
   }
 
   public get hasOffset(): boolean {
-    return this._offset > 0;
+    return this._offset !== undefined;
   }
 
   constructor(
@@ -89,6 +89,12 @@ export class StopwatchService implements IStopwatchService {
   }
 
   public snap(): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.snap.name,
+      this._elapsed
+    );
+
     this._snapped = this._elapsed;
   }
 
@@ -107,7 +113,7 @@ export class StopwatchService implements IStopwatchService {
       this.clearOffset.name
     );
 
-    this._offset = 0;
+    this._offset = undefined;
   }
 
   public addTickListener(callback: StopwatchTickEvent): void {
@@ -139,7 +145,7 @@ export class StopwatchService implements IStopwatchService {
 
     this._elapsed = this._elapsed + (now.getTime() - this._start);
 
-    const elapsed = this._elapsed - this._offset;
+    const elapsed = this._elapsed - (this._offset ?? 0);
 
     this._start = now.getTime();
 
