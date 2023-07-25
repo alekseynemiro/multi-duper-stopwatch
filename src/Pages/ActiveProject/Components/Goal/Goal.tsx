@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
-import { GoalStatus } from "@pages/Home/Models";
+import { GoalStatus } from "@pages/ActiveProject/Models";
 import { colors, defaultFontSize } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { GoalProps } from "./GoalProps";

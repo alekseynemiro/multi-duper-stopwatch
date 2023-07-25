@@ -1,4 +1,4 @@
-import { GoalModel } from "@pages/Home/Models";
+import { GoalModel } from "@pages/ActiveProject/Models";
 
 export type StopwatchDisplayProps = {
 

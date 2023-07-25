@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { GoalModel } from "@pages/Home/Models";
+import { GoalModel } from "@pages/ActiveProject/Models";
 import { IStopwatchService, StopwatchTickEventArgs } from "@services/Stopwatch";
 import { TimeSpan } from "@types";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
@@ -27,7 +27,6 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     milliseconds: 0,
     displayValue: "",
   });
-
 
   const [showActiveGoal, setShowActiveGoal] = useState<boolean>();
 

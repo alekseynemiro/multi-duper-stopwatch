@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { GoalModel } from "@pages/Home/Models";
+import { GoalModel } from "@pages/ActiveProject/Models";
 import { Goal } from "../Goal";
 import { HorizontalListLayoutProps } from "./HorizontalListLayoutProps";
 import { horizontalListLayoutStyles } from "./HorizontalListLayoutStyles";
