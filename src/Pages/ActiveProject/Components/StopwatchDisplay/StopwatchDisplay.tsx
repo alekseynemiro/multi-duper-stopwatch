@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -6,9 +6,9 @@ import {
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { GoalModel } from "@pages/ActiveProject/Models";
-import { IStopwatchService, StopwatchTickEventArgs } from "@services/Stopwatch";
-import { TimeSpan } from "@types";
+import { IStopwatchService } from "@services/Stopwatch";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
 
@@ -19,31 +19,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     activeGoal,
   } = props;
 
-  const [elapsed, setElapsed] = useState<TimeSpan>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    milliseconds: 0,
-    displayValue: "",
-  });
-
   const [showActiveGoal, setShowActiveGoal] = useState<boolean>();
-
-  useEffect(
-    (): { (): void } => {
-      const tickHandler = (e: StopwatchTickEventArgs): void => {
-        setElapsed(e.timeSpan);
-      };
-
-      stopwatchService.addTickListener(tickHandler);
-
-      return (): void => {
-        stopwatchService.removeTickListener(tickHandler);
-      };
-    },
-    []
-  );
 
   return (
     <TouchableOpacity
@@ -93,13 +69,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
             </View>
           )
         }
-        <Text
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          style={stopwatchDisplayStyles.elapsed}
-        >
-          {elapsed.displayValue}
-        </Text>
+        <ElapsedTime />
       </View>
     </TouchableOpacity>
   );
