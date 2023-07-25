@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import { Alert } from "react-native-windows";
+import { Alert } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
@@ -106,6 +106,24 @@ export function ProjectListPage({ navigation }: ProjectListPageProps): JSX.Eleme
                       variant="primary"
                       onPress={(): void => {
                         navigation.navigate(
+                          Routes.Home,
+                          {
+                            projectId: x.id,
+                          }
+                        );
+                      }}
+                    >
+                      <Icon
+                        name="play"
+                        variant="primary-contrast"
+                      />
+                    </Button>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Button
+                      variant="secondary"
+                      onPress={(): void => {
+                        navigation.navigate(
                           Routes.Project,
                           {
                             projectId: x.id,
@@ -115,7 +133,7 @@ export function ProjectListPage({ navigation }: ProjectListPageProps): JSX.Eleme
                     >
                       <Icon
                         name="edit"
-                        variant="primary-contrast"
+                        variant="secondary-contrast"
                       />
                     </Button>
                   </View>
