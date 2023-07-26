@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import {
   Text,
   useWindowDimensions,
@@ -15,31 +15,33 @@ export function HomePage(): JSX.Element {
   const route = useRoute<Routes.Home>();
   const projectId = route.params?.projectId;
 
+  const [sessionId, setSessionId] = useState<string | undefined>();
+
+  const activeProjectPage = (
+    <ActiveProjectPage
+      projectId={projectId}
+      onSessionStart={setSessionId}
+    />
+  );
+
   return (
     <Carousel
-      loop
       width={width}
       style={homePageStyles.container}
+      loop={false}
       autoPlay={false}
-      data={[...new Array(2).keys()]}
+      overscrollEnabled={true}
       scrollAnimationDuration={1000}
       panGestureHandlerProps={{
-
+        activeOffsetX: [-10, 10],
       }}
-      renderItem={({ index }) => {
-        if (index === 0) {
-          return (
-            <ActiveProjectPage
-              projectId={projectId}
-            />
-          );
-        } else if (index === 1) {
-          return (
-            <Text>TODO: {index}</Text>
-          );
-        } else {
-          throw new Error(`The value ${index} is not supported.`);
-        }
+      data={[
+        activeProjectPage,
+        <Text>TODO:</Text>,
+      ]}
+
+      renderItem={({ item }) => {
+        return item;
       }}
     />
   );

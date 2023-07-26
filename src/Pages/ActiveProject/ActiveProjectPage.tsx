@@ -26,9 +26,14 @@ const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifie
 const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
 const dateTimeService = serviceProvider.get<IDateTimeService>(ServiceIdentifier.DateTimeService);
 
-export function ActiveProjectPage({ projectId }: ActiveProjectPageProps): JSX.Element {
+export function ActiveProjectPage(props: ActiveProjectPageProps): JSX.Element {
   const mounted = useRef(false);
   const loaded = useRef(false);
+
+  const {
+    projectId,
+    onSessionStart,
+  } = props;
 
   const sessionId = useRef<string | undefined>(undefined);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
@@ -143,6 +148,8 @@ export function ActiveProjectPage({ projectId }: ActiveProjectPageProps): JSX.El
               });
 
               sessionId.current = session.id;
+
+              onSessionStart(session.id);
             } else {
               const date = dateTimeService.now;
 
