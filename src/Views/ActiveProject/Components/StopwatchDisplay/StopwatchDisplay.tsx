@@ -68,6 +68,13 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
               }
             </View>
           )
+          || (
+            <Text
+              style={[
+                stopwatchDisplayStyles.mode,
+              ]}
+            />
+          )
         }
         <ElapsedTime />
       </View>
