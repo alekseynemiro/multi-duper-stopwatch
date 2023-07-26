@@ -122,7 +122,9 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         <HorizontalListLayout
           goals={goals}
           onGoalPress={async({ goalId }: HorizontalListLayoutGoalPressEventArgs): Promise<void> => {
-            let newActiveGoal: GoalModel | undefined;
+            const currentGoalPredicate = (x: GoalModel): boolean => {
+              return x.id === goalId;
+            };
 
             if (!sessionId.current) {
               const date = dateTimeService.now;
@@ -133,14 +135,15 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 goals.map((x: GoalModel): GoalModel => {
                   if (x.id === goalId) {
                     x.status = GoalStatus.Running;
-                    newActiveGoal = x;
                   }
 
                   return x;
                 })
               );
 
-              setActiveGoal(newActiveGoal);
+              setActiveGoal(
+                goals.find(currentGoalPredicate)
+              );
 
               const session = await sessionService.create({
                 projectId: projectId as string,
@@ -178,8 +181,6 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
               setGoals(
                 goals.map((x: GoalModel): GoalModel => {
                   if (x.id === goalId) {
-                    newActiveGoal = x;
-
                     if (toggleResult.isRunning) {
                       x.status = GoalStatus.Running;
                     } else if (toggleResult.isPaused) {
@@ -195,7 +196,9 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 })
               );
 
-              setActiveGoal(newActiveGoal);
+              setActiveGoal(
+                goals.find(currentGoalPredicate)
+              );
             }
           }}
         />
