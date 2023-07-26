@@ -71,6 +71,71 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
     ]
   );
 
+  const toggleActive = useCallback(
+    async(): Promise<void> => {
+      if (!sessionId.current) {
+        throw new Error("Session ID is required");
+      }
+
+      if (!activeGoal) {
+        throw new Error("Active goal is required.");
+      }
+
+      const activeGoalPredicate = (x: GoalModel): boolean => {
+        return x.id === activeGoal.id;
+      };
+
+      const date = dateTimeService.now;
+
+      stopwatchService.stop();
+
+      const toggleResult = await sessionService.toggle({
+        sessionId: sessionId.current,
+        goalId: activeGoal.id,
+        avgSpeed: 0,
+        distance: 0,
+        maxSpeed: 0,
+        date,
+      });
+
+      if (toggleResult.isRunning) {
+        stopwatchService.snap();
+
+        if (stopwatchService.hasOffset) {
+          stopwatchService.setOffset();
+        }
+
+        stopwatchService.start();
+      } else {
+        stopwatchService.stop();
+      }
+
+      const newGoals = goals.map((x: GoalModel): GoalModel => {
+        if (x.id === activeGoal.id) {
+          if (toggleResult.isRunning) {
+            x.status = GoalStatus.Running;
+          } else if (toggleResult.isPaused) {
+            x.status = GoalStatus.Paused;
+          } else {
+            x.status = GoalStatus.Idle;
+          }
+        } else {
+          x.status = GoalStatus.Idle;
+        }
+
+        return x;
+      });
+
+      setGoals(newGoals);
+      setActiveGoal(newGoals.find(activeGoalPredicate));
+    },
+    [
+      sessionId,
+      activeGoal,
+      goals,
+    ]
+  );
+
   if (
     !mounted.current
     && !loaded.current
@@ -208,20 +273,15 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          onPress={async() => {
-            const date = dateTimeService.now;
-            stopwatchService.stop();
-            await sessionService.pause({
-              sessionId: sessionId.current as string,
-              avgSpeed: 0,
-              distance: 0,
-              maxSpeed: 0,
-              date,
-            });
-          }}
+          disabled={!activeGoal}
+          onPress={toggleActive}
         >
           <Text>
-            Pause
+            {
+              activeGoal?.status === GoalStatus.Paused
+                && "Resume"
+                || "Pause"
+            }
           </Text>
         </Button>
         <Button
