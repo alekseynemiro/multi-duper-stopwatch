@@ -54,4 +54,7 @@ export const styles = StyleSheet.create({
   flexColumn: {
     flexDirection: "column",
   },
+  bold: {
+    fontWeight: "600",
+  },
 });
