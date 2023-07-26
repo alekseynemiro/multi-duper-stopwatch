@@ -8,4 +8,6 @@ export type RouteParamList = {
 
   [Routes.Project]: { projectId: string } | undefined;
 
+  [Routes.Report]: { sessionId: string };
+
 };
