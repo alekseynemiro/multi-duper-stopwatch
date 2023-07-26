@@ -15,6 +15,12 @@ export class SessionLog {
   public elapsedTime!: number;
 
   @Column({
+    name: "Steps",
+    nullable: false,
+  })
+  public steps!: number;
+
+  @Column({
     name: "Distance",
     nullable: false,
   })

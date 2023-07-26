@@ -201,6 +201,11 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "Steps",
+            type: "real",
+            isNullable: false,
+          },
+          {
             name: "Distance",
             type: "real",
             isNullable: false,
