@@ -11,18 +11,24 @@ export function Button(props: ButtonProps): JSX.Element {
     style,
     titleStyle,
     childWrapperStyle,
+    disabled,
     onPress,
   } = props;
 
   return (
     <View style={buttonStyles.container}>
       <TouchableOpacity
+        disabled={disabled}
         style={[
           buttonStyles.button,
           buttonStyles[variant ?? "primary"],
           style,
         ]}
-        onPress={onPress}
+        onPress={(): void => {
+          if (!disabled) {
+            onPress();
+          }
+        }}
       >
         {
           title

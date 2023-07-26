@@ -15,6 +15,8 @@ export type ButtonProps = {
 
   titleStyle?: StyleProp<TextStyle>;
 
+  disabled?: boolean;
+
   onPress(): void;
 
 };
