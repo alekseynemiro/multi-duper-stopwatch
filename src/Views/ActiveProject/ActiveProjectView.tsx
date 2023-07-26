@@ -14,6 +14,7 @@ import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
   HorizontalListLayoutGoalPressEventArgs,
+  SessionNameModal,
   StopwatchDisplay,
 } from "./Components";
 import { GoalModel, GoalStatus } from "./Models";
@@ -31,12 +32,14 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
     projectId,
     onLoad,
     onSessionStart,
+    onSessionFinished,
   } = props;
 
   const sessionId = useRef<string | undefined>(undefined);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [goals, setGoals] = useState<Array<GoalModel>>([]);
   const [activeGoal, setActiveGoal] = useState<GoalModel | undefined>(undefined);
+  const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
 
   const load = useCallback(
     async(): Promise<void> => {
@@ -133,6 +136,48 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
       sessionId,
       activeGoal,
       goals,
+    ]
+  );
+
+  const finish = useCallback(
+    async(): Promise<void> => {
+      if (!sessionId.current) {
+        return;
+      }
+
+      const date = dateTimeService.now;
+
+      stopwatchService.stop();
+
+      await sessionService.finish({
+        sessionId: sessionId.current,
+        avgSpeed: 0,
+        distance: 0,
+        maxSpeed: 0,
+        date,
+      });
+
+      setShowSessionNameModal(true);
+    },
+    [
+      sessionId,
+    ]
+  );
+
+  const complete = useCallback(
+    async(name: string | undefined): Promise<void> => {
+      if (sessionId.current) {
+        await sessionService.rename({
+          sessionId: sessionId.current,
+          name,
+        });
+      }
+
+      setShowSessionNameModal(false);
+      onSessionFinished();
+    },
+    [
+      onSessionFinished,
     ]
   );
 
@@ -287,17 +332,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          onPress={async() => {
-            const date = dateTimeService.now;
-            stopwatchService.stop();
-            await sessionService.finish({
-              sessionId: sessionId.current as string,
-              avgSpeed: 0,
-              distance: 0,
-              maxSpeed: 0,
-              date,
-            });
-          }}
+          onPress={finish}
         >
           <Icon
             name="finish"
@@ -307,6 +342,10 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
           </Text>
         </Button>
       </View>
+      <SessionNameModal
+        show={showSessionNameModal}
+        onComplete={complete}
+      />
     </View>
   );
 }

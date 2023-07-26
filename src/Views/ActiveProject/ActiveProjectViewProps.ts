@@ -6,4 +6,6 @@ export type ActiveProjectViewProps = {
 
   onSessionStart(sessionId: string): void;
 
+  onSessionFinished(): void;
+
 };

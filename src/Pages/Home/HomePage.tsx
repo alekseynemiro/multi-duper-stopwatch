@@ -29,12 +29,25 @@ export function HomePage(): JSX.Element {
             });
           }}
           onSessionStart={setSessionId}
+          onSessionFinished={() => {
+            if (sessionId) {
+              navigation.navigate(
+                Routes.Report,
+                {
+                  sessionId,
+                }
+              );
+            } else {
+              // TODO:
+            }
+          }}
         />
       );
     },
     [
       navigation,
       projectId,
+      sessionId,
     ]
   );
 
