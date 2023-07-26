@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Routes } from "@config";
@@ -18,26 +18,41 @@ export function HomePage(): JSX.Element {
 
   const [sessionId, setSessionId] = useState<string | undefined>();
 
-  const activeProjectView = (
-    <ActiveProjectView
-      projectId={projectId}
-      onLoad={(projectName: string): void => {
-        navigation.setOptions({
-          title: projectName,
-        });
-      }}
-      onSessionStart={setSessionId}
-    />
+  const activeProjectView = useMemo(
+    (): JSX.Element => {
+      return (
+        <ActiveProjectView
+          projectId={projectId}
+          onLoad={(projectName: string): void => {
+            navigation.setOptions({
+              title: projectName,
+            });
+          }}
+          onSessionStart={setSessionId}
+        />
+      );
+    },
+    [
+      navigation,
+      projectId,
+    ]
   );
 
-  const reportView = sessionId
-    ? (
-      <ReportView
-        ref={reportViewRef}
-        sessionId={sessionId as string}
-      />
-    )
-    : <></>;
+  const reportView = useMemo(
+    (): JSX.Element => {
+      return sessionId
+        ? (
+          <ReportView
+            ref={reportViewRef}
+            sessionId={sessionId as string}
+          />
+        )
+        : <></>;
+    },
+    [
+      sessionId,
+    ]
+  );
 
   return (
     <Carousel
