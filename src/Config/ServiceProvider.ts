@@ -1,3 +1,4 @@
+import { SessionLogService } from "@services/Sessions/SessionLogService";
 import { IStopwatchService } from "@services/Stopwatch";
 import { StopwatchService } from "@services/Stopwatch/StopwatchService";
 import { Container } from "inversify";
@@ -9,7 +10,7 @@ import { ILoggerService } from "../Core/Services/Logger";
 import { LoggerService } from "../Core/Services/Logger/LoggerService";
 import { IProjectService } from "../Core/Services/Projects";
 import { ProjectService } from "../Core/Services/Projects/ProjectService";
-import { ISessionService } from "../Core/Services/Sessions";
+import { ISessionLogService, ISessionService } from "../Core/Services/Sessions";
 import { SessionService } from "../Core/Services/Sessions/SessionService";
 import { IMigrationRunner } from "../Data";
 import { DatabaseService } from "../Data/DatabaseService";
@@ -25,6 +26,7 @@ serviceProvider.bind<IGuidService>(ServiceIdentifier.GuidService).to(GuidService
 serviceProvider.bind<ILoggerService>(ServiceIdentifier.LoggerService).to(LoggerService).inSingletonScope();
 serviceProvider.bind<IProjectService>(ServiceIdentifier.ProjectService).to(ProjectService).inSingletonScope();
 serviceProvider.bind<ISessionService>(ServiceIdentifier.SessionService).to(SessionService).inSingletonScope();
+serviceProvider.bind<ISessionLogService>(ServiceIdentifier.SessionLogService).to(SessionLogService).inSingletonScope();
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 

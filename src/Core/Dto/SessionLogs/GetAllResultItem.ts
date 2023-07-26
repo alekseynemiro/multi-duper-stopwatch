@@ -8,7 +8,7 @@ export type GetAllResultItem = {
 
   goalColor: ColorPalette;
 
-  elapsedTime: string;
+  elapsedTime: number;
 
   distance: number;
 
