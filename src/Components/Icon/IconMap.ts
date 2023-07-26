@@ -10,4 +10,5 @@ export const iconMap = new Map<IconName, string>()
   .set("goal-list", "tags")
   .set("statistics", "chart-bar")
   .set("application-settings", "cog")
-  .set("finish", "flag-checkered");
+  .set("finish", "flag-checkered")
+  .set("elapsed-time", "clock");
