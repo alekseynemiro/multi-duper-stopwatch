@@ -29,6 +29,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
   const {
     projectId,
+    onLoad,
     onSessionStart,
   } = props;
 
@@ -59,10 +60,14 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
           }
         ) || [],
       );
+      setActiveGoal(undefined);
       setShowLoadingIndicator(false);
+
+      onLoad(data.name);
     },
     [
       projectId,
+      onLoad,
     ]
   );
 

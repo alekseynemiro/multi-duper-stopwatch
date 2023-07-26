@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Routes } from "@config";
-import { useRoute } from "@utils/NavigationUtils";
+import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
 import { ReportView, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
@@ -10,6 +10,7 @@ import { homePageStyles } from "./HomePageStyles";
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
 
+  const navigation = useNavigation();
   const route = useRoute<Routes.Home>();
   const projectId = route.params?.projectId;
 
@@ -20,6 +21,11 @@ export function HomePage(): JSX.Element {
   const activeProjectView = (
     <ActiveProjectView
       projectId={projectId}
+      onLoad={(projectName: string): void => {
+        navigation.setOptions({
+          title: projectName,
+        });
+      }}
       onSessionStart={setSessionId}
     />
   );
