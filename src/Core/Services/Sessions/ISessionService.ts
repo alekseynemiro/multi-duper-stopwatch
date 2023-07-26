@@ -3,6 +3,7 @@ import {
   CreateSessionResult,
   FinishRequest,
   PauseRequest,
+  RenameRequest,
   ToggleRequest,
   ToggleResult,
 } from "@dto/Sessions";
@@ -20,5 +21,7 @@ export interface ISessionService {
   pause(request: PauseRequest): Promise<void>;
 
   finish(request: FinishRequest): Promise<void>;
+
+  rename(request: RenameRequest): Promise<void>;
 
 }

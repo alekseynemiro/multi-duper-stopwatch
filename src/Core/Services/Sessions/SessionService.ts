@@ -5,6 +5,7 @@ import {
   CreateSessionResult,
   FinishRequest,
   PauseRequest,
+  RenameRequest,
   ToggleDetailsResult,
   ToggleRequest,
   ToggleResult,
@@ -355,6 +356,29 @@ export class SessionService implements ISessionService {
 
         session.state = SessionState.Finished;
         session.finishDate = request.date;
+
+        await this._databaseService.sessions().save(session);
+      }
+    );
+  }
+
+  public async rename(request: RenameRequest): Promise<void> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.finish.name,
+      request
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<void> => {
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: request.sessionId,
+            },
+          });
+
+        session.name = request.name;
 
         await this._databaseService.sessions().save(session);
       }
