@@ -10,6 +10,12 @@ export class Session {
   public id!: string;
 
   @Column({
+    name: "Name",
+    nullable: true,
+  })
+  public name: string | undefined;
+
+  @Column({
     name: "State",
     type: "int",
     nullable: false,

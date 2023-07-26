@@ -137,6 +137,11 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "Name",
+            type: "text",
+            isNullable: true,
+          },
+          {
             name: "State",
             type: "int",
             isNullable: false,
