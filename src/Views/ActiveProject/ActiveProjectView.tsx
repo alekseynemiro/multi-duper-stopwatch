@@ -16,7 +16,7 @@ import {
   HorizontalListLayoutGoalPressEventArgs,
   StopwatchDisplay,
 } from "./Components";
-import { GoalModel, GoalStatus, ProjectModel } from "./Models";
+import { GoalModel, GoalStatus } from "./Models";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
 const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
@@ -34,7 +34,8 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
   const sessionId = useRef<string | undefined>(undefined);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
-  const [model, setModel] = useState<ProjectModel | undefined>(undefined);
+  const [goals, setGoals] = useState<Array<GoalModel>>([]);
+  const [activeGoal, setActiveGoal] = useState<GoalModel | undefined>(undefined);
 
   const load = useCallback(
     async(): Promise<void> => {
@@ -46,9 +47,8 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
       const data = await projectService.get(projectId);
 
-      setModel({
-        name: data.name,
-        goals: data.goals?.map(
+      setGoals(
+        data.goals?.map(
           (x: GetResultGoal): GoalModel => {
             return {
               color: x.color,
@@ -58,11 +58,12 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
             };
           }
         ) || [],
-      });
-
+      );
       setShowLoadingIndicator(false);
     },
-    [projectId]
+    [
+      projectId,
+    ]
   );
 
   if (
@@ -112,31 +113,34 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         style={activeProjectViewStyles.stopwatchContainer}
       >
         <StopwatchDisplay
-          activeGoal={model?.activeGoal}
+          activeGoal={activeGoal}
         />
       </View>
       <View
         style={activeProjectViewStyles.goalsContainer}
       >
         <HorizontalListLayout
-          goals={model?.goals}
+          goals={goals}
           onGoalPress={async({ goalId }: HorizontalListLayoutGoalPressEventArgs): Promise<void> => {
+            let newActiveGoal: GoalModel | undefined;
+
             if (!sessionId.current) {
               const date = dateTimeService.now;
 
               stopwatchService.start();
 
-              setModel({
-                ...(model as ProjectModel),
-                goals: (model as ProjectModel).goals.map((x: GoalModel): GoalModel => {
+              setGoals(
+                goals.map((x: GoalModel): GoalModel => {
                   if (x.id === goalId) {
                     x.status = GoalStatus.Running;
+                    newActiveGoal = x;
                   }
 
                   return x;
-                }),
-                activeGoal: (model as ProjectModel).goals.find(x => x.id === goalId),
-              });
+                })
+              );
+
+              setActiveGoal(newActiveGoal);
 
               const session = await sessionService.create({
                 projectId: projectId as string,
@@ -171,10 +175,11 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 stopwatchService.stop();
               }
 
-              setModel({
-                ...(model as ProjectModel),
-                goals: (model as ProjectModel).goals.map((x: GoalModel): GoalModel => {
+              setGoals(
+                goals.map((x: GoalModel): GoalModel => {
                   if (x.id === goalId) {
+                    newActiveGoal = x;
+
                     if (toggleResult.isRunning) {
                       x.status = GoalStatus.Running;
                     } else if (toggleResult.isPaused) {
@@ -187,13 +192,10 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                   }
 
                   return x;
-                }),
-                activeGoal: (model as ProjectModel).goals.find(
-                  (x: GoalModel): boolean => {
-                    return x.id === goalId;
-                  }
-                ),
-              });
+                })
+              );
+
+              setActiveGoal(newActiveGoal);
             }
           }}
         />
