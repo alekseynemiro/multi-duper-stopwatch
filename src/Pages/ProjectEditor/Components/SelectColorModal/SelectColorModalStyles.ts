@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
-export const selectColorModalStyles =  StyleSheet.create({
+export const selectColorModalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "flex-start",
