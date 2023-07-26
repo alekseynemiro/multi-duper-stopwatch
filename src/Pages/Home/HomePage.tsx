@@ -1,12 +1,10 @@
 import React, { useRef, useState } from "react";
-import {
-  Text,
-  useWindowDimensions,
-} from "react-native";
+import { useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Routes } from "@config";
 import { useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
+import { ReportView, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
 
 export function HomePage(): JSX.Element {
@@ -14,6 +12,8 @@ export function HomePage(): JSX.Element {
 
   const route = useRoute<Routes.Home>();
   const projectId = route.params?.projectId;
+
+  const reportViewRef = useRef<ReportViewProps>();
 
   const [sessionId, setSessionId] = useState<string | undefined>();
 
@@ -23,6 +23,15 @@ export function HomePage(): JSX.Element {
       onSessionStart={setSessionId}
     />
   );
+
+  const reportView = sessionId
+    ? (
+      <ReportView
+        ref={reportViewRef}
+        sessionId={sessionId as string}
+      />
+    )
+    : <></>;
 
   return (
     <Carousel
@@ -37,8 +46,13 @@ export function HomePage(): JSX.Element {
       }}
       data={[
         activeProjectView,
-        <Text>TODO:</Text>,
+        reportView,
       ]}
+      onSnapToItem={(index) => {
+        if (index === 1 && reportViewRef.current) {
+          reportViewRef.current?.load?.apply(reportViewRef.current);
+        }
+      }}
       renderItem={({ item }) => {
         return item;
       }}
