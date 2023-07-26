@@ -1,8 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Text,
-  View,
-} from "react-native";
+import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
@@ -12,8 +9,8 @@ import { IDateTimeService } from "@services/DateTime";
 import { IProjectService } from "@services/Projects";
 import { ISessionService } from "@services/Sessions";
 import { IStopwatchService } from "@services/Stopwatch";
-import { ActiveProjectPageProps } from "./ActiveProjectPageProps";
-import { activeProjectPageStyles } from "./ActiveProjectPageStyles";
+import { ActiveProjectViewProps } from "./ActiveProjectViewProps";
+import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
   HorizontalListLayoutGoalPressEventArgs,
@@ -26,7 +23,7 @@ const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifie
 const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
 const dateTimeService = serviceProvider.get<IDateTimeService>(ServiceIdentifier.DateTimeService);
 
-export function ActiveProjectPage(props: ActiveProjectPageProps): JSX.Element {
+export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
   const mounted = useRef(false);
   const loaded = useRef(false);
 
@@ -109,17 +106,17 @@ export function ActiveProjectPage(props: ActiveProjectPageProps): JSX.Element {
 
   return (
     <View
-      style={activeProjectPageStyles.container}
+      style={activeProjectViewStyles.container}
     >
       <View
-        style={activeProjectPageStyles.stopwatchContainer}
+        style={activeProjectViewStyles.stopwatchContainer}
       >
         <StopwatchDisplay
           activeGoal={model?.activeGoal}
         />
       </View>
       <View
-        style={activeProjectPageStyles.goalsContainer}
+        style={activeProjectViewStyles.goalsContainer}
       >
         <HorizontalListLayout
           goals={model?.goals}
@@ -202,11 +199,11 @@ export function ActiveProjectPage(props: ActiveProjectPageProps): JSX.Element {
         />
       </View>
       <View
-        style={activeProjectPageStyles.footer}
+        style={activeProjectViewStyles.footer}
       >
         <Button
           variant="light"
-          childWrapperStyle={activeProjectPageStyles.footerButton}
+          childWrapperStyle={activeProjectViewStyles.footerButton}
           onPress={async() => {
             const date = dateTimeService.now;
             stopwatchService.stop();
@@ -225,7 +222,7 @@ export function ActiveProjectPage(props: ActiveProjectPageProps): JSX.Element {
         </Button>
         <Button
           variant="light"
-          childWrapperStyle={activeProjectPageStyles.footerButton}
+          childWrapperStyle={activeProjectViewStyles.footerButton}
           onPress={async() => {
             const date = dateTimeService.now;
             stopwatchService.stop();

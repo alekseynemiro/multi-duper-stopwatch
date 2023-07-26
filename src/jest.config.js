@@ -18,6 +18,7 @@ module.exports = {
     "^@styles(.*)$": "<rootDir>/Styles/$1",
     "^@types(.*)$": "<rootDir>/Types/$1",
     "^@utils(.*)$": "<rootDir>/Utils/$1",
+    "^@views(.*)$": "<rootDir>/Views/$1",
   },
   "cacheDirectory": ".jest/cache",
 };

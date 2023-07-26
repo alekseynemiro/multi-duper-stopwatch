@@ -20,7 +20,8 @@
       "@styles/*": ["./Styles/*"],
       "@types": ["./Types"],
       "@types/*": ["./Types/*"],
-      "@utils/*": ["./Utils/*"]
+      "@utils/*": ["./Utils/*"],
+      "@views/*": ["./Views/*"]
     }
   }
 }

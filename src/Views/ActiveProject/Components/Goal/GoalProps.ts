@@ -1,5 +1,5 @@
 import { ColorPalette } from "@data";
-import { GoalStatus } from "@pages/ActiveProject/Models";
+import { GoalStatus } from "../../Models";
 
 export type GoalProps = {
 

@@ -1,4 +1,4 @@
-import { GoalModel } from "@pages/ActiveProject/Models";
+import { GoalModel } from "../../Models";
 import { HorizontalListLayoutGoalPressEventArgs } from "./HorizontalListLayoutGoalPressEventArgs";
 
 export type HorizontalListLayoutProps = {

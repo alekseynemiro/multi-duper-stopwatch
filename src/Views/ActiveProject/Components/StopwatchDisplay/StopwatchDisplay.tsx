@@ -5,9 +5,9 @@ import {
 } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { GoalModel } from "@pages/ActiveProject/Models";
 import { IStopwatchService } from "@services/Stopwatch";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { GoalModel } from "../../Models";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";

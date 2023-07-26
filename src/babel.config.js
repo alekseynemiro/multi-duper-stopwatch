@@ -42,6 +42,7 @@ module.exports = {
           "@styles": "./Styles",
           "@types": "./Types",
           "@utils": "./Utils",
+          "@views": "./Views",
         },
       },
     ],

@@ -5,8 +5,8 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Routes } from "@config";
-import { ActiveProjectPage } from "@pages/ActiveProject";
 import { useRoute } from "@utils/NavigationUtils";
+import { ActiveProjectView } from "@views/ActiveProject";
 import { homePageStyles } from "./HomePageStyles";
 
 export function HomePage(): JSX.Element {
@@ -17,8 +17,8 @@ export function HomePage(): JSX.Element {
 
   const [sessionId, setSessionId] = useState<string | undefined>();
 
-  const activeProjectPage = (
-    <ActiveProjectPage
+  const activeProjectView = (
+    <ActiveProjectView
       projectId={projectId}
       onSessionStart={setSessionId}
     />
@@ -36,10 +36,9 @@ export function HomePage(): JSX.Element {
         activeOffsetX: [-10, 10],
       }}
       data={[
-        activeProjectPage,
+        activeProjectView,
         <Text>TODO:</Text>,
       ]}
-
       renderItem={({ item }) => {
         return item;
       }}

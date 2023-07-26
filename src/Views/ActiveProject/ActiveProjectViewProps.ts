@@ -1,4 +1,4 @@
-export type ActiveProjectPageProps = {
+export type ActiveProjectViewProps = {
 
   projectId: string | undefined;
 

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const activeProjectPageStyles = StyleSheet.create({
+export const activeProjectViewStyles = StyleSheet.create({
   container: {
     height: "100%",
   },
