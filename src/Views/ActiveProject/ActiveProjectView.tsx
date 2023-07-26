@@ -131,19 +131,16 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
               stopwatchService.start();
 
-              setGoals(
-                goals.map((x: GoalModel): GoalModel => {
-                  if (x.id === goalId) {
-                    x.status = GoalStatus.Running;
-                  }
+              const newGoals = goals.map((x: GoalModel): GoalModel => {
+                if (x.id === goalId) {
+                  x.status = GoalStatus.Running;
+                }
 
-                  return x;
-                })
-              );
+                return x;
+              });
 
-              setActiveGoal(
-                goals.find(currentGoalPredicate)
-              );
+              setGoals(newGoals);
+              setActiveGoal(newGoals.find(currentGoalPredicate));
 
               const session = await sessionService.create({
                 projectId: projectId as string,
@@ -178,27 +175,24 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 stopwatchService.stop();
               }
 
-              setGoals(
-                goals.map((x: GoalModel): GoalModel => {
-                  if (x.id === goalId) {
-                    if (toggleResult.isRunning) {
-                      x.status = GoalStatus.Running;
-                    } else if (toggleResult.isPaused) {
-                      x.status = GoalStatus.Paused;
-                    } else {
-                      x.status = GoalStatus.Idle;
-                    }
+              const newGoals = goals.map((x: GoalModel): GoalModel => {
+                if (x.id === goalId) {
+                  if (toggleResult.isRunning) {
+                    x.status = GoalStatus.Running;
+                  } else if (toggleResult.isPaused) {
+                    x.status = GoalStatus.Paused;
                   } else {
                     x.status = GoalStatus.Idle;
                   }
+                } else {
+                  x.status = GoalStatus.Idle;
+                }
 
-                  return x;
-                })
-              );
+                return x;
+              });
 
-              setActiveGoal(
-                goals.find(currentGoalPredicate)
-              );
+              setGoals(newGoals);
+              setActiveGoal(newGoals.find(currentGoalPredicate));
             }
           }}
         />
