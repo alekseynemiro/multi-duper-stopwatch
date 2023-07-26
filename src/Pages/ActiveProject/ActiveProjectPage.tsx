@@ -34,8 +34,6 @@ export function ActiveProjectPage({ projectId }: ActiveProjectPageProps): JSX.El
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [model, setModel] = useState<ProjectModel | undefined>(undefined);
 
-  console.info("%cActiveProjectPage", "color: green", "projectId", projectId, "sessionId", sessionId, "model", model);
-
   const load = useCallback(
     async(): Promise<void> => {
       if (!projectId) {
@@ -186,7 +184,11 @@ export function ActiveProjectPage({ projectId }: ActiveProjectPageProps): JSX.El
 
                   return x;
                 }),
-                activeGoal: (model as ProjectModel).goals.find(x => x.id === goalId),
+                activeGoal: (model as ProjectModel).goals.find(
+                  (x: GoalModel): boolean => {
+                    return x.id === goalId;
+                  }
+                ),
               });
             }
           }}
