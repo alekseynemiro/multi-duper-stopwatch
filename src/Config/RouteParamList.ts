@@ -10,4 +10,6 @@ export type RouteParamList = {
 
   [Routes.Report]: { sessionId: string };
 
+  [Routes.ReportList]: undefined;
+
 };

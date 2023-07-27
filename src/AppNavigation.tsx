@@ -12,7 +12,7 @@ export function AppNavigation(): JSX.Element {
   const createProjectIcon = (): JSX.Element => <Icon name="create-project" />;
   const projectListIcon = (): JSX.Element => <Icon name="project-list" />;
   const actionListIcon = (): JSX.Element => <Icon name="action-list" />;
-  const statisticsIcon = (): JSX.Element => <Icon name="statistics" />;
+  const reportsIcon = (): JSX.Element => <Icon name="statistics" />;
   const applicationSettingsIcon = (): JSX.Element => <Icon name="application-settings" />;
   const exitIcon = (): JSX.Element => <Icon name="exit" />;
 
@@ -47,10 +47,10 @@ export function AppNavigation(): JSX.Element {
           }}
         />
         <DrawerItem
-          label="Statistics"
-          icon={statisticsIcon}
+          label="Reports"
+          icon={reportsIcon}
           onPress={(): void => {
-            // TODO:
+            navigation.navigate(Routes.ReportList);
           }}
         />
         <HorizontalLine />

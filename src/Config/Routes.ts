@@ -3,4 +3,5 @@ export enum Routes {
   Project = "Project",
   ProjectList = "ProjectList",
   Report = "Report",
+  ReportList = "ReportList",
 }

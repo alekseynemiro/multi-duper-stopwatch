@@ -12,6 +12,7 @@ import { HomePage } from "@pages/Home";
 import { ProjectEditorPage } from "@pages/ProjectEditor";
 import { ProjectListPage } from "@pages/ProjectList";
 import { ReportPage } from "@pages/Report";
+import { ReportListPage } from "@pages/ReportList";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppNavigation } from "./AppNavigation";
@@ -56,6 +57,13 @@ export function App(): JSX.Element {
           <Drawer.Screen
             name={Routes.Report}
             component={ReportPage}
+          />
+          <Drawer.Screen
+            name={Routes.ReportList}
+            component={ReportListPage}
+            options={{
+              title: "Reports",
+            }}
           />
         </Drawer.Navigator>
       </NavigationContainer>
