@@ -11,4 +11,5 @@ export const iconMap = new Map<IconName, string>()
   .set("statistics", "chart-bar")
   .set("application-settings", "cog")
   .set("finish", "flag-checkered")
-  .set("elapsed-time", "clock");
+  .set("elapsed-time", "clock")
+  .set("details", "eye");
