@@ -45,6 +45,9 @@ export function App(): JSX.Element {
           <Drawer.Screen
             name={Routes.ProjectList}
             component={ProjectListPage}
+            options={{
+              title: "Project list",
+            }}
           />
           <Drawer.Screen
             name={Routes.Project}
