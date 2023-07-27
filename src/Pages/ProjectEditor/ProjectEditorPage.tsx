@@ -60,28 +60,28 @@ export function ProjectEditorPage(): JSX.Element {
     async(): Promise<void> => {
       if (!route.params?.projectId) {
         setModel(initialModel.current);
-      setShowLoadingIndicator(false);
-      return;
-    }
+        setShowLoadingIndicator(false);
+        return;
+      }
 
       setShowLoadingIndicator(true);
 
-    const data = await projectService.get(route.params.projectId);
+      const data = await projectService.get(route.params.projectId);
 
-    setModel({
-      name: data.name,
-      actions: data.actions?.map((x: GetResultAction): ActionModel => {
-        return {
-          id: x.id,
-          code: x.id,
-          color: x.color,
-          name: x.name,
-          isDeleted: false,
-        };
-      }),
-    });
+      setModel({
+        name: data.name,
+        actions: data.actions?.map((x: GetResultAction): ActionModel => {
+          return {
+            id: x.id,
+            code: x.id,
+            color: x.color,
+            name: x.name,
+            isDeleted: false,
+          };
+        }),
+      });
 
-    setShowLoadingIndicator(false);
+      setShowLoadingIndicator(false);
     },
     [
       route,
@@ -152,8 +152,8 @@ export function ProjectEditorPage(): JSX.Element {
   useFocusEffect(
     useCallback(
       (): void => {
-    load();
-    },
+        load();
+      },
       [
         load,
       ]
@@ -170,6 +170,7 @@ export function ProjectEditorPage(): JSX.Element {
     <ScrollView style={styles.contentView}>
       <Formik<ProjectModel>
         initialValues={model}
+        enableReinitialize={true}
         validate={validate}
         onSubmit={save}
       >
