@@ -157,6 +157,36 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "ElapsedTime",
+            type: "int",
+            isNullable: false,
+          },
+          {
+            name: "Steps",
+            type: "real",
+            isNullable: false,
+          },
+          {
+            name: "Distance",
+            type: "real",
+            isNullable: false,
+          },
+          {
+            name: "AvgSpeed",
+            type: "real",
+            isNullable: false,
+          },
+          {
+            name: "MaxSpeed",
+            type: "real",
+            isNullable: false,
+          },
+          {
+            name: "Events",
+            type: "int",
+            isNullable: false,
+          },
+          {
             name: "StartDate",
             type: "int",
             isNullable: false,

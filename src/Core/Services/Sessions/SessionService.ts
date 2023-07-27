@@ -63,6 +63,12 @@ export class SessionService implements ISessionService {
         session.project = project;
         session.action = action;
         session.state = SessionState.Run;
+        session.elapsedTime = 0;
+        session.steps = 0;
+        session.distance = 0;
+        session.maxSpeed = 0;
+        session.avgSpeed = 0;
+        session.events = 0;
         session.startDate = request.date;
         session.actionStartDate = request.date;
         session.createdDate = this._dateTimeService.now;
@@ -354,8 +360,51 @@ export class SessionService implements ISessionService {
 
         await this._databaseService.sessionLogs().insert(log);
 
+        const allLogs = await this._databaseService.sessionLogs()
+          .find({
+            where: {
+              session,
+            },
+          });
+
+        type Stats = {
+          elapsedTime: number,
+          steps: number,
+          distance: number,
+          maxSpeed: number,
+          avgSpeed: number,
+          events: number,
+        };
+
+        const stats: Stats = allLogs.reduce(
+          (accumulator: Stats, currentItem: SessionLog): Stats => {
+            return {
+              elapsedTime: accumulator.elapsedTime + currentItem.elapsedTime,
+              steps: accumulator.steps + currentItem.steps,
+              distance: accumulator.distance + currentItem.distance,
+              maxSpeed: Math.max(accumulator.maxSpeed, currentItem.maxSpeed),
+              avgSpeed: (accumulator.avgSpeed + currentItem.avgSpeed) / 2,
+              events: accumulator.events + 1,
+            };
+          },
+          {
+            elapsedTime: 0,
+            steps: 0,
+            distance: 0,
+            maxSpeed: 0,
+            avgSpeed: 0,
+            events: 0,
+          }
+        );
+
         session.state = SessionState.Finished;
         session.finishDate = request.date;
+        session.elapsedTime = stats.elapsedTime;
+        session.steps = stats.steps;
+        session.distance = stats.distance;
+        session.maxSpeed = stats.maxSpeed;
+        session.avgSpeed = stats.avgSpeed;
+        session.events = stats.events;
 
         await this._databaseService.sessions().save(session);
       }

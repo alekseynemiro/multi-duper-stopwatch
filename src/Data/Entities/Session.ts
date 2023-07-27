@@ -24,6 +24,42 @@ export class Session {
   public state!: SessionState;
 
   @Column({
+    name: "ElapsedTime",
+    nullable: false,
+  })
+  public elapsedTime!: number;
+
+  @Column({
+    name: "Steps",
+    nullable: false,
+  })
+  public steps!: number;
+
+  @Column({
+    name: "Distance",
+    nullable: false,
+  })
+  public distance!: number;
+
+  @Column({
+    name: "AvgSpeed",
+    nullable: false,
+  })
+  public avgSpeed!: number;
+
+  @Column({
+    name: "MaxSpeed",
+    nullable: false,
+  })
+  public maxSpeed!: number;
+
+  @Column({
+    name: "Events",
+    nullable: false,
+  })
+  public events!: number;
+
+  @Column({
     name: "StartDate",
     nullable: true,
   })
