@@ -4,6 +4,8 @@ import {
   CreateSessionRequest,
   CreateSessionResult,
   FinishRequest,
+  GetAllResult,
+  GetAllResultItem,
   PauseRequest,
   RenameRequest,
   ToggleDetailsResult,
@@ -430,6 +432,51 @@ export class SessionService implements ISessionService {
         session.name = request.name;
 
         await this._databaseService.sessions().save(session);
+      }
+    );
+  }
+
+  public getAll(): Promise<GetAllResult> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.getAll.name
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<GetAllResult> => {
+        const sessions = await this._databaseService.sessions()
+          .find({
+            where: {
+              state: SessionState.Finished,
+            },
+            order: {
+              createdDate: "desc",
+            },
+            relations: {
+              project: true,
+            } as any,
+          });
+
+        const result: GetAllResult = {
+          items: sessions.map((x: Session): GetAllResultItem => {
+            return {
+              id: x.id,
+              sessionName: x.name,
+              projectName: x.project.name,
+              avgSpeed: x.avgSpeed,
+              distance: x.distance,
+              elapsedTime: x.elapsedTime,
+              events: x.events,
+              maxSpeed: x.maxSpeed,
+              steps: x.steps,
+              createdDate: x.createdDate,
+              startDate: x.startDate,
+              finishDate: x.finishDate as Date,
+            };
+          }),
+        };
+
+        return result;
       }
     );
   }
