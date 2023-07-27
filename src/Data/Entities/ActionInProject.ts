@@ -48,4 +48,10 @@ export class ActionInProject {
   })
   public position!: number;
 
+  @Column({
+    name: "PlayListPath",
+    nullable: false,
+  })
+  public playListPath?: string | undefined;
+
 }

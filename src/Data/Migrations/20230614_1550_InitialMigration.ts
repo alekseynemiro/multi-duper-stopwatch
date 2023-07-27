@@ -74,6 +74,11 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "PlayListPath",
+            type: "text",
+            isNullable: true,
+          },
+          {
             name: "IsGlobal",
             type: "int",
             isNullable: false,
@@ -111,6 +116,11 @@ export class InitialMigration implements MigrationInterface {
             name: "Position",
             type: "int",
             isNullable: false,
+          },
+          {
+            name: "PlayListPath",
+            type: "text",
+            isNullable: true,
           },
         ],
       })

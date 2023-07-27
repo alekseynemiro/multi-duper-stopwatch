@@ -23,6 +23,12 @@ export class Action {
   public name!: string;
 
   @Column({
+    name: "PlayListPath",
+    nullable: false,
+  })
+  public playListPath?: string | undefined;
+
+  @Column({
     name: "IsGlobal",
     nullable: false,
   })
