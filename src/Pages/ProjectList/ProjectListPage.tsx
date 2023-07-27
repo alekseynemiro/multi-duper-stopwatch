@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Alert } from "react-native";
 import { Button } from "@components/Button";
@@ -6,6 +6,7 @@ import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { GetAllResultItem } from "@dto/Projects";
+import { useFocusEffect } from "@react-navigation/native";
 import { IProjectService } from "@services/Projects";
 import { styles } from "@styles";
 import { useNavigation } from "@utils/NavigationUtils";
@@ -17,17 +18,14 @@ const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.Pr
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
 
-  const mounted = useRef(false);
-  const loaded = useRef(false);
-
   const [list, setList] = useState<ProjectListPageState["list"]>([]);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectListPageState["showLoadingIndicator"]>(true);
 
   const load = async(): Promise<void> => {
-    loaded.current = true;
-
     setShowLoadingIndicator(true);
+
     const data = await projectService.getAll();
+
     setList(data.items);
     setShowLoadingIndicator(false);
   };
@@ -60,15 +58,13 @@ export function ProjectListPage(): JSX.Element {
     await load();
   };
 
-  if (!mounted.current) {
-    !loaded.current && load();
-  }
-
-  useEffect(
-    (): void => {
-      mounted.current = true;
-    },
-    [mounted]
+  useFocusEffect(
+    useCallback(
+      (): void => {
+        load();
+      },
+      []
+    )
   );
 
   if (showLoadingIndicator) {
