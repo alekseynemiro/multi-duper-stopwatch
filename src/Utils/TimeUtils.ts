@@ -20,3 +20,11 @@ export const getTimeSpan = (value: number): TimeSpan => {
       + String(milliseconds).padStart(2, "0"),
   };
 };
+
+export const sleep = (milliseconds: number): Promise<void> => {
+  return new Promise(
+    (resolve: { (): void }): void => {
+      setTimeout(resolve, milliseconds);
+    }
+  );
+};
