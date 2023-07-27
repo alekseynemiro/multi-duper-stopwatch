@@ -23,7 +23,6 @@ import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
 import { Action, ActionChangeEventArgs, SelectColorModal } from "./Components";
 import { ActionModel, ProjectModel } from "./Models";
-import { ProjectEditorPageState } from "./ProjectEditorPageState";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
 
@@ -39,10 +38,10 @@ export function ProjectEditorPage(): JSX.Element {
     actions: [],
   });
 
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectEditorPageState["showLoadingIndicator"]>(true);
-  const [model, setModel] = useState<ProjectEditorPageState["model"]>(initialModel.current);
-  const [showSelectColor, setShowSelectColor] = useState<ProjectEditorPageState["showSelectColor"]>(false);
-  const [activeCode, setActiveCode] = useState<ProjectEditorPageState["activeCode"]>();
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
+  const [model, setModel] = useState<ProjectModel>(initialModel.current);
+  const [showSelectColor, setShowSelectColor] = useState<boolean>(false);
+  const [activeCode, setActiveCode] = useState<string | undefined>();
 
   const showSelectColorModal = (actionCode: string): void => {
     setShowSelectColor(true);
