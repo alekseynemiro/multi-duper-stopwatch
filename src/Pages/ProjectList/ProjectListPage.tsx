@@ -152,6 +152,24 @@ export function ProjectListPage(): JSX.Element {
               );
             })
           }
+          {
+            list.length === 0
+              && (
+                <View>
+                  <Text>
+                    You don't have any projects yet.
+                  </Text>
+                  <Button
+                    title="Create a new project"
+                    variant="primary"
+                    style={styles.mt16}
+                    onPress={(): void => {
+                      navigation.navigate(Routes.Project);
+                    }}
+                  />
+                </View>
+              )
+          }
         </View>
       </View>
     </ScrollView>
