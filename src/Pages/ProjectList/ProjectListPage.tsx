@@ -10,7 +10,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { IProjectService } from "@services/Projects";
 import { styles } from "@styles";
 import { useNavigation } from "@utils/NavigationUtils";
-import { ProjectListPageState } from "./ProjectListPageState";
 import { projectListPageStyles } from "./ProjectListPageStyles";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
@@ -18,8 +17,9 @@ const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.Pr
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
 
-  const [list, setList] = useState<ProjectListPageState["list"]>([]);
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectListPageState["showLoadingIndicator"]>(true);
+  // TODO: Use view model instead of DTO
+  const [list, setList] = useState<Array<GetAllResultItem>>([]);
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
   const load = async(): Promise<void> => {
     setShowLoadingIndicator(true);
