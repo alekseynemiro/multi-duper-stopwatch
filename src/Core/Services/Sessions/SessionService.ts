@@ -67,7 +67,7 @@ export class SessionService implements ISessionService {
         session.actionStartDate = request.date;
         session.createdDate = this._dateTimeService.now;
 
-        this._databaseService.sessions().insert(session);
+        await this._databaseService.sessions().insert(session);
 
         const result: CreateSessionResult = {
           id: session.id,
@@ -144,7 +144,7 @@ export class SessionService implements ISessionService {
               createdDate: this._dateTimeService.now,
             };
 
-            this._databaseService.sessionLogs().insert(log);
+            await this._databaseService.sessionLogs().insert(log);
 
             session.state = SessionState.Paused;
             session.actionFinishDate = request.date;
@@ -175,7 +175,7 @@ export class SessionService implements ISessionService {
               createdDate: this._dateTimeService.now,
             };
 
-            this._databaseService.sessionLogs().insert(log);
+            await this._databaseService.sessionLogs().insert(log);
 
             session.action = action;
             session.actionStartDate = request.date;
@@ -298,7 +298,7 @@ export class SessionService implements ISessionService {
           createdDate: this._dateTimeService.now,
         };
 
-        this._databaseService.sessionLogs().insert(log);
+        await this._databaseService.sessionLogs().insert(log);
 
         session.state = SessionState.Paused;
         session.actionFinishDate = request.date;
@@ -352,7 +352,7 @@ export class SessionService implements ISessionService {
           createdDate: this._dateTimeService.now,
         };
 
-        this._databaseService.sessionLogs().insert(log);
+        await this._databaseService.sessionLogs().insert(log);
 
         session.state = SessionState.Finished;
         session.finishDate = request.date;
