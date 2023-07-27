@@ -1,9 +1,9 @@
-import { GoalModel } from "./GoalModel";
+import { ActionModel } from "./ActionModel";
 
 export type ProjectModel = {
 
   name?: string;
 
-  goals?: Array<GoalModel>;
+  actions?: Array<ActionModel>;
 
 };

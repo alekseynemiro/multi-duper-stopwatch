@@ -1,6 +1,6 @@
 import { Validator } from "fluentvalidation-ts";
 import { ProjectModel } from "../Models";
-import { GoalModelValidator } from "./GoalModelValidator";
+import { ActionModelValidator } from "./ActionModelValidator";
 
 export class ProjectModelValidator extends Validator<ProjectModel> {
 
@@ -11,12 +11,12 @@ export class ProjectModelValidator extends Validator<ProjectModel> {
       .notEmpty()
       .withMessage("Project name is required.");
 
-    this.ruleFor("goals")
+    this.ruleFor("actions")
       .notNull()
-      .withMessage("At least one goal is required.");
+      .withMessage("At least one action is required.");
 
-    this.ruleForEach("goals")
-      .setValidator(() => new GoalModelValidator());
+    this.ruleForEach("actions")
+      .setValidator(() => new ActionModelValidator());
   }
 
 }

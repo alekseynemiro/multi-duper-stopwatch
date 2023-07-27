@@ -1,10 +1,10 @@
-import { GoalModel } from "../../Models";
-import { HorizontalListLayoutGoalPressEventArgs } from "./HorizontalListLayoutGoalPressEventArgs";
+import { ActionModel } from "../../Models";
+import { HorizontalListLayoutActionPressEventArgs } from "./HorizontalListLayoutActionPressEventArgs";
 
 export type HorizontalListLayoutProps = {
 
-  goals: Array<GoalModel> | undefined;
+  actions: Array<ActionModel> | undefined;
 
-  onGoalPress(e: HorizontalListLayoutGoalPressEventArgs): Promise<void>;
+  onActionPress(e: HorizontalListLayoutActionPressEventArgs): Promise<void>;
 
 };

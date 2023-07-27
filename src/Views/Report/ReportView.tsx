@@ -43,8 +43,8 @@ export const ReportView = forwardRef(({ sessionId }: ReportViewProps, ref): JSX.
 
           return {
             id: x.id,
-            name: x.goalName,
-            color: x.goalColor,
+            name: x.actionName,
+            color: x.actionColor,
             avgSpeed: x.avgSpeed,
             elapsedTime: x.elapsedTime,
             maxSpeed: x.maxSpeed,
@@ -127,7 +127,7 @@ export const ReportView = forwardRef(({ sessionId }: ReportViewProps, ref): JSX.
             ]}
           >
             <Text style={styles.bold}>
-              Goal
+              Action
             </Text>
           </View>
           <View

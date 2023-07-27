@@ -1,2 +1,2 @@
-export type { GoalModel } from "./GoalModel";
+export type { ActionModel } from "./ActionModel";
 export type { ProjectModel } from "./ProjectModel";

@@ -7,7 +7,7 @@ import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { IStopwatchService } from "@services/Stopwatch";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
-import { GoalModel } from "../../Models";
+import { ActionModel } from "../../Models";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
@@ -16,21 +16,21 @@ const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifie
 
 export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
-    activeGoal,
+    activeAction,
   } = props;
 
-  const [showActiveGoal, setShowActiveGoal] = useState<boolean>();
+  const [showActiveAction, setShowActiveAction] = useState<boolean>();
 
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
-        if (showActiveGoal) {
+        if (showActiveAction) {
           stopwatchService.clearOffset();
-          setShowActiveGoal(false);
+          setShowActiveAction(false);
         } else {
           stopwatchService.setOffset();
-          setShowActiveGoal(true);
+          setShowActiveAction(true);
         }
       }}
     >
@@ -38,22 +38,22 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
         style={stopwatchDisplayStyles.elapsedContainer}
       >
         {
-          activeGoal
+          activeAction
           && (
             <View>
               {
-                showActiveGoal
+                showActiveAction
                 && (
                   <Text
                     style={[
                       stopwatchDisplayStyles.mode,
                       {
-                        backgroundColor: getColorCode((activeGoal as GoalModel).color),
-                        color: getContrastColorCode((activeGoal as GoalModel).color),
+                        backgroundColor: getColorCode((activeAction as ActionModel).color),
+                        color: getContrastColorCode((activeAction as ActionModel).color),
                       },
                     ]}
                   >
-                    {activeGoal?.name}
+                    {activeAction?.name}
                   </Text>
                 )
                 || (

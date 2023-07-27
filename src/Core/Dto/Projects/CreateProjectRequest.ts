@@ -1,4 +1,4 @@
-import { CreateProjectRequestGoal } from "./CreateProjectRequestGoal";
+import { CreateProjectRequestAction } from "./CreateProjectRequestAction";
 
 export type CreateProjectRequest = {
 
@@ -6,6 +6,6 @@ export type CreateProjectRequest = {
 
   name: string;
 
-  goals: Array<CreateProjectRequestGoal>;
+  actions: Array<CreateProjectRequestAction>;
 
 };

@@ -4,11 +4,11 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { colors, defaultFontSize } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
-import { GoalStatus } from "../../Models";
-import { GoalProps } from "./GoalProps";
-import { goalStyles } from "./GoalStyles";
+import { ActionStatus } from "../../Models";
+import { ActionProps } from "./ActionProps";
+import { actionStyles } from "./ActionStyles";
 
-export function Goal(props: GoalProps): JSX.Element {
+export function Action(props: ActionProps): JSX.Element {
   const {
     id,
     name,
@@ -33,7 +33,7 @@ export function Goal(props: GoalProps): JSX.Element {
         },
       ]}
       childWrapperStyle={[
-        goalStyles.button,
+        actionStyles.button,
       ]}
       onPress={(): void => {
         onPress(id);
@@ -41,11 +41,11 @@ export function Goal(props: GoalProps): JSX.Element {
     >
       <View
         style={[
-          goalStyles.iconContainer,
+          actionStyles.iconContainer,
         ]}
       >
         {
-          status === GoalStatus.Running
+          status === ActionStatus.Running
           && (
             <Icon
               name="play"
@@ -57,7 +57,7 @@ export function Goal(props: GoalProps): JSX.Element {
           )
         }
         {
-          status === GoalStatus.Paused
+          status === ActionStatus.Paused
           && (
             <Icon
               name="pause"
@@ -71,14 +71,14 @@ export function Goal(props: GoalProps): JSX.Element {
       </View>
       <Text
         style={[
-          goalStyles.bold,
+          actionStyles.bold,
           textColor,
         ]}
       >
         {name}
       </Text>
       <View
-        style={goalStyles.padding}
+        style={actionStyles.padding}
       />
     </Button>
   );

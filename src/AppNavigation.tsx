@@ -11,7 +11,7 @@ export function AppNavigation(): JSX.Element {
 
   const createProjectIcon = (): JSX.Element => <Icon name="create-project" />;
   const projectListIcon = (): JSX.Element => <Icon name="project-list" />;
-  const goalListIcon = (): JSX.Element => <Icon name="goal-list" />;
+  const actionListIcon = (): JSX.Element => <Icon name="action-list" />;
   const statisticsIcon = (): JSX.Element => <Icon name="statistics" />;
   const applicationSettingsIcon = (): JSX.Element => <Icon name="application-settings" />;
   const exitIcon = (): JSX.Element => <Icon name="exit" />;
@@ -40,8 +40,8 @@ export function AppNavigation(): JSX.Element {
           }}
         />
         <DrawerItem
-          label="Goal list"
-          icon={goalListIcon}
+          label="Action list"
+          icon={actionListIcon}
           onPress={(): void => {
             // TODO:
           }}

@@ -1,6 +1,6 @@
 import { ColorPalette } from "@data";
 
-export type UpdateProjectRequestGoal = {
+export type UpdateProjectRequestAction = {
 
   id: string;
 

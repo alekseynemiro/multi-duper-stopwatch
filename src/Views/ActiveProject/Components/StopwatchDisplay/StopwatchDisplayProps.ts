@@ -1,7 +1,7 @@
-import { GoalModel } from "../../Models";
+import { ActionModel } from "../../Models";
 
 export type StopwatchDisplayProps = {
 
-  activeGoal?: GoalModel | undefined;
+  activeAction?: ActionModel | undefined;
 
 };

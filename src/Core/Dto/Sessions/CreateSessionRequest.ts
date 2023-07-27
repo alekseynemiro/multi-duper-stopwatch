@@ -2,7 +2,7 @@ export type CreateSessionRequest = {
 
   projectId: string;
 
-  goalId: string;
+  actionId: string;
 
   date: Date;
 

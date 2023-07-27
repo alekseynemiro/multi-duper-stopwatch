@@ -10,18 +10,18 @@ import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { ColorPalette } from "@data";
 import {
   CreateProjectRequest,
-  CreateProjectRequestGoal,
-  GetResultGoal,
+  CreateProjectRequestAction,
+  GetResultAction,
   UpdateProjectRequest,
-  UpdateProjectRequestGoal,
+  UpdateProjectRequestAction,
 } from "@dto/Projects";
 import { IGuidService } from "@services/Guid";
 import { IProjectService } from "@services/Projects";
 import { styles } from "@styles";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
-import { Goal, GoalChangeEventArgs, SelectColorModal } from "./Components";
-import { GoalModel, ProjectModel } from "./Models";
+import { Action, ActionChangeEventArgs, SelectColorModal } from "./Components";
+import { ActionModel, ProjectModel } from "./Models";
 import { ProjectEditorPageState } from "./ProjectEditorPageState";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
@@ -39,14 +39,14 @@ export function ProjectEditorPage(): JSX.Element {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectEditorPageState["showLoadingIndicator"]>(true);
   const [model, setModel] = useState<ProjectEditorPageState["model"]>({
     name: "",
-    goals: [],
+    actions: [],
   });
   const [showSelectColor, setShowSelectColor] = useState<ProjectEditorPageState["showSelectColor"]>(false);
   const [activeCode, setActiveCode] = useState<ProjectEditorPageState["activeCode"]>();
 
-  const showSelectColorModal = (goalCode: string): void => {
+  const showSelectColorModal = (actionCode: string): void => {
     setShowSelectColor(true);
-    setActiveCode(goalCode);
+    setActiveCode(actionCode);
   };
 
   const hideSelectColorModal = (): void => {
@@ -67,7 +67,7 @@ export function ProjectEditorPage(): JSX.Element {
 
     setModel({
       name: data.name,
-      goals: data.goals?.map((x: GetResultGoal): GoalModel => {
+      actions: data.actions?.map((x: GetResultAction): ActionModel => {
         return {
           id: x.id,
           code: x.id,
@@ -87,11 +87,11 @@ export function ProjectEditorPage(): JSX.Element {
       const updateRequest: UpdateProjectRequest = {
         id: route.params.projectId,
         name: values.name as string,
-        goals: (values.goals as Array<GoalModel>)
-          .filter((x: GoalModel): boolean => {
+        actions: (values.actions as Array<ActionModel>)
+          .filter((x: ActionModel): boolean => {
             return !x.isDeleted;
           })
-          .map((x: GoalModel): UpdateProjectRequestGoal => {
+          .map((x: ActionModel): UpdateProjectRequestAction => {
             return {
               id: x.id as string,
               name: x.name,
@@ -99,11 +99,11 @@ export function ProjectEditorPage(): JSX.Element {
               position: 0, // TODO: position
             };
           }),
-        goalsToDelete: (values.goals as Array<GoalModel>)
-        .filter((x: GoalModel): boolean => {
+        actionsToDelete: (values.actions as Array<ActionModel>)
+        .filter((x: ActionModel): boolean => {
           return x.isDeleted && !!x.id;
         })
-        .map((x: GoalModel): string => {
+        .map((x: ActionModel): string => {
           return x.id as string;
         }),
       };
@@ -113,11 +113,11 @@ export function ProjectEditorPage(): JSX.Element {
       const createRequest: CreateProjectRequest = {
         id: guidService.newGuid(),
         name: values.name as string,
-        goals: (values.goals as Array<GoalModel>)
-          .filter((x: GoalModel): boolean => {
+        actions: (values.actions as Array<ActionModel>)
+          .filter((x: ActionModel): boolean => {
             return !x.isDeleted;
           })
-          .map((x: GoalModel): CreateProjectRequestGoal => {
+          .map((x: ActionModel): CreateProjectRequestAction => {
             return {
               name: x.name,
               color: x.color,
@@ -132,12 +132,12 @@ export function ProjectEditorPage(): JSX.Element {
     navigation.goBack();
   };
 
-  const findGoalIndexByCode = (goals: Array<GoalModel> | undefined, code: string): number => {
-    if (!goals) {
-      throw new Error("Goals are expected.");
+  const findActionIndexByCode = (actions: Array<ActionModel> | undefined, code: string): number => {
+    if (!actions) {
+      throw new Error("Actions are expected.");
     }
 
-    return goals.findIndex((x: GoalModel): boolean => {
+    return actions.findIndex((x: ActionModel): boolean => {
       return x.code === code;
     });
   };
@@ -190,7 +190,7 @@ export function ProjectEditorPage(): JSX.Element {
                 </FormRow>
                 <FormRow>
                   <Label>
-                    Goals:
+                    Actions:
                   </Label>
                   <View
                     style={[
@@ -198,29 +198,29 @@ export function ProjectEditorPage(): JSX.Element {
                     ]}
                   >
                     {
-                      values.goals
-                        ?.filter((goal: GoalModel): boolean => {
-                          return !goal.isDeleted;
+                      values.actions
+                        ?.filter((action: ActionModel): boolean => {
+                          return !action.isDeleted;
                         })
-                        .map((goal: GoalModel, index: number): JSX.Element => {
+                        .map((action: ActionModel, index: number): JSX.Element => {
                           return (
-                            <Goal
-                              key={goal.code}
-                              goalCode={goal.code}
-                              goalId={goal?.id}
-                              goalName={goal.name}
-                              goalColor={goal.color}
-                              error={touched.goals && (errors.goals?.[index] as unknown as GoalModel)?.name}
+                            <Action
+                              key={action.code}
+                              actionCode={action.code}
+                              actionId={action.id}
+                              actionName={action.name}
+                              actionColor={action.color}
+                              error={touched.actions && (errors.actions?.[index] as unknown as ActionModel)?.name}
                               onSelectColorClick={(): void => {
-                                showSelectColorModal(goal.code);
+                                showSelectColorModal(action.code);
                               }}
-                              onChange={(e: GoalChangeEventArgs): void => {
-                                const goalIndex = findGoalIndexByCode(values?.goals, e.code);
-                                setFieldValue(`goals[${goalIndex}].${e.fieldName}`, e.value);
+                              onChange={(e: ActionChangeEventArgs): void => {
+                                const actionIndex = findActionIndexByCode(values?.actions, e.code);
+                                setFieldValue(`actions[${actionIndex}].${e.fieldName}`, e.value);
                               }}
-                              onDelete={(goalCode: string): void => {
-                                const goalIndex = findGoalIndexByCode(values?.goals, goalCode);
-                                setFieldValue(`goals[${goalIndex}].isDeleted`, true);
+                              onDelete={(actionCode: string): void => {
+                                const actionIndex = findActionIndexByCode(values?.actions, actionCode);
+                                setFieldValue(`actions[${actionIndex}].isDeleted`, true);
                               }}
                             />
                           );
@@ -228,12 +228,12 @@ export function ProjectEditorPage(): JSX.Element {
                     }
                   </View>
                   <Button
-                    title="Add goal"
+                    title="Add action"
                     onPress={(): void => {
                       setFieldValue(
-                        "goals",
+                        "actions",
                         [
-                          ...values?.goals || [],
+                          ...values?.actions || [],
                           {
                             code: guidService.newGuid(),
                             name: "",
@@ -260,12 +260,12 @@ export function ProjectEditorPage(): JSX.Element {
                     />
                   </View>
                   <SelectColorModal
-                    goalCode={activeCode}
+                    actionCode={activeCode}
                     show={showSelectColor}
                     onClose={hideSelectColorModal}
-                    onSelect={(goalCode: string, color: ColorPalette): void => {
-                      const goalIndex = findGoalIndexByCode(values?.goals, goalCode);
-                      setFieldValue(`goals[${goalIndex}].color`, color);
+                    onSelect={(actionCode: string, color: ColorPalette): void => {
+                      const actionIndex = findActionIndexByCode(values?.actions, actionCode);
+                      setFieldValue(`actions[${actionIndex}].color`, color);
                       hideSelectColorModal();
                     }}
                   />

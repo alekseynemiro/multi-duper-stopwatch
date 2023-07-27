@@ -1,4 +1,4 @@
-export type GoalState = {
+export type ActionState = {
 
   name: string;
 

@@ -4,7 +4,7 @@ import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { GetResultGoal } from "@dto/Projects";
+import { GetResultAction } from "@dto/Projects";
 import { IDateTimeService } from "@services/DateTime";
 import { IProjectService } from "@services/Projects";
 import { ISessionService } from "@services/Sessions";
@@ -13,11 +13,11 @@ import { ActiveProjectViewProps } from "./ActiveProjectViewProps";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
-  HorizontalListLayoutGoalPressEventArgs,
+  HorizontalListLayoutActionPressEventArgs,
   SessionNameModal,
   StopwatchDisplay,
 } from "./Components";
-import { GoalModel, GoalStatus } from "./Models";
+import { ActionModel, ActionStatus } from "./Models";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
 const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
@@ -37,8 +37,8 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
   const sessionId = useRef<string | undefined>(undefined);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
-  const [goals, setGoals] = useState<Array<GoalModel>>([]);
-  const [activeGoal, setActiveGoal] = useState<GoalModel | undefined>(undefined);
+  const [actions, setActions] = useState<Array<ActionModel>>([]);
+  const [activeAction, setActiveAction] = useState<ActionModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
 
   const load = useCallback(
@@ -51,19 +51,19 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
       const data = await projectService.get(projectId);
 
-      setGoals(
-        data.goals?.map(
-          (x: GetResultGoal): GoalModel => {
+      setActions(
+        data.actions?.map(
+          (x: GetResultAction): ActionModel => {
             return {
               color: x.color,
               id: x.id,
               name: x.name,
-              status: GoalStatus.Idle,
+              status: ActionStatus.Idle,
             };
           }
         ) || [],
       );
-      setActiveGoal(undefined);
+      setActiveAction(undefined);
       setShowLoadingIndicator(false);
 
       onLoad(data.name);
@@ -80,12 +80,12 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         throw new Error("Session ID is required");
       }
 
-      if (!activeGoal) {
-        throw new Error("Active goal is required.");
+      if (!activeAction) {
+        throw new Error("Active action is required.");
       }
 
-      const activeGoalPredicate = (x: GoalModel): boolean => {
-        return x.id === activeGoal.id;
+      const activeActionPredicate = (x: ActionModel): boolean => {
+        return x.id === activeAction.id;
       };
 
       const date = dateTimeService.now;
@@ -94,7 +94,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
       const toggleResult = await sessionService.toggle({
         sessionId: sessionId.current,
-        goalId: activeGoal.id,
+        actionId: activeAction.id,
         avgSpeed: 0,
         distance: 0,
         maxSpeed: 0,
@@ -113,29 +113,29 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         stopwatchService.stop();
       }
 
-      const newGoals = goals.map((x: GoalModel): GoalModel => {
-        if (x.id === activeGoal.id) {
+      const newActions = actions.map((x: ActionModel): ActionModel => {
+        if (x.id === activeAction.id) {
           if (toggleResult.isRunning) {
-            x.status = GoalStatus.Running;
+            x.status = ActionStatus.Running;
           } else if (toggleResult.isPaused) {
-            x.status = GoalStatus.Paused;
+            x.status = ActionStatus.Paused;
           } else {
-            x.status = GoalStatus.Idle;
+            x.status = ActionStatus.Idle;
           }
         } else {
-          x.status = GoalStatus.Idle;
+          x.status = ActionStatus.Idle;
         }
 
         return x;
       });
 
-      setGoals(newGoals);
-      setActiveGoal(newGoals.find(activeGoalPredicate));
+      setActions(newActions);
+      setActiveAction(newActions.find(activeActionPredicate));
     },
     [
       sessionId,
-      activeGoal,
-      goals,
+      activeAction,
+      actions,
     ]
   );
 
@@ -228,17 +228,17 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         style={activeProjectViewStyles.stopwatchContainer}
       >
         <StopwatchDisplay
-          activeGoal={activeGoal}
+          activeAction={activeAction}
         />
       </View>
       <View
-        style={activeProjectViewStyles.goalsContainer}
+        style={activeProjectViewStyles.actionsContainer}
       >
         <HorizontalListLayout
-          goals={goals}
-          onGoalPress={async({ goalId }: HorizontalListLayoutGoalPressEventArgs): Promise<void> => {
-            const currentGoalPredicate = (x: GoalModel): boolean => {
-              return x.id === goalId;
+          actions={actions}
+          onActionPress={async({ actionId }: HorizontalListLayoutActionPressEventArgs): Promise<void> => {
+            const currentActionPredicate = (x: ActionModel): boolean => {
+              return x.id === actionId;
             };
 
             if (!sessionId.current) {
@@ -246,20 +246,20 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
               stopwatchService.start();
 
-              const newGoals = goals.map((x: GoalModel): GoalModel => {
-                if (x.id === goalId) {
-                  x.status = GoalStatus.Running;
+              const newActions = actions.map((x: ActionModel): ActionModel => {
+                if (x.id === actionId) {
+                  x.status = ActionStatus.Running;
                 }
 
                 return x;
               });
 
-              setGoals(newGoals);
-              setActiveGoal(newGoals.find(currentGoalPredicate));
+              setActions(newActions);
+              setActiveAction(newActions.find(currentActionPredicate));
 
               const session = await sessionService.create({
                 projectId: projectId as string,
-                goalId,
+                actionId,
                 date,
               });
 
@@ -271,7 +271,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
               const toggleResult = await sessionService.toggle({
                 sessionId: sessionId.current as string,
-                goalId,
+                actionId,
                 avgSpeed: 0,
                 distance: 0,
                 maxSpeed: 0,
@@ -290,24 +290,24 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 stopwatchService.stop();
               }
 
-              const newGoals = goals.map((x: GoalModel): GoalModel => {
-                if (x.id === goalId) {
+              const newActions = actions.map((x: ActionModel): ActionModel => {
+                if (x.id === actionId) {
                   if (toggleResult.isRunning) {
-                    x.status = GoalStatus.Running;
+                    x.status = ActionStatus.Running;
                   } else if (toggleResult.isPaused) {
-                    x.status = GoalStatus.Paused;
+                    x.status = ActionStatus.Paused;
                   } else {
-                    x.status = GoalStatus.Idle;
+                    x.status = ActionStatus.Idle;
                   }
                 } else {
-                  x.status = GoalStatus.Idle;
+                  x.status = ActionStatus.Idle;
                 }
 
                 return x;
               });
 
-              setGoals(newGoals);
-              setActiveGoal(newGoals.find(currentGoalPredicate));
+              setActions(newActions);
+              setActiveAction(newActions.find(currentActionPredicate));
             }
           }}
         />
@@ -318,12 +318,12 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          disabled={!activeGoal}
+          disabled={!activeAction}
           onPress={toggleActive}
         >
           <Text>
             {
-              activeGoal?.status === GoalStatus.Paused
+              activeAction?.status === ActionStatus.Paused
                 && "Resume"
                 || "Pause"
             }

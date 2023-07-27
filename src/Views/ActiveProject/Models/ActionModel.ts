@@ -1,7 +1,7 @@
 import { ColorPalette } from "@data";
-import { GoalStatus } from "./GoalStatus";
+import { ActionStatus } from "./ActionStatus";
 
-export type GoalModel = {
+export type ActionModel = {
 
   id: string;
 
@@ -9,6 +9,6 @@ export type GoalModel = {
 
   color: ColorPalette;
 
-  status: GoalStatus;
+  status: ActionStatus;
 
 };

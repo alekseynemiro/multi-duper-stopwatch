@@ -7,7 +7,7 @@ export const activeProjectViewStyles = StyleSheet.create({
   stopwatchContainer: {
     height: "20%",
   },
-  goalsContainer: {
+  actionsContainer: {
     height: "70%",
   },
   footer: {

@@ -6,14 +6,14 @@ import { Icon } from "@components/Icon";
 import { TextInputField } from "@components/TextInputField";
 import { styles } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
-import { GoalProps } from "./GoalProps";
-import { goalStyles } from "./GoalStyles";
+import { ActionProps } from "./ActionProps";
+import { actionStyles } from "./ActionStyles";
 
-export function Goal(props: GoalProps): JSX.Element {
+export function Action(props: ActionProps): JSX.Element {
   const {
-    goalCode,
-    goalName,
-    goalColor,
+    actionCode,
+    actionName,
+    actionColor,
     error,
     onSelectColorClick,
     onChange,
@@ -25,7 +25,7 @@ export function Goal(props: GoalProps): JSX.Element {
       <View
         style={[
           styles.tableCell,
-          goalStyles.positionCol,
+          actionStyles.positionCol,
         ]}
       >
         {/*TODO: Drag'n'Drop*/}
@@ -38,15 +38,15 @@ export function Goal(props: GoalProps): JSX.Element {
       <View
         style={[
           styles.tableCell,
-          goalStyles.nameCol,
+          actionStyles.nameCol,
         ]}
       >
         <TextInputField
-          value={goalName}
+          value={actionName}
           error={error}
           onChangeText={(value: string): void => {
             onChange({
-              code: goalCode,
+              code: actionCode,
               fieldName: "name",
               value,
             });
@@ -56,22 +56,22 @@ export function Goal(props: GoalProps): JSX.Element {
       <View
         style={[
           styles.tableCell,
-          goalStyles.colorCol,
+          actionStyles.colorCol,
         ]}
       >
         <Button
           style={[
-            goalStyles.selectColorButton,
+            actionStyles.selectColorButton,
             {
-              backgroundColor: goalColor
-                ? getColorCode(goalColor)
-                : goalStyles.selectColorButton.backgroundColor,
+              backgroundColor: actionColor
+                ? getColorCode(actionColor)
+                : actionStyles.selectColorButton.backgroundColor,
             },
           ]}
           onPress={onSelectColorClick}
         >
           {
-            !goalColor
+            !actionColor
               ? (
                 <Icon
                   name="color"
@@ -86,14 +86,14 @@ export function Goal(props: GoalProps): JSX.Element {
       <View
         style={[
           styles.tableCell,
-          goalStyles.deleteCol,
+          actionStyles.deleteCol,
         ]}
       >
         <Button
           variant="danger"
           style={styles.w100}
           onPress={(): void => {
-            onDelete(goalCode);
+            onDelete(actionCode);
           }}
         >
           <Icon

@@ -1,4 +1,4 @@
-export enum GoalStatus {
+export enum ActionStatus {
   Idle,
   Running,
   Paused,

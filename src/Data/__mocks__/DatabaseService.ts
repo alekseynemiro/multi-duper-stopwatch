@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
 import { DataSource, Repository } from "typeorm";
 import {
-  Goal,
-  GoalInProject,
+  Action,
+  ActionInProject,
   Info,
   Project,
   Session,
@@ -16,9 +16,9 @@ export class DatabaseService implements IDatabaseService {
 
   private readonly _dataSource: DataSource;
 
-  public readonly goals = (): Repository<Goal> => this._dataSource.getRepository(Goal);
+  public readonly actions = (): Repository<Action> => this._dataSource.getRepository(Action);
 
-  public readonly goalsInProjects = (): Repository<GoalInProject> => this._dataSource.getRepository(GoalInProject);
+  public readonly actionsInProjects = (): Repository<ActionInProject> => this._dataSource.getRepository(ActionInProject);
 
   public readonly infos = (): Repository<Info> => this._dataSource.getRepository(Info);
 
@@ -37,8 +37,8 @@ export class DatabaseService implements IDatabaseService {
       logger: "debug",
       synchronize: false,
       entities: [
-        Goal,
-        GoalInProject,
+        Action,
+        ActionInProject,
         Info,
         Project,
         Session,

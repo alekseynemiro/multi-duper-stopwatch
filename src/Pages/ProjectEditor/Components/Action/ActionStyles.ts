@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
-export const goalStyles = StyleSheet.create({
+export const actionStyles = StyleSheet.create({
   positionCol: {
     width: 32,
     justifyContent: "center",

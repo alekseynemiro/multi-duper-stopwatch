@@ -4,9 +4,9 @@ export type ToggleDetailsResult = {
 
   id: string;
 
-  goalName: string;
+  actionName: string;
 
-  goalColor: ColorPalette;
+  actionColor: ColorPalette;
 
   elapsedTime: number;
 

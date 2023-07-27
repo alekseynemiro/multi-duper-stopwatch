@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import {
-  Goal,
-  GoalInProject,
+  Action,
+  ActionInProject,
   Info,
   Project,
   Session,
@@ -11,9 +11,9 @@ import {
 
 export interface IDatabaseService {
 
-  goals: { (): Repository<Goal> };
+  actions: { (): Repository<Action> };
 
-  goalsInProjects: { (): Repository<GoalInProject> };
+  actionsInProjects: { (): Repository<ActionInProject> };
 
   infos: { (): Repository<Info> };
 

@@ -1,6 +1,6 @@
 import { ColorPalette } from "../../../Data";
 
-export type GetResultGoal = {
+export type GetResultAction = {
 
   id: string;
 

@@ -1,2 +1,2 @@
-export * from "./Goal";
+export * from "./Action";
 export * from "./SelectColorModal";

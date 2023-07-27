@@ -1,14 +1,14 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { GoalModel } from "../../Models";
-import { Goal } from "../Goal";
+import { ActionModel } from "../../Models";
+import { Action } from "../Action";
 import { HorizontalListLayoutProps } from "./HorizontalListLayoutProps";
 import { horizontalListLayoutStyles } from "./HorizontalListLayoutStyles";
 
 export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Element {
   const {
-    goals,
-    onGoalPress,
+    actions,
+    onActionPress,
   } = props;
 
   return (
@@ -19,18 +19,18 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
         style={horizontalListLayoutStyles.container}
       >
         {
-          goals?.map(
-            (goal: GoalModel): JSX.Element => {
+          actions?.map(
+            (action: ActionModel): JSX.Element => {
               return (
-                <Goal
-                  key={goal.id}
-                  id={goal.id}
-                  name={goal.name}
-                  color={goal.color}
-                  status={goal.status}
+                <Action
+                  key={action.id}
+                  id={action.id}
+                  name={action.name}
+                  color={action.color}
+                  status={action.status}
                   onPress={(): Promise<void> => {
-                    return onGoalPress({
-                      goalId: goal.id,
+                    return onActionPress({
+                      actionId: action.id,
                     });
                   }}
                 />

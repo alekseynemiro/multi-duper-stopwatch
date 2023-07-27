@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
-import { Goal } from "./Goal";
+import { Action } from "./Action";
 import { Session } from "./Session";
 
 @Entity({ name: "SessionLogs" })
@@ -60,8 +60,8 @@ export class SessionLog {
   @JoinColumn({ name: "SessionId" })
   public session!: Session;
 
-  @OneToOne(() => Goal, (x) => x.id)
-  @JoinColumn({ name: "GoalId" })
-  public goal!: Goal;
+  @OneToOne(() => Action, (x) => x.id)
+  @JoinColumn({ name: "ActionId" })
+  public action!: Action;
 
 }

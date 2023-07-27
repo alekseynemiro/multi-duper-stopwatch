@@ -1,9 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Goal } from "./Goal";
+import { Action } from "./Action";
 import { Project } from "./Project";
 
-@Entity({ name: "GoalsInProjects" })
-export class GoalInProject {
+@Entity({ name: "ActionsInProjects" })
+export class ActionInProject {
 
   @PrimaryColumn({
     name: "Id",
@@ -13,10 +13,10 @@ export class GoalInProject {
   public id!: string;
 
   @Column({
-    name: "GoalId",
+    name: "ActionId",
     nullable: false,
   })
-  public goalId!: string;
+  public actionId!: string;
 
   @Column({
     name: "ProjectId",
@@ -25,17 +25,17 @@ export class GoalInProject {
   public projectId!: string;
 
   @ManyToOne(
-    () => Goal,
-    x => x.goalsInProjects,
+    () => Action,
+    x => x.actionsInProjects,
     {
       eager: true,
     }
   )
-  public goal!: Goal;
+  public action!: Action;
 
   @ManyToOne(
     () => Project,
-    x => x.goalsInProjects,
+    x => x.actionsInProjects,
     {
       eager: true,
     }

@@ -1,4 +1,4 @@
-import { GetResultGoal } from "./GetResultGoal";
+import { GetResultAction } from "./GetResultAction";
 
 export type GetResult = {
 
@@ -8,6 +8,6 @@ export type GetResult = {
 
   createdDate: Date;
 
-  goals?: Array<GetResultGoal>;
+  actions?: Array<GetResultAction>;
 
 };

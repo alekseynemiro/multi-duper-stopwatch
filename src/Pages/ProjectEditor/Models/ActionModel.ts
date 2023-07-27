@@ -1,6 +1,6 @@
 import { ColorPalette } from "@data";
 
-export type GoalModel = {
+export type ActionModel = {
 
   code: string;
 

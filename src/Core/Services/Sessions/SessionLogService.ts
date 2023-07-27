@@ -45,7 +45,7 @@ export class SessionLogService implements ISessionLogService {
               createdDate: "asc",
             },
             relations: {
-              goal: true,
+              action: true,
             } as any,
           });
 
@@ -57,8 +57,8 @@ export class SessionLogService implements ISessionLogService {
                 distance: x.distance,
                 elapsedTime: x.elapsedTime,
                 finishDate: x.finishDate,
-                goalColor: x.goal.color,
-                goalName: x.goal.name,
+                actionColor: x.action.color,
+                actionName: x.action.name,
                 maxSpeed: x.maxSpeed,
                 startDate: x.startDate,
               };

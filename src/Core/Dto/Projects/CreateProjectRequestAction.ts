@@ -1,6 +1,6 @@
 import { ColorPalette } from "../../../Data";
 
-export type CreateProjectRequestGoal = {
+export type CreateProjectRequestAction = {
 
   id?: string;
 

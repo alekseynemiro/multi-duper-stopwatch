@@ -2,11 +2,11 @@ import { ColorPalette } from "@data";
 
 export type SelectColorModalProps = {
 
-  goalCode: string | undefined;
+  actionCode: string | undefined;
 
   show: boolean;
 
-  onSelect(goalCode: string | undefined, color: ColorPalette): void;
+  onSelect(actionCode: string | undefined, color: ColorPalette): void;
 
   onClose(): void;
 

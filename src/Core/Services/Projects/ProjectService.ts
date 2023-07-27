@@ -1,11 +1,11 @@
 import { ServiceIdentifier } from "@config";
-import { Goal, GoalInProject, IDatabaseService, Project } from "@data";
+import { Action, ActionInProject, IDatabaseService, Project } from "@data";
 import {
   CreateProjectRequest,
   GetAllResult,
   GetAllResultItem,
   GetResult,
-  GetResultGoal,
+  GetResultAction,
   UpdateProjectRequest,
 } from "@dto/Projects";
 import { IDateTimeService } from "@services/DateTime";
@@ -41,19 +41,19 @@ export class ProjectService implements IProjectService {
           .findOneOrFail({
             where: { id },
             relations: {
-              goalsInProjects: true,
+              actionsInProjects: true,
             },
           });
 
-        const goals = project.goalsInProjects
+        const actions = project.actionsInProjects
           ?.sort((a, b): number => {
             return a.position - b.position;
           })
-          ?.map<GetResultGoal>(x => {
+          ?.map<GetResultAction>(x => {
             return {
-              id: x.goal.id,
-              color: x.goal.color,
-              name: x.goal.name,
+              id: x.action.id,
+              color: x.action.color,
+              name: x.action.name,
             };
           }) ?? [];
 
@@ -61,7 +61,7 @@ export class ProjectService implements IProjectService {
           id: project.id,
           name: project.name,
           createdDate: project.createdDate,
-          goals,
+          actions,
         };
 
         return result;
@@ -100,40 +100,40 @@ export class ProjectService implements IProjectService {
 
         await this._databaseService.projects().save(project);
 
-        if (request.goals?.length > 0) {
-          for (const goal of request.goals) {
-            const globalGoal = goal.id
-              ? await this._databaseService.goals().findOneByOrFail({ id: goal.id, isGlobal: true })
+        if (request.actions?.length > 0) {
+          for (const action of request.actions) {
+            const globalAction = action.id
+              ? await this._databaseService.actions().findOneByOrFail({ id: action.id, isGlobal: true })
               : undefined;
 
-            if (globalGoal) {
-              const goalInProject = new GoalInProject();
+            if (globalAction) {
+              const actionInProject = new ActionInProject();
 
-              goalInProject.id = this._guidService.newGuid();
-              goalInProject.project.id = project.id;
-              goalInProject.goalId = globalGoal.id;
-              goalInProject.position = goal.position;
+              actionInProject.id = this._guidService.newGuid();
+              actionInProject.project.id = project.id;
+              actionInProject.actionId = globalAction.id;
+              actionInProject.position = action.position;
 
-              await this._databaseService.goalsInProjects().save(goalInProject);
+              await this._databaseService.actionsInProjects().save(actionInProject);
             } else {
-              const newGoal = new Goal();
+              const newAction = new Action();
 
-              newGoal.id = this._guidService.newGuid();
-              newGoal.color = goal.color;
-              newGoal.name = goal.name;
-              newGoal.isGlobal = false;
-              newGoal.createdDate = now;
+              newAction.id = this._guidService.newGuid();
+              newAction.color = action.color;
+              newAction.name = action.name;
+              newAction.isGlobal = false;
+              newAction.createdDate = now;
 
-              const createdGoal = await this._databaseService.goals().save(newGoal);
+              const createdAction = await this._databaseService.actions().save(newAction);
 
-              const goalInProject = new GoalInProject();
+              const actionInProject = new ActionInProject();
 
-              goalInProject.id = this._guidService.newGuid();
-              goalInProject.projectId = project.id;
-              goalInProject.goalId = createdGoal.id;
-              goalInProject.position = goal.position;
+              actionInProject.id = this._guidService.newGuid();
+              actionInProject.projectId = project.id;
+              actionInProject.actionId = createdAction.id;
+              actionInProject.position = action.position;
 
-              await this._databaseService.goalsInProjects().save(goalInProject);
+              await this._databaseService.actionsInProjects().save(actionInProject);
             }
           }
         }
@@ -160,7 +160,7 @@ export class ProjectService implements IProjectService {
               id: request.id,
             },
             relations: {
-              goalsInProjects: true,
+              actionsInProjects: true,
             },
           });
 
@@ -168,88 +168,88 @@ export class ProjectService implements IProjectService {
 
         await this._databaseService.projects().save(project);
 
-        if (request.goalsToDelete?.length) {
+        if (request.actionsToDelete?.length) {
           // delete references
-          const goalsInProjectsToDelete = await this._databaseService.goalsInProjects().find({
+          const actionsInProjectsToDelete = await this._databaseService.actionsInProjects().find({
             where: {
               projectId: project.id,
-              goalId: In(request.goalsToDelete),
+              actionId: In(request.actionsToDelete),
             },
           });
 
-          await this._databaseService.goalsInProjects().delete(
-            goalsInProjectsToDelete.map(
-              (x: GoalInProject): string => {
+          await this._databaseService.actionsInProjects().delete(
+            actionsInProjectsToDelete.map(
+              (x: ActionInProject): string => {
                 return x.id;
               }
             )
           );
 
-          // delete private goals
-          const privateGoalsToDelete = await this._databaseService.goals().find({
+          // delete private actions
+          const privateActionsToDelete = await this._databaseService.actions().find({
             where: {
-              id: In(request.goalsToDelete),
+              id: In(request.actionsToDelete),
               isGlobal: false,
             },
           });
 
-          await this._databaseService.goals().delete(
-            privateGoalsToDelete.map((x: Goal): string => x.id)
+          await this._databaseService.actions().delete(
+            privateActionsToDelete.map((x: Action): string => x.id)
           );
         }
 
-        if (request.goals?.length > 0) {
-          for (const goal of request.goals) {
-            const goalInProject = project.goalsInProjects?.find(
-              (x: GoalInProject): boolean => {
-                return x.goal.id === goal.id;
+        if (request.actions?.length > 0) {
+          for (const action of request.actions) {
+            const actionInProject = project.actionsInProjects?.find(
+              (x: ActionInProject): boolean => {
+                return x.action.id === action.id;
               }
             );
 
-            const linked = !!goalInProject;
+            const linked = !!actionInProject;
 
-            const globalGoal = goal.id && !linked
-              ? await this._databaseService.goals().findOneByOrFail({ id: goal.id, isGlobal: true })
+            const globalAction = action.id && !linked
+              ? await this._databaseService.actions().findOneByOrFail({ id: action.id, isGlobal: true })
               : undefined;
 
-            if (globalGoal) {
-              const newGoalInProject = new GoalInProject();
+            if (globalAction) {
+              const newActionInProject = new ActionInProject();
 
-              newGoalInProject.id = this._guidService.newGuid();
-              newGoalInProject.projectId = project.id;
-              newGoalInProject.goalId = globalGoal.id;
-              newGoalInProject.position = goal.position;
+              newActionInProject.id = this._guidService.newGuid();
+              newActionInProject.projectId = project.id;
+              newActionInProject.actionId = globalAction.id;
+              newActionInProject.position = action.position;
 
-              await this._databaseService.goalsInProjects().save(newGoalInProject);
+              await this._databaseService.actionsInProjects().save(newActionInProject);
             } else {
               if (linked) {
                 // update an existing reference
-                goalInProject.goal.color = goal.color;
-                goalInProject.goal.name = goal.name;
-                goalInProject.position = goal.position;
+                actionInProject.action.color = action.color;
+                actionInProject.action.name = action.name;
+                actionInProject.position = action.position;
 
-                await this._databaseService.goalsInProjects().save(goalInProject);
-                await this._databaseService.goals().save(goalInProject.goal);
+                await this._databaseService.actionsInProjects().save(actionInProject);
+                await this._databaseService.actions().save(actionInProject.action);
               } else {
-                // create new goal and reference
-                const newGoal = new Goal();
+                // create new action and reference
+                const newAction = new Action();
 
-                newGoal.id = this._guidService.newGuid();
-                newGoal.color = goal.color;
-                newGoal.name = goal.name;
-                newGoal.isGlobal = false;
-                newGoal.createdDate = now;
+                newAction.id = this._guidService.newGuid();
+                newAction.color = action.color;
+                newAction.name = action.name;
+                newAction.isGlobal = false;
+                newAction.createdDate = now;
 
-                const createdGoal = await this._databaseService.goals().save(newGoal);
+                const createdAction = await this._databaseService.actions().save(newAction);
 
-                const newGoalInProject = new GoalInProject();
+                const newActionInProject = new ActionInProject();
 
-                newGoalInProject.id = this._guidService.newGuid();
-                newGoalInProject.projectId = project.id;
-                newGoalInProject.goalId = createdGoal.id;
-                newGoalInProject.position = goal.position;
+                newActionInProject.id = this._guidService.newGuid();
+                newActionInProject.projectId = project.id;
+                newActionInProject.actionId = createdAction.id;
+                newActionInProject.position = action.position;
 
-                await this._databaseService.goalsInProjects().save(newGoalInProject);
+                await this._databaseService.actionsInProjects().save(newActionInProject);
               }
             }
           }
