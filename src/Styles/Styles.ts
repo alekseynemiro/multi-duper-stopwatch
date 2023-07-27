@@ -42,6 +42,9 @@ export const styles = StyleSheet.create({
   w100: {
     width: "100%",
   },
+  mt16: {
+    marginTop: 16,
+  },
   pt8: {
     paddingTop: 8,
   },
