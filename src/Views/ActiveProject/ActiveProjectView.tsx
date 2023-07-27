@@ -35,7 +35,8 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
     onSessionFinished,
   } = props;
 
-  const sessionId = useRef<string | undefined>(undefined);
+  const sessionId = useRef<string | undefined>();
+  const currentProjectId = useRef<string | undefined>();
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [actions, setActions] = useState<Array<ActionModel>>([]);
   const [activeAction, setActiveAction] = useState<ActionModel | undefined>(undefined);
@@ -63,8 +64,11 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
           }
         ) || [],
       );
+
       setActiveAction(undefined);
       setShowLoadingIndicator(false);
+
+      currentProjectId.current = data.id;
 
       onLoad(data.name);
     },
@@ -198,7 +202,10 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
 
   useEffect(
     (): void => {
-      if (projectId) {
+      if (
+        projectId
+        && currentProjectId.current !== projectId
+      ) {
         load();
       }
     },
@@ -254,8 +261,14 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 return x;
               });
 
+              const newActiveAction = newActions.find(currentActionPredicate);
+
+              if (!newActiveAction) {
+                throw new Error(`Action ${actionId} not found.`);
+              }
+
               setActions(newActions);
-              setActiveAction(newActions.find(currentActionPredicate));
+              setActiveAction(newActiveAction);
 
               const session = await sessionService.create({
                 projectId: projectId as string,
@@ -306,8 +319,14 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
                 return x;
               });
 
+              const newActiveAction = newActions.find(currentActionPredicate);
+
+              if (!newActiveAction) {
+                throw new Error(`Action ${actionId} not found.`);
+              }
+
               setActions(newActions);
-              setActiveAction(newActions.find(currentActionPredicate));
+              setActiveAction(newActiveAction);
             }
           }}
         />

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useWindowDimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Routes } from "@config";
@@ -18,54 +18,38 @@ export function HomePage(): JSX.Element {
 
   const [sessionId, setSessionId] = useState<string | undefined>();
 
-  const activeProjectView = useMemo(
-    (): JSX.Element => {
-      return (
-        <ActiveProjectView
-          projectId={projectId}
-          onLoad={(projectName: string): void => {
-            navigation.setOptions({
-              title: projectName,
-            });
-          }}
-          onSessionStart={setSessionId}
-          onSessionFinished={() => {
-            if (sessionId) {
-              navigation.navigate(
-                Routes.Report,
-                {
-                  sessionId,
-                }
-              );
-            } else {
-              // TODO:
+  const activeProjectView = (
+    <ActiveProjectView
+      projectId={projectId}
+      onLoad={(projectName: string): void => {
+        navigation.setOptions({
+          title: projectName,
+        });
+      }}
+      onSessionStart={setSessionId}
+      onSessionFinished={() => {
+        if (sessionId) {
+          navigation.navigate(
+            Routes.Report,
+            {
+              sessionId,
             }
-          }}
-        />
-      );
-    },
-    [
-      navigation,
-      projectId,
-      sessionId,
-    ]
+          );
+        } else {
+          // TODO:
+        }
+      }}
+    />
   );
 
-  const reportView = useMemo(
-    (): JSX.Element => {
-      return sessionId
-        ? (
-          <ReportView
-            ref={reportViewRef}
-            sessionId={sessionId as string}
-          />
-        )
-        : <></>;
-    },
-    [
-      sessionId,
-    ]
-  );
+  const reportView = sessionId
+    ? (
+      <ReportView
+        ref={reportViewRef}
+        sessionId={sessionId}
+      />
+    )
+    : <></>;
 
   return (
     <Carousel
