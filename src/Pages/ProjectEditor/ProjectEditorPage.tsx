@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
@@ -15,6 +15,7 @@ import {
   UpdateProjectRequest,
   UpdateProjectRequestAction,
 } from "@dto/Projects";
+import { useFocusEffect } from "@react-navigation/native";
 import { IGuidService } from "@services/Guid";
 import { IProjectService } from "@services/Projects";
 import { styles } from "@styles";
@@ -33,14 +34,13 @@ export function ProjectEditorPage(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute<Routes.Project>();
 
-  const mounted = useRef(false);
-  const loaded = useRef(false);
-
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectEditorPageState["showLoadingIndicator"]>(true);
-  const [model, setModel] = useState<ProjectEditorPageState["model"]>({
+  const initialModel = useRef<ProjectModel>({
     name: "",
     actions: [],
   });
+
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState<ProjectEditorPageState["showLoadingIndicator"]>(true);
+  const [model, setModel] = useState<ProjectEditorPageState["model"]>(initialModel.current);
   const [showSelectColor, setShowSelectColor] = useState<ProjectEditorPageState["showSelectColor"]>(false);
   const [activeCode, setActiveCode] = useState<ProjectEditorPageState["activeCode"]>();
 
@@ -56,12 +56,15 @@ export function ProjectEditorPage(): JSX.Element {
 
   const validate = new ProjectModelValidator().validate;
 
-  const load = async(): Promise<void> => {
-    if (!route?.params?.projectId) {
-      loaded.current = true;
+  const load = useCallback(
+    async(): Promise<void> => {
+      if (!route.params?.projectId) {
+        setModel(initialModel.current);
       setShowLoadingIndicator(false);
       return;
     }
+
+      setShowLoadingIndicator(true);
 
     const data = await projectService.get(route.params.projectId);
 
@@ -78,9 +81,13 @@ export function ProjectEditorPage(): JSX.Element {
       }),
     });
 
-    loaded.current = true;
     setShowLoadingIndicator(false);
-  };
+    },
+    [
+      route,
+      initialModel,
+    ]
+  );
 
   const save = async(values: ProjectModel): Promise<void> => {
     if (route?.params?.projectId) {
@@ -142,17 +149,16 @@ export function ProjectEditorPage(): JSX.Element {
     });
   };
 
-  if (!mounted.current && !loaded.current) {
+  useFocusEffect(
+    useCallback(
+      (): void => {
     load();
-  }
-
-  useEffect(
-    (): void => {
-      mounted.current = true;
     },
-    []
+      [
+        load,
+      ]
+    )
   );
-
 
   if (showLoadingIndicator) {
     return (
