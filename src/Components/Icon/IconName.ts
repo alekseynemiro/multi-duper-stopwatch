@@ -14,4 +14,5 @@ export type IconName =
   | "application-settings"
   | "finish"
   | "elapsed-time"
-  | "details";
+  | "details"
+  | "back";
