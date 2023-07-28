@@ -200,7 +200,7 @@ export function ReportListPage(): JSX.Element {
                     ]}
                   >
                     <Button
-                      variant="light"
+                      variant="transparent"
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Report,
