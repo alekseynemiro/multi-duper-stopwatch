@@ -33,6 +33,10 @@ export const buttonStyles = StyleSheet.create({
     borderColor: colors.borderLight,
     borderWidth: 1,
   },
+  transparent: {
+    backgroundColor: colors.transparent,
+    borderColor: colors.transparent,
+  },
   primaryTitle: {
     color: colors.primaryContrast,
   },
@@ -53,5 +57,8 @@ export const buttonStyles = StyleSheet.create({
   },
   lightTitle: {
     color: colors.lightContrast,
+  },
+  transparentTitle: {
+    color: colors.text,
   },
 });
