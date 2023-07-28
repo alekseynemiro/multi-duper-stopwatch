@@ -12,6 +12,7 @@ const background = white;
 const border = black;
 const borderLight = "#e9ecef";
 const text = black;
+const headerText = "#666666";
 const error = danger;
 
 export const colors = {
@@ -33,6 +34,7 @@ export const colors = {
   borderLight,
 
   text,
+  headerText,
   error,
 
   primaryContrast: white,
