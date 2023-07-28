@@ -16,4 +16,5 @@ export type IconName =
   | "elapsed-time"
   | "details"
   | "back"
-  | "menu";
+  | "menu"
+  | "home";
