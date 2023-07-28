@@ -13,4 +13,5 @@ export const iconMap = new Map<IconName, string>()
   .set("finish", "flag-checkered")
   .set("elapsed-time", "clock")
   .set("details", "eye")
-  .set("back", "arrow-left");
+  .set("back", "arrow-left")
+  .set("menu", "bars");

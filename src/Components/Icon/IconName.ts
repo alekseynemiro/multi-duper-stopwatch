@@ -15,4 +15,5 @@ export type IconName =
   | "finish"
   | "elapsed-time"
   | "details"
-  | "back";
+  | "back"
+  | "menu";
