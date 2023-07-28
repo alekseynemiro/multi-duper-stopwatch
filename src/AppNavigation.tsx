@@ -40,13 +40,6 @@ export function AppNavigation(): JSX.Element {
           }}
         />
         <DrawerItem
-          label="Action list"
-          icon={actionListIcon}
-          onPress={(): void => {
-            // TODO:
-          }}
-        />
-        <DrawerItem
           label="Reports"
           icon={reportsIcon}
           onPress={(): void => {
