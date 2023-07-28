@@ -6,6 +6,7 @@
  */
 import React, { useLayoutEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppHeader } from "@components/AppHeader";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner } from "@data";
 import { HomePage } from "@pages/Home";
@@ -38,6 +39,10 @@ export function App(): JSX.Element {
         <Drawer.Navigator
           initialRouteName={Routes.Home}
           drawerContent={AppNavigation}
+          backBehavior="history"
+          screenOptions={{
+            header: AppHeader,
+          }}
         >
           <Drawer.Screen
             name={Routes.Home}
