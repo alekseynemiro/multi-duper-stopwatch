@@ -143,7 +143,12 @@ export function ReportListPage(): JSX.Element {
                       ellipsizeMode="tail"
                       numberOfLines={3}
                     >
-                      {x.sessionName ?? x.projectName}
+                      {
+                        x.sessionName
+                        || (
+                          `${x.projectName} #${x.id.substring(0, 5)}`
+                        )
+                      }
                     </Text>
                   </View>
                   {
