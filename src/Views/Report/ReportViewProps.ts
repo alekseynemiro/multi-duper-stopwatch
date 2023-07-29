@@ -6,6 +6,8 @@ export type ReportViewProps = {
 
   sessionId: string;
 
+  autoScrollToBottom?: boolean;
+
   load?(): Promise<void>;
 
 };

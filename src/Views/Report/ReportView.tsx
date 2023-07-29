@@ -16,13 +16,28 @@ import { reportViewStyles } from "./ReportViewStyles";
 
 const sessionLogService = serviceProvider.get<ISessionLogService>(ServiceIdentifier.SessionLogService);
 
-export const ReportView = forwardRef(({ sessionId }: ReportViewProps, ref): JSX.Element => {
+export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element => {
+  const {
+    sessionId,
+    autoScrollToBottom,
+  } = props;
+
   const mounted = useRef(false);
   const loaded = useRef(false);
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [logs, setLogs] = useState<Array<ReportItemModel>>([]);
   const [totalTime, setTotalTime] = useState<number>(0);
+
+  const scrollToBottom = useCallback(
+    (): void => {
+      scrollViewRef.current?.scrollToEnd({animated: true});
+    },
+    [
+      scrollViewRef,
+    ]
+  );
 
   const load = useCallback(
     async(): Promise<void> => {
@@ -57,8 +72,16 @@ export const ReportView = forwardRef(({ sessionId }: ReportViewProps, ref): JSX.
 
       setTotalTime(totalElapsedTime);
       setShowLoadingIndicator(false);
+
+      if (autoScrollToBottom) {
+        scrollToBottom();
+      }
     },
-    [sessionId]
+    [
+      sessionId,
+      autoScrollToBottom,
+      scrollToBottom,
+    ]
   );
 
   useImperativeHandle(
@@ -105,7 +128,9 @@ export const ReportView = forwardRef(({ sessionId }: ReportViewProps, ref): JSX.
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      ref={scrollViewRef}
+    >
       <View
         style={[
           styles.table,

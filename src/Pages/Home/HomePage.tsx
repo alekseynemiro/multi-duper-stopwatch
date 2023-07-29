@@ -47,6 +47,7 @@ export function HomePage(): JSX.Element {
       <ReportView
         ref={reportViewRef}
         sessionId={sessionId}
+        autoScrollToBottom={true}
       />
     )
     : <></>;
