@@ -2,10 +2,14 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
+import { Routes } from "@config";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
+import { useRoute } from "@utils/NavigationUtils";
 import { appHeaderStyles } from "./AppHeaderStyles";
 
 export function AppHeader(props: DrawerHeaderProps): JSX.Element {
+  const route = useRoute();
+
   return (
     <View
       style={appHeaderStyles.container}
@@ -22,6 +26,7 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
       </Button>
       {
         props.navigation.canGoBack()
+        && route.name !== Routes.Home
         && (
           <Button
             variant="transparent"
