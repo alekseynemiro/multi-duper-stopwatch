@@ -10,6 +10,9 @@ export const buttonStyles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
+  disabled: {
+    opacity: 0.75,
+  },
   primary: {
     backgroundColor: colors.primary,
   },

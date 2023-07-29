@@ -22,6 +22,7 @@ export function Button(props: ButtonProps): JSX.Element {
         style={[
           buttonStyles.button,
           buttonStyles[variant ?? "primary"],
+          disabled && buttonStyles.disabled,
           style,
         ]}
         onPress={(): void => {
