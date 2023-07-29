@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { DurationFormatter } from "@components/DurationFormatter";
@@ -6,6 +6,7 @@ import { Icon } from "@components/Icon";
 import { TriangleMarker } from "@components/TriangleMarker";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { GetAllResultItem } from "@dto/SessionLogs";
+import { useFocusEffect } from "@react-navigation/native";
 import { ISessionLogService } from "@services/Sessions";
 import { colors, styles } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
@@ -22,8 +23,6 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     autoScrollToBottom,
   } = props;
 
-  const mounted = useRef(false);
-  const loaded = useRef(false);
   const scrollViewRef = useRef<ScrollView | null>(null);
 
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
@@ -46,8 +45,6 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       if (!sessionId) {
         throw new Error("'sessionId' is required. Value must not be empty.");
       }
-
-      loaded.current = true;
 
       const data = await sessionLogService.getAll(sessionId);
       let totalElapsedTime = 0;
@@ -94,31 +91,16 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     }
   );
 
-  if (
-    !mounted.current
-    && !loaded.current
-    && sessionId
-  ) {
-    load();
-  }
 
-  useEffect(
-    (): void => {
-      mounted.current = true;
-    },
-    []
-  );
-
-  useEffect(
-    (): void => {
-      if (sessionId) {
+  useFocusEffect(
+    useCallback(
+      (): void => {
         load();
-      }
-    },
-    [
-      sessionId,
-      load,
-    ]
+      },
+      [
+        load,
+      ]
+    )
   );
 
   if (showLoadingIndicator) {
