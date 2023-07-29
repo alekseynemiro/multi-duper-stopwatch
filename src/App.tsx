@@ -51,6 +51,7 @@ export function App(): JSX.Element {
           backBehavior="history"
           screenOptions={{
             header: appHeader,
+            unmountOnBlur: true,
           }}
         >
           <Drawer.Screen
