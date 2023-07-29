@@ -4,7 +4,7 @@
  *
  * @format
  */
-import React, { useLayoutEffect } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
@@ -14,7 +14,7 @@ import { ProjectEditorPage } from "@pages/ProjectEditor";
 import { ProjectListPage } from "@pages/ProjectList";
 import { ReportPage } from "@pages/Report";
 import { ReportListPage } from "@pages/ReportList";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { AppNavigation } from "./AppNavigation";
 
@@ -23,6 +23,15 @@ const Drawer = createDrawerNavigator();
 const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
 
 export function App(): JSX.Element {
+  const appHeader = useCallback(
+    (props: DrawerHeaderProps): JSX.Element => {
+      return (
+        <AppHeader {...props} />
+      );
+    },
+    []
+  );
+
   useLayoutEffect(
     (): void => {
       // TODO:
@@ -41,7 +50,7 @@ export function App(): JSX.Element {
           drawerContent={AppNavigation}
           backBehavior="history"
           screenOptions={{
-            header: AppHeader,
+            header: appHeader,
           }}
         >
           <Drawer.Screen
