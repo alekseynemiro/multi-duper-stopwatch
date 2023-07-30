@@ -91,7 +91,6 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     }
   );
 
-
   useFocusEffect(
     useCallback(
       (): void => {
