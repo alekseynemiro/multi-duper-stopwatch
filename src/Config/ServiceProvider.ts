@@ -13,6 +13,8 @@ import { ProjectService } from "@services/Projects/ProjectService";
 import { ISessionLogService, ISessionService } from "@services/Sessions";
 import { SessionLogService } from "@services/Sessions/SessionLogService";
 import { SessionService } from "@services/Sessions/SessionService";
+import { ISettingsService } from "@services/Settings";
+import { SettingsService } from "@services/Settings/SettingsService";
 import { IStopwatchService } from "@services/Stopwatch";
 import { StopwatchService } from "@services/Stopwatch/StopwatchService";
 import { Container } from "inversify";
@@ -29,5 +31,6 @@ serviceProvider.bind<ISessionService>(ServiceIdentifier.SessionService).to(Sessi
 serviceProvider.bind<ISessionLogService>(ServiceIdentifier.SessionLogService).to(SessionLogService).inSingletonScope();
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
+serviceProvider.bind<ISettingsService>(ServiceIdentifier.SettingsService).to(SettingsService).inSingletonScope();
 
 export { serviceProvider };

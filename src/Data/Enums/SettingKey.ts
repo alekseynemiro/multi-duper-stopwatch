@@ -1,3 +1,4 @@
 export enum SettingKey {
-  // TODO
+  Language = 0,
+  LastSessionId = 1,
 }
