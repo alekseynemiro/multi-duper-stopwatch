@@ -44,4 +44,7 @@ export const styles = StyleSheet.create({
   bold: {
     fontWeight: "600",
   },
+  fullFlex: {
+    flex: 1,
+  },
 });

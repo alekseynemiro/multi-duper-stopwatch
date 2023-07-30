@@ -15,6 +15,7 @@ import { ReportPage } from "@pages/Report";
 import { ReportListPage } from "@pages/ReportList";
 import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+import { styles } from "@styles";
 import { InitialScreen } from "@views/InitialScreen";
 import { AppNavigation } from "./AppNavigation";
 
@@ -32,7 +33,7 @@ export function App(): JSX.Element {
 
   return (
     <GestureHandlerRootView
-      style={{ flex: 1 }}
+      style={styles.fullFlex}
     >
       <NavigationContainer>
         <InitialScreen />
