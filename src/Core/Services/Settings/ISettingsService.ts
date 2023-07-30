@@ -5,8 +5,8 @@ export interface ISettingsService {
 
   getAll(): Promise<GetAllResult>;
 
-  get(key: SettingKey): Promise<ArrayBuffer | undefined>;
+  get(key: SettingKey): Promise<Blob | undefined>;
 
-  set(key: SettingKey, value: ArrayBuffer | undefined): Promise<void>;
+  set(key: SettingKey, value: Blob | undefined): Promise<void>;
 
 }

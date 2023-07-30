@@ -17,6 +17,6 @@ export class Setting {
     type: "blob",
     nullable: true,
   })
-  value?: ArrayBuffer;
+  value?: Blob;
 
 }

@@ -1,3 +1,3 @@
 import { SettingKey } from "@data";
 
-export type GetAllResult = Map<SettingKey, ArrayBuffer | undefined>;
+export type GetAllResult = Map<SettingKey, Blob | undefined>;

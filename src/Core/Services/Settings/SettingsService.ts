@@ -29,7 +29,7 @@ export class SettingsService implements ISettingsService {
     return this._databaseService.execute(
       async(): Promise<GetAllResult> => {
         const data = await this._databaseService.settings().find();
-        let result: GetAllResult = new Map<SettingKey, ArrayBuffer | undefined>();
+        let result: GetAllResult = new Map<SettingKey, Blob | undefined>();
 
         for (const setting of data) {
           result.set(setting.key, setting.value);
@@ -40,7 +40,7 @@ export class SettingsService implements ISettingsService {
     );
   }
 
-  public get(key: SettingKey): Promise<ArrayBuffer | undefined> {
+  public get(key: SettingKey): Promise<Blob | undefined> {
     this._loggerService.debug(
       SettingsService.name,
       this.get.name,
@@ -48,20 +48,20 @@ export class SettingsService implements ISettingsService {
     );
 
     return this._databaseService.execute(
-      async(): Promise<ArrayBuffer | undefined> => {
+      async(): Promise<Blob | undefined> => {
         const result = await this._databaseService.settings()
-        .findOne({
-          where: {
-            key,
-          },
-        });
+          .findOne({
+            where: {
+              key,
+            },
+          });
 
         return result?.value;
       }
     );
   }
 
-  public set(key: SettingKey, value: ArrayBuffer | undefined): Promise<void> {
+  public set(key: SettingKey, value: Blob | undefined): Promise<void> {
     this._loggerService.debug(
       SettingsService.name,
       this.set.name,
@@ -79,7 +79,7 @@ export class SettingsService implements ISettingsService {
         });
 
         if (setting) {
-          setting.value = setting.value;
+          setting.value = value;
 
           await this._databaseService.settings().save(setting);
         } else {
