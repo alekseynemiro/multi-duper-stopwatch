@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
-export const initialScreenStyles = StyleSheet.create({
+export const initialScreenPageStyles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",

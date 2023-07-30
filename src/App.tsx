@@ -1,14 +1,9 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
 import { Routes } from "@config";
 import { HomePage } from "@pages/Home";
+import { InitialScreenPage } from "@pages/InitialScreen";
 import { ProjectEditorPage } from "@pages/ProjectEditor";
 import { ProjectListPage } from "@pages/ProjectList";
 import { ReportPage } from "@pages/Report";
@@ -16,7 +11,6 @@ import { ReportListPage } from "@pages/ReportList";
 import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { styles } from "@styles";
-import { InitialScreen } from "@views/InitialScreen";
 import { AppNavigation } from "./AppNavigation";
 
 const Drawer = createDrawerNavigator();
@@ -36,9 +30,8 @@ export function App(): JSX.Element {
       style={styles.fullFlex}
     >
       <NavigationContainer>
-        <InitialScreen />
         <Drawer.Navigator
-          initialRouteName={Routes.Home}
+          initialRouteName={Routes.Init}
           drawerContent={AppNavigation}
           backBehavior="history"
           screenOptions={{
@@ -46,6 +39,13 @@ export function App(): JSX.Element {
             unmountOnBlur: true,
           }}
         >
+          <Drawer.Screen
+            name={Routes.Init}
+            component={InitialScreenPage}
+            options={{
+              headerShown: false,
+            }}
+          />
           <Drawer.Screen
             name={Routes.Home}
             component={HomePage}

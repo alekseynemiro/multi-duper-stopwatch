@@ -1,1 +1,0 @@
-export { InitialScreen } from "./InitialScreen";

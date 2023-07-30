@@ -1,4 +1,5 @@
 export enum Routes {
+  Init = "Init",
   Home = "Home",
   Project = "Project",
   ProjectList = "ProjectList",

@@ -1,22 +1,28 @@
 import { useCallback, useState } from "react";
 import React, { View } from "react-native";
 import { ActivityIndicator } from "@components/ActivityIndicator";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
-import { initialScreenStyles } from "./InitialScreenStyles";
+import { useNavigation } from "@utils/NavigationUtils";
+import { initialScreenPageStyles } from "./InitialScreenPageStyles";
 
 const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
 
-export function InitialScreen(): JSX.Element {
-  const [loaded, setLoaded] = useState(false);
+export function InitialScreenPage(): JSX.Element {
+  const [loaded] = useState(false);
+
+  const navigation = useNavigation();
 
   const load = useCallback(
     async(): Promise<void> => {
       await migrationRunner.run();
-      setLoaded(true);
+
+      navigation.navigate(Routes.Home);
     },
-    []
+    [
+      navigation,
+    ]
   );
 
   useFocusEffect(
@@ -38,10 +44,10 @@ export function InitialScreen(): JSX.Element {
 
   return (
     <View
-      style={initialScreenStyles.container}
+      style={initialScreenPageStyles.container}
     >
       <View
-        style={initialScreenStyles.loader}
+        style={initialScreenPageStyles.loader}
       >
         <ActivityIndicator
           size="x-large"
