@@ -291,7 +291,7 @@ export class InitialMigration implements MigrationInterface {
           },
           {
             name: "Value",
-            type: "blob",
+            type: "text",
             isNullable: true,
           },
         ],

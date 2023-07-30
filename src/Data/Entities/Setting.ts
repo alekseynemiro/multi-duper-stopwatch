@@ -14,9 +14,8 @@ export class Setting {
 
   @Column({
     name: "Value",
-    type: "blob",
     nullable: true,
   })
-  value?: Blob;
+  value?: string;
 
 }

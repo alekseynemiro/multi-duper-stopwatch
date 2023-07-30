@@ -29,7 +29,7 @@ export class SettingsService implements ISettingsService {
     return this._databaseService.execute(
       async(): Promise<GetAllResult> => {
         const data = await this._databaseService.settings().find();
-        let result: GetAllResult = new Map<SettingKey, Blob | undefined>();
+        let result: GetAllResult = new Map<SettingKey, string | undefined>();
 
         for (const setting of data) {
           result.set(setting.key, setting.value);
@@ -40,7 +40,7 @@ export class SettingsService implements ISettingsService {
     );
   }
 
-  public get(key: SettingKey): Promise<Blob | undefined> {
+  public get(key: SettingKey): Promise<string | undefined> {
     this._loggerService.debug(
       SettingsService.name,
       this.get.name,
@@ -48,7 +48,7 @@ export class SettingsService implements ISettingsService {
     );
 
     return this._databaseService.execute(
-      async(): Promise<Blob | undefined> => {
+      async(): Promise<string | undefined> => {
         const result = await this._databaseService.settings()
           .findOne({
             where: {
@@ -61,7 +61,7 @@ export class SettingsService implements ISettingsService {
     );
   }
 
-  public set(key: SettingKey, value: Blob | undefined): Promise<void> {
+  public set(key: SettingKey, value: string | undefined): Promise<void> {
     this._loggerService.debug(
       SettingsService.name,
       this.set.name,
