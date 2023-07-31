@@ -6,6 +6,8 @@ export interface IStopwatchService {
 
   readonly hasOffset: boolean;
 
+  readonly isRunning: boolean;
+
   start(): void;
 
   stop(): void;

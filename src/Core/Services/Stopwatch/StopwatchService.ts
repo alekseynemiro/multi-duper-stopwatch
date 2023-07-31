@@ -35,6 +35,10 @@ export class StopwatchService implements IStopwatchService {
     return this._offset !== undefined;
   }
 
+  public get isRunning(): boolean {
+    return this._id !== undefined;
+  }
+
   constructor(
     @inject(ServiceIdentifier.DateTimeService) dateTimeService: IDateTimeService,
     @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
