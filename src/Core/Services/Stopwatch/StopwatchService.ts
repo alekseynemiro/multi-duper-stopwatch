@@ -80,7 +80,9 @@ export class StopwatchService implements IStopwatchService {
       StopwatchService.name,
       this.stop.name,
       "id",
-      this._id
+      this._id,
+      "elapsed",
+      this._elapsed
     );
 
     if (this._id) {
