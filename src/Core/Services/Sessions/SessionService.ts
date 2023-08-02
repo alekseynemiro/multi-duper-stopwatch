@@ -282,6 +282,25 @@ export class SessionService implements ISessionService {
         const startDate = session.actionStartDate;
         let elapsedTime = request.date.getTime() - startDate.getTime();
 
+        const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
+          .findOne({
+            where: {
+              session,
+              finishDate: request.date,
+            },
+          });
+
+        if (existingLogEntryWithSameDate) {
+          this._loggerService.debug(
+            SessionService.name,
+            this.pause.name,
+            "sessionId",
+            request.sessionId,
+            `Pause without log because the current status ${SessionState[SessionState.Run]} and an entry with the date ${request.date} was found in the log.`,
+            "Elapsed time",
+            elapsedTime
+          );
+        } else {
         this._loggerService.debug(
           SessionService.name,
           this.pause.name,
