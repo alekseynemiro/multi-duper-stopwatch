@@ -188,7 +188,7 @@ export class SessionService implements ISessionService {
 
             session.action = action;
             session.actionStartDate = request.date;
-            session.finishDate = undefined;
+            session.actionFinishDate = undefined;
           }
         } else if (session.state === SessionState.Paused) {
           if (session.action.id !== action.id) {
@@ -205,7 +205,7 @@ export class SessionService implements ISessionService {
             );
 
             session.action = action;
-            session.finishDate = undefined;
+            session.actionFinishDate = undefined;
           } else {
             this._loggerService.debug(
               SessionService.name,
@@ -220,7 +220,7 @@ export class SessionService implements ISessionService {
 
           session.state = SessionState.Run;
           session.actionStartDate = request.date;
-          session.finishDate = undefined;
+          session.actionFinishDate = undefined;
         } else {
           throw new Error(`The state ${session.state} is not supported.`);
         }
