@@ -6,6 +6,7 @@ import {
   FinishRequest,
   GetAllResult,
   GetAllResultItem,
+  GetResult,
   PauseRequest,
   RenameRequest,
   ToggleDetailsResult,
@@ -493,6 +494,43 @@ export class SessionService implements ISessionService {
               finishDate: x.finishDate as Date,
             };
           }),
+        };
+
+        return result;
+      }
+    );
+  }
+
+  public async get(sessionId: string): Promise<GetResult> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.get.name,
+      sessionId
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<GetResult> => {
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: sessionId,
+            },
+            relations: {
+              project: true,
+              action: true,
+            } as any,
+          });
+
+        const result: GetResult = {
+          id: session.id,
+          projectId: session.project.id,
+          actionId: session.action?.id,
+          avgSpeed: session.avgSpeed,
+          distance: session.distance,
+          elapsedTime: session.elapsedTime,
+          maxSpeed: session.maxSpeed,
+          steps: session.steps,
+          state: session.state,
         };
 
         return result;

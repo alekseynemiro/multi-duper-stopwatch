@@ -3,6 +3,7 @@ import {
   CreateSessionResult,
   FinishRequest,
   GetAllResult,
+  GetResult,
   PauseRequest,
   RenameRequest,
   ToggleRequest,
@@ -22,5 +23,7 @@ export interface ISessionService {
   rename(request: RenameRequest): Promise<void>;
 
   getAll(): Promise<GetAllResult>;
+
+  get(sessionId: string): Promise<GetResult>;
 
 }
