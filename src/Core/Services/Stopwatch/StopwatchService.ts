@@ -49,6 +49,16 @@ export class StopwatchService implements IStopwatchService {
     this.timerHandler = this.timerHandler.bind(this);
   }
 
+  public set(elapsed: number): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.set.name,
+      elapsed
+    );
+
+    this._elapsed = elapsed;
+  }
+
   public start(): void {
     this._loggerService.debug(
       StopwatchService.name,

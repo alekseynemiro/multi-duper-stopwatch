@@ -8,6 +8,8 @@ export interface IStopwatchService {
 
   readonly isRunning: boolean;
 
+  set(elapsed: number): void;
+
   start(): void;
 
   stop(): void;
