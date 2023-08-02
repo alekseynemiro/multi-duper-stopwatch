@@ -19,6 +19,8 @@ import { ISettingsService } from "@services/Settings";
 import { SettingsService } from "@services/Settings/SettingsService";
 import { IStopwatchService } from "@services/Stopwatch";
 import { StopwatchService } from "@services/Stopwatch/StopwatchService";
+import { ILocalStorageService } from "@services/Storage";
+import { LocalStorageService } from "@services/Storage/LocalStorageService";
 import { Container } from "inversify";
 import { ServiceIdentifier } from "./ServiceIdentifier";
 
@@ -35,5 +37,6 @@ serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(Mig
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 serviceProvider.bind<ISettingsService>(ServiceIdentifier.SettingsService).to(SettingsService).inSingletonScope();
 serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
+serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
 
 export { serviceProvider };

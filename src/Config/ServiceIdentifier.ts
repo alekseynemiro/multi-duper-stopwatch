@@ -12,4 +12,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("StopwatchService")
   .add("SettingsService")
   .add("JsonService")
+  .add("LocalStorageService")
   .build();
