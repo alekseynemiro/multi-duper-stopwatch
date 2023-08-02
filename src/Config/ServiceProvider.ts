@@ -12,6 +12,8 @@ import { ILoggerService } from "@services/Logger";
 import { LoggerService } from "@services/Logger/LoggerService";
 import { IProjectService } from "@services/Projects";
 import { ProjectService } from "@services/Projects/ProjectService";
+import { IQueueService } from "@services/Queue";
+import { QueueService } from "@services/Queue/QueueService";
 import { ISessionLogService, ISessionService } from "@services/Sessions";
 import { SessionLogService } from "@services/Sessions/SessionLogService";
 import { SessionService } from "@services/Sessions/SessionService";
@@ -36,6 +38,7 @@ serviceProvider.bind<ISessionLogService>(ServiceIdentifier.SessionLogService).to
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 serviceProvider.bind<ISettingsService>(ServiceIdentifier.SettingsService).to(SettingsService).inSingletonScope();
+serviceProvider.bind<IQueueService>(ServiceIdentifier.QueueService).to(QueueService).inSingletonScope();
 serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
 serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
 
