@@ -6,6 +6,8 @@ import { IDateTimeService } from "@services/DateTime";
 import { DateTimeService } from "@services/DateTime/DateTimeService";
 import { IGuidService } from "@services/Guid";
 import { GuidService } from "@services/Guid/GuidService";
+import { IJsonService } from "@services/Json";
+import { JsonService } from "@services/Json/JsonService";
 import { ILoggerService } from "@services/Logger";
 import { LoggerService } from "@services/Logger/LoggerService";
 import { IProjectService } from "@services/Projects";
@@ -32,5 +34,6 @@ serviceProvider.bind<ISessionLogService>(ServiceIdentifier.SessionLogService).to
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 serviceProvider.bind<ISettingsService>(ServiceIdentifier.SettingsService).to(SettingsService).inSingletonScope();
+serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
 
 export { serviceProvider };

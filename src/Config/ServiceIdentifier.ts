@@ -11,4 +11,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("SessionLogService")
   .add("StopwatchService")
   .add("SettingsService")
+  .add("JsonService")
   .build();
