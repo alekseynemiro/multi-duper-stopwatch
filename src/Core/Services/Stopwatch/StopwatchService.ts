@@ -121,6 +121,8 @@ export class StopwatchService implements IStopwatchService {
     );
 
     this._offset = this._snapped;
+
+    this.onTick();
   }
 
   public clearOffset(): void {
@@ -130,6 +132,8 @@ export class StopwatchService implements IStopwatchService {
     );
 
     this._offset = undefined;
+
+    this.onTick();
   }
 
   public addTickListener(callback: StopwatchTickEvent): void {
@@ -158,13 +162,14 @@ export class StopwatchService implements IStopwatchService {
 
   private timerHandler(): void {
     const now = this._dateTimeService.now;
-
     this._elapsed = this._elapsed + (now.getTime() - this._start);
-
-    const elapsed = this._elapsed - (this._offset ?? 0);
-
     this._start = now.getTime();
 
+    this.onTick();
+  }
+
+  private onTick(): void {
+    const elapsed = this._elapsed - (this._offset ?? 0);
     const milliseconds = Math.floor((elapsed % 1000) / 10); // <-- round to hundredths for display convenience
     const seconds = Math.floor((elapsed / 1000) % 60);
     const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
