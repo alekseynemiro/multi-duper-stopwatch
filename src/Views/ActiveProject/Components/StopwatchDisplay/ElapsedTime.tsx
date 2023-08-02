@@ -9,7 +9,9 @@ import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
 const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
 
 export function ElapsedTime(): JSX.Element {
-  const [elapsed, setElapsed] = useState<TimeSpan>(getTimeSpan(0));
+  const [elapsed, setElapsed] = useState<TimeSpan>(
+    getTimeSpan(stopwatchService.elapsed)
+  );
 
   useEffect(
     (): { (): void } => {
