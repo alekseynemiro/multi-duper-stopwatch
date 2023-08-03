@@ -71,10 +71,25 @@ export class DatabaseService implements IDatabaseService {
     return this._dataSource.destroy();
   }
 
-  public async execute<TResult>(action: { (): Promise<TResult> }): Promise<TResult> {
-    this._loggerService.debug(DatabaseService.name, this.execute.name);
+  public async execute<TResult>(action: { (): Promise<TResult> }, name?: string | undefined): Promise<TResult> {
+    try {
+      this._loggerService.debug(
+        DatabaseService.name,
+        this.execute.name,
+        name ?? "action"
+      );
+
     await this.open();
+
     return await action();
+    } finally {
+      this._loggerService.debug(
+        DatabaseService.name,
+        this.execute.name,
+        name ?? "action",
+        "completed"
+      );
+    }
   }
 
 }

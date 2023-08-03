@@ -29,6 +29,6 @@ export interface IDatabaseService {
 
   close(): Promise<void>;
 
-  execute<TResult>(action: { (): Promise<TResult> }): Promise<TResult>;
+  execute<TResult>(action: { (): Promise<TResult> }, name?: string | undefined): Promise<TResult>;
 
 }
