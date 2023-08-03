@@ -225,6 +225,13 @@ export class SessionService implements ISessionService {
           throw new Error(`The state ${session.state} is not supported.`);
         }
 
+        if (log) {
+          session.distance += log.distance;
+          session.elapsedTime += log.elapsedTime;
+          session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
+          session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
+        }
+
         await this._databaseService.sessions().save(session);
 
         const result: ToggleResult = {
@@ -303,31 +310,31 @@ export class SessionService implements ISessionService {
             elapsedTime
           );
         } else {
-        this._loggerService.debug(
-          SessionService.name,
-          this.pause.name,
-          "sessionId",
-          request.sessionId,
-          `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
-          "Elapsed time",
-          elapsedTime
-        );
+          this._loggerService.debug(
+            SessionService.name,
+            this.pause.name,
+            "sessionId",
+            request.sessionId,
+            `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
+            "Elapsed time",
+            elapsedTime
+          );
 
           log = {
-          id: this._guidService.newGuid(),
-          session,
-          action: { ...session.action }, // to kill reference
-          distance: request.distance,
-          avgSpeed: request.avgSpeed,
-          maxSpeed: request.maxSpeed,
-          steps: 0,
-          elapsedTime,
-          startDate,
-          finishDate: request.date,
-          createdDate: this._dateTimeService.now,
-        };
+            id: this._guidService.newGuid(),
+            session,
+            action: { ...session.action }, // to kill reference
+            distance: request.distance,
+            avgSpeed: request.avgSpeed,
+            maxSpeed: request.maxSpeed,
+            steps: 0,
+            elapsedTime,
+            startDate,
+            finishDate: request.date,
+            createdDate: this._dateTimeService.now,
+          };
 
-        await this._databaseService.sessionLogs().insert(log);
+          await this._databaseService.sessionLogs().insert(log);
         }
 
         if (log) {
