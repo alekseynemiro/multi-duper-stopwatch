@@ -282,6 +282,7 @@ export class SessionService implements ISessionService {
 
         const startDate = session.actionStartDate;
         let elapsedTime = request.date.getTime() - startDate.getTime();
+        let log: SessionLog | undefined;
 
         const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
           .findOne({
@@ -312,7 +313,7 @@ export class SessionService implements ISessionService {
           elapsedTime
         );
 
-        const log: SessionLog = {
+          log = {
           id: this._guidService.newGuid(),
           session,
           action: { ...session.action }, // to kill reference
@@ -327,9 +328,17 @@ export class SessionService implements ISessionService {
         };
 
         await this._databaseService.sessionLogs().insert(log);
+        }
+
+        if (log) {
+          session.distance += log.distance;
+          session.elapsedTime += log.elapsedTime;
+          session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
+          session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
+          session.actionFinishDate = log.finishDate;
+        }
 
         session.state = SessionState.Paused;
-        session.actionFinishDate = request.date;
 
         await this._databaseService.sessions().save(session);
       }
