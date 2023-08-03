@@ -2,7 +2,10 @@ import { Routes } from "./Routes";
 
 export type RouteParamList = {
 
-  [Routes.Home]: { projectId: string } | undefined;
+  [Routes.Home]: {
+    projectId?: string | undefined,
+    sessionId?: string | undefined,
+  } | undefined;
 
   [Routes.ProjectList]: undefined;
 

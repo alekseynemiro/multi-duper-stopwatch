@@ -1,9 +1,11 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, useWindowDimensions,View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { useFocusEffect } from "@react-navigation/native";
+import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { IProjectService } from "@services/Projects";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
@@ -11,25 +13,81 @@ import { ReportView, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
 
   const navigation = useNavigation();
   const route = useRoute<Routes.Home>();
-  const projectId = route.params?.projectId;
 
   const reportViewRef = useRef<ReportViewProps>();
 
-  const [sessionId, setSessionId] = useState<string | undefined>();
+  const [projectId, setProjectId] = useState<string | undefined>(route.params?.projectId);
+  const [sessionId, setSessionId] = useState<string | undefined>(route.params?.sessionId);
+  const [loading, setLoading] = useState<boolean>(true);
   const [canOpenProject, setCanOpenProject] = useState<boolean>(false);
 
   const load = useCallback(
     async(): Promise<void> => {
+      if (activeProjectService.project?.id !== projectId) {
+        await activeProjectService.useProjectId(projectId);
+      }
+
       const projects = await projectService.getAll();
 
       setCanOpenProject(projects.items.length > 0);
+      setLoading(false);
     },
+    [
+      projectId,
+    ]
+  );
+
+  useEffect(
+    (): { (): void } => {
+      const sessionStartedSubscription = activeProjectService.addEventListener(
+        "session-loaded",
+        (): void => {
+          activeProjectService.session && setSessionId(activeProjectService.session.id);
+          activeProjectService.project && setProjectId(activeProjectService.project.id);
+        }
+      );
+
+      const sessionFinishedSubscription = activeProjectService.addEventListener(
+        "session-finished",
+        (e: ActiveProjectServiceEventArgs): void => {
+          navigation.navigate(
+            Routes.Report,
+            {
+              sessionId: e.sessionId,
+            }
+          );
+        }
+      );
+
+      const projectLoadedSubscription = activeProjectService.addEventListener(
+        "project-loaded",
+        (): void => {
+          navigation.setOptions({
+            title: activeProjectService.project?.name,
+          });
+        }
+      );
+
+      return async(): Promise<void> => {
+        sessionStartedSubscription.remove();
+        sessionFinishedSubscription.remove();
+        projectLoadedSubscription.remove();
+
+        if (activeProjectService.session) {
+          await activeProjectService.pause();
+        }
+
+        await activeProjectService.reset();
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -43,6 +101,12 @@ export function HomePage(): JSX.Element {
       ]
     )
   );
+
+  if (loading) {
+    return (
+      <ActivityIndicator />
+    );
+  }
 
   if (!projectId) {
     return (
@@ -76,27 +140,7 @@ export function HomePage(): JSX.Element {
   }
 
   const activeProjectView = (
-    <ActiveProjectView
-      projectId={projectId}
-      onLoad={(projectName: string): void => {
-        navigation.setOptions({
-          title: projectName,
-        });
-      }}
-      onSessionStart={setSessionId}
-      onSessionFinished={() => {
-        if (sessionId) {
-          navigation.navigate(
-            Routes.Report,
-            {
-              sessionId,
-            }
-          );
-        } else {
-          // TODO:
-        }
-      }}
-    />
+    <ActiveProjectView />
   );
 
   const reportView = sessionId

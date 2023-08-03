@@ -2,9 +2,9 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
+import { ActionStatus } from "@dto/ActiveProject";
 import { colors, defaultFontSize } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
-import { ActionStatus } from "../../Models";
 import { ActionProps } from "./ActionProps";
 import { actionStyles } from "./ActionStyles";
 

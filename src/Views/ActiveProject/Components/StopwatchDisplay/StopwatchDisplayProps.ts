@@ -1,4 +1,4 @@
-import { ActionModel } from "../../Models";
+import { Action as ActionModel } from "@dto/ActiveProject";
 
 export type StopwatchDisplayProps = {
 

@@ -4,10 +4,12 @@ import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
+import { IActiveProjectService } from "@services/ActiveProject";
 import { useNavigation } from "@utils/NavigationUtils";
 import { initialScreenPageStyles } from "./InitialScreenPageStyles";
 
 const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function InitialScreenPage(): JSX.Element {
   const [loaded] = useState(false);
@@ -18,7 +20,17 @@ export function InitialScreenPage(): JSX.Element {
     async(): Promise<void> => {
       await migrationRunner.run();
 
-      navigation.navigate(Routes.Home);
+      await activeProjectService.checkForCrash();
+      await activeProjectService.reset();
+      await activeProjectService.useLastSessionId();
+
+      navigation.navigate(
+        Routes.Home,
+        {
+          projectId: activeProjectService.project?.id,
+          sessionId: activeProjectService.session?.id,
+        }
+      );
     },
     [
       navigation,

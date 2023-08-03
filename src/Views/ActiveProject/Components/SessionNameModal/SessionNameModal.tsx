@@ -6,7 +6,7 @@ import { TextInputField } from "@components/TextInputField";
 import { SessionNameModalProps } from "./SessionNameModalProps";
 import { sessionNameModalStyles } from "./SessionNameModalStyles";
 
-export function SessionNameModal({ show, onComplete }: SessionNameModalProps): JSX.Element {
+export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModalProps): JSX.Element {
   const [sessionName, setSessionName] = useState<string | undefined>();
 
   if (!show) {
@@ -38,9 +38,18 @@ export function SessionNameModal({ show, onComplete }: SessionNameModalProps): J
               <Button
                 variant="primary"
                 title="Ok"
+                style={sessionNameModalStyles.button}
                 onPress={(): void => {
-                  onComplete(sessionName);
+                  onConfirm({
+                    sessionName,
+                  });
                 }}
+              />
+              <Button
+                variant="secondary"
+                title="Cancel"
+                style={sessionNameModalStyles.button}
+                onPress={onCancel}
               />
             </View>
           </View>

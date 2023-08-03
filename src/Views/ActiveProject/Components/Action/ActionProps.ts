@@ -1,5 +1,5 @@
 import { ColorPalette } from "@data";
-import { ActionStatus } from "../../Models";
+import { ActionStatus } from "@dto/ActiveProject";
 
 export type ActionProps = {
 

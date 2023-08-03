@@ -4,57 +4,50 @@ import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { GetResultAction } from "@dto/Projects";
-import { IDateTimeService } from "@services/DateTime";
-import { IProjectService } from "@services/Projects";
-import { ISessionService } from "@services/Sessions";
-import { IStopwatchService } from "@services/Stopwatch";
-import { ActiveProjectViewProps } from "./ActiveProjectViewProps";
+import { Action as ActionModel, ActionStatus } from "@dto/ActiveProject";
+import { ActiveProjectFinishResult, IActiveProjectService } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
   HorizontalListLayoutActionPressEventArgs,
   SessionNameModal,
+  SessionNameModalEventArgs,
   StopwatchDisplay,
 } from "./Components";
-import { ActionModel, ActionStatus } from "./Models";
 
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
-const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
-const dateTimeService = serviceProvider.get<IDateTimeService>(ServiceIdentifier.DateTimeService);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
-export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
+export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
   const loaded = useRef(false);
 
-  const {
-    projectId,
-    onLoad,
-    onSessionStart,
-    onSessionFinished,
-  } = props;
-
-  const sessionId = useRef<string | undefined>();
+  const finishActionRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [actions, setActions] = useState<Array<ActionModel>>([]);
   const [activeAction, setActiveAction] = useState<ActionModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
 
+  const activeActionPredicate = useCallback(
+    (x: ActionModel): boolean => {
+      return x.id === activeAction?.id;
+    },
+    [
+      activeAction,
+    ]
+  );
+
   const load = useCallback(
     async(): Promise<void> => {
-      if (!projectId) {
-        throw new Error("'projectId' is required. Value must not be empty.");
-      }
-
       loaded.current = true;
 
-      const data = await projectService.get(projectId);
+      if (!activeProjectService.project) {
+        throw new Error("Project is required.");
+      }
 
       setActions(
-        data.actions?.map(
-          (x: GetResultAction): ActionModel => {
+        activeProjectService.actions?.map(
+          (x: ActionModel): ActionModel => {
             return {
               color: x.color,
               id: x.id,
@@ -68,63 +61,76 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
       setActiveAction(undefined);
       setShowLoadingIndicator(false);
 
-      currentProjectId.current = data.id;
+      currentProjectId.current = activeProjectService.project.id;
+    },
+    []
+  );
 
-      onLoad(data.name);
+  const toggle = useCallback(
+    async({ actionId }: HorizontalListLayoutActionPressEventArgs): Promise<void> => {
+      const action = actions.find(
+        (x: ActionModel): boolean => {
+          return x.id === actionId;
+        }
+      );
+
+      const isRunning = action?.status !== ActionStatus.Running;
+      const isPaused = action?.status === ActionStatus.Running && activeAction?.id === action.id;
+
+      activeProjectService.setActiveAction(
+        actionId,
+        isRunning
+      );
+
+      const newActions = actions.map(
+        (x: ActionModel): ActionModel => {
+          if (x.id === actionId) {
+            if (isRunning) {
+              x.status = ActionStatus.Running;
+            } else if (isPaused) {
+              x.status = ActionStatus.Paused;
+            } else {
+              x.status = ActionStatus.Idle;
+            }
+          } else {
+            x.status = ActionStatus.Idle;
+          }
+
+          return x;
+        }
+      );
+
+      const newActiveAction = newActions.find(
+        (x: ActionModel): boolean => {
+          return x.id === actionId;
+        }
+      );
+
+      setActions(newActions);
+      setActiveAction(newActiveAction);
     },
     [
-      projectId,
-      onLoad,
+      actions,
+      activeAction,
     ]
   );
 
   const toggleActive = useCallback(
     async(): Promise<void> => {
-      if (!sessionId.current) {
-        throw new Error("Session ID is required");
-      }
-
       if (!activeAction) {
         throw new Error("Active action is required.");
       }
 
-      const activeActionPredicate = (x: ActionModel): boolean => {
-        return x.id === activeAction.id;
-      };
+      const isRunning = activeAction.status !== ActionStatus.Running;
 
-      const date = dateTimeService.now;
-
-      stopwatchService.stop();
-
-      const toggleResult = await sessionService.toggle({
-        sessionId: sessionId.current,
-        actionId: activeAction.id,
-        avgSpeed: 0,
-        distance: 0,
-        maxSpeed: 0,
-        date,
-      });
-
-      if (toggleResult.isRunning) {
-        stopwatchService.snap();
-
-        if (stopwatchService.hasOffset) {
-          stopwatchService.setOffset();
-        }
-
-        stopwatchService.start();
-      } else {
-        stopwatchService.stop();
-      }
+      await activeProjectService.toggleActiveAction();
 
       const newActions = actions.map((x: ActionModel): ActionModel => {
         if (x.id === activeAction.id) {
-          if (toggleResult.isRunning) {
+          if (isRunning) {
             x.status = ActionStatus.Running;
-          } else if (toggleResult.isPaused) {
-            x.status = ActionStatus.Paused;
           } else {
-            x.status = ActionStatus.Idle;
+            x.status = ActionStatus.Paused;
           }
         } else {
           x.status = ActionStatus.Idle;
@@ -137,85 +143,95 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
       setActiveAction(newActions.find(activeActionPredicate));
     },
     [
-      sessionId,
       activeAction,
       actions,
+      activeActionPredicate,
     ]
   );
 
-  const finish = useCallback(
+  const finishRequest = useCallback(
     async(): Promise<void> => {
-      if (!sessionId.current) {
-        return;
-      }
-
-      const date = dateTimeService.now;
-
-      stopwatchService.stop();
-
-      await sessionService.finish({
-        sessionId: sessionId.current,
-        avgSpeed: 0,
-        distance: 0,
-        maxSpeed: 0,
-        date,
-      });
+      finishActionRef.current = await activeProjectService.finish();
 
       setShowSessionNameModal(true);
     },
     [
-      sessionId,
+      finishActionRef,
     ]
   );
 
-  const complete = useCallback(
-    async(name: string | undefined): Promise<void> => {
-      if (sessionId.current) {
-        await sessionService.rename({
-          sessionId: sessionId.current,
-          name,
-        });
+  const finishConfirm = useCallback(
+    async(e: SessionNameModalEventArgs): Promise<void> => {
+      if (!finishActionRef.current) {
+        throw new Error("Finish action is not initiated.");
       }
 
       setShowSessionNameModal(false);
-      onSessionFinished();
+
+      await finishActionRef.current.confirm(e.sessionName);
     },
     [
-      onSessionFinished,
+      finishActionRef,
+    ]
+  );
+
+  const finishCancel = useCallback(
+    async(): Promise<void> => {
+      if (!finishActionRef.current) {
+        throw new Error("Finish action is not initiated.");
+      }
+
+      setShowSessionNameModal(false);
+
+      await finishActionRef.current.cancel();
+    },
+    [
+      finishActionRef,
     ]
   );
 
   if (
     !mounted.current
     && !loaded.current
-    && projectId
   ) {
     load();
   }
 
   useEffect(
-    (): void => {
+    (): { (): void } => {
       mounted.current = true;
+
+      const sessionPausedSubscription = activeProjectService.addEventListener(
+        "session-paused",
+        (): void => {
+          /*if (activeProjectService.activeActionId) {
+            if (!activeAction) {
+              throw new Error("Active action is required.");
+            }
+
+            const newActions = actions.map((x: ActionModel): ActionModel => {
+              if (x.id === activeAction.id) {
+                x.status = ActionStatus.Paused;
+              } else {
+                x.status = ActionStatus.Idle;
+              }
+
+              return x;
+            });
+
+            setActions(newActions);
+            setActiveAction(newActions.find(activeActionPredicate));
+          }*/
+        }
+      );
+
+      return (): void => {
+        sessionPausedSubscription.remove();
+      };
     },
-    []
   );
 
-  useEffect(
-    (): void => {
-      if (
-        projectId
-        && currentProjectId.current !== projectId
-      ) {
-        load();
-      }
-    },
-    [
-      projectId,
-      load,
-    ]
-  );
-
-  if (!projectId) {
+  if (!activeProjectService.project) {
     return (
       <></>
     );
@@ -243,92 +259,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
       >
         <HorizontalListLayout
           actions={actions}
-          onActionPress={async({ actionId }: HorizontalListLayoutActionPressEventArgs): Promise<void> => {
-            const currentActionPredicate = (x: ActionModel): boolean => {
-              return x.id === actionId;
-            };
-
-            if (!sessionId.current) {
-              const date = dateTimeService.now;
-
-              stopwatchService.start();
-
-              const newActions = actions.map((x: ActionModel): ActionModel => {
-                if (x.id === actionId) {
-                  x.status = ActionStatus.Running;
-                }
-
-                return x;
-              });
-
-              const newActiveAction = newActions.find(currentActionPredicate);
-
-              if (!newActiveAction) {
-                throw new Error(`Action ${actionId} not found.`);
-              }
-
-              setActions(newActions);
-              setActiveAction(newActiveAction);
-
-              const session = await sessionService.create({
-                projectId: projectId as string,
-                actionId,
-                date,
-              });
-
-              sessionId.current = session.id;
-
-              onSessionStart(session.id);
-            } else {
-              const date = dateTimeService.now;
-
-              const toggleResult = await sessionService.toggle({
-                sessionId: sessionId.current as string,
-                actionId,
-                avgSpeed: 0,
-                distance: 0,
-                maxSpeed: 0,
-                date,
-              });
-
-              if (toggleResult.isRunning) {
-                stopwatchService.snap();
-
-                if (stopwatchService.hasOffset) {
-                  stopwatchService.setOffset();
-                }
-
-                stopwatchService.start();
-              } else {
-                stopwatchService.stop();
-              }
-
-              const newActions = actions.map((x: ActionModel): ActionModel => {
-                if (x.id === actionId) {
-                  if (toggleResult.isRunning) {
-                    x.status = ActionStatus.Running;
-                  } else if (toggleResult.isPaused) {
-                    x.status = ActionStatus.Paused;
-                  } else {
-                    x.status = ActionStatus.Idle;
-                  }
-                } else {
-                  x.status = ActionStatus.Idle;
-                }
-
-                return x;
-              });
-
-              const newActiveAction = newActions.find(currentActionPredicate);
-
-              if (!newActiveAction) {
-                throw new Error(`Action ${actionId} not found.`);
-              }
-
-              setActions(newActions);
-              setActiveAction(newActiveAction);
-            }
-          }}
+          onActionPress={toggle}
         />
       </View>
       <View
@@ -351,7 +282,7 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          onPress={finish}
+          onPress={finishRequest}
         >
           <Icon
             name="finish"
@@ -363,7 +294,8 @@ export function ActiveProjectView(props: ActiveProjectViewProps): JSX.Element {
       </View>
       <SessionNameModal
         show={showSessionNameModal}
-        onComplete={complete}
+        onConfirm={finishConfirm}
+        onCancel={finishCancel}
       />
     </View>
   );

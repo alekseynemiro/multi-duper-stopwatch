@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect } from "react";
+import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
-import { Routes } from "@config";
+import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { HomePage } from "@pages/Home";
 import { InitialScreenPage } from "@pages/InitialScreen";
 import { ProjectEditorPage } from "@pages/ProjectEditor";
@@ -10,10 +11,13 @@ import { ReportPage } from "@pages/Report";
 import { ReportListPage } from "@pages/ReportList";
 import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+import { IActiveProjectService } from "@services/ActiveProject";
 import { styles } from "@styles";
 import { AppNavigation } from "./AppNavigation";
 
 const Drawer = createDrawerNavigator();
+
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function App(): JSX.Element {
   const appHeader = useCallback(
@@ -21,6 +25,26 @@ export function App(): JSX.Element {
       return (
         <AppHeader {...props} />
       );
+    },
+    []
+  );
+
+  useEffect(
+    (): { (): void } => {
+      const subscription = AppState.addEventListener(
+        "change",
+        async(nextAppState: AppStateStatus): Promise<void> => {
+          if (nextAppState.match(/inactive|background/)) {
+            if (activeProjectService.session) {
+              await activeProjectService.pause();
+            }
+          }
+        }
+      );
+
+      return (): void => {
+        subscription.remove();
+      };
     },
     []
   );

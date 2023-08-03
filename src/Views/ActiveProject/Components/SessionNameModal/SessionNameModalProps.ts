@@ -1,7 +1,11 @@
+import { SessionNameModalEventArgs } from "./SessionNameModalEventArgs";
+
 export type SessionNameModalProps = {
 
   show: boolean;
 
-  onComplete(sessionName: string | undefined): void;
+  onConfirm(e: SessionNameModalEventArgs): void;
+
+  onCancel(): void;
 
 };

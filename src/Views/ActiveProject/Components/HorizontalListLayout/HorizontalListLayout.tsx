@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { ActionModel } from "../../Models";
+import { Action as ActionModel } from "@dto/ActiveProject";
 import { Action } from "../Action";
 import { HorizontalListLayoutProps } from "./HorizontalListLayoutProps";
 import { horizontalListLayoutStyles } from "./HorizontalListLayoutStyles";

@@ -35,5 +35,10 @@ export const sessionNameModalStyles = StyleSheet.create({
   },
   footer: {
     width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  button: {
+    minWidth: 75,
   },
 });
