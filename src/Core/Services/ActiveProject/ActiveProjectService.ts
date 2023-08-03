@@ -194,6 +194,20 @@ export class ActiveProjectService implements IActiveProjectService {
           maxSpeed: 0,
         });
       }
+
+      if (session.state === SessionState.Finished) {
+        this._loggerService.debug(
+          ActiveProjectService.name,
+          this.checkForCrash.name,
+          `Found last session #${lastSessionId} but session is ${SessionState[session.state]}.`,
+          "The value of LastSessionId parameter should be removed."
+        );
+
+        await this._settingsService.set(
+          SettingKey.LastSessionId,
+          undefined
+        );
+      }
     }
   }
 
