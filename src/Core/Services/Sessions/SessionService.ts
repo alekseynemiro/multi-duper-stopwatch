@@ -361,7 +361,10 @@ export class SessionService implements ISessionService {
     this._loggerService.debug(
       SessionService.name,
       this.finish.name,
-      request
+      "sessionId",
+      request.sessionId,
+      "time",
+      request.date.getTime()
     );
 
     return this._databaseService.execute(
@@ -450,7 +453,8 @@ export class SessionService implements ISessionService {
         session.events = stats.events;
 
         await this._databaseService.sessions().save(session);
-      }
+      },
+      `${SessionService.name}.${this.finish.name}`
     );
   }
 
