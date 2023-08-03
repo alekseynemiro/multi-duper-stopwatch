@@ -266,6 +266,11 @@ export class ActiveProjectService implements IActiveProjectService {
 
       this.on("session-started");
       this.onActionUpdate(actionId, ActionStatus.Running);
+
+      if (this._session) {
+        // To fix "Property 'state' does not exist on type 'never'" o_O
+        (this._session as Session).state = SessionState.Run;
+      }
     } else {
       if (isRunning) {
         this._stopwatchService.snap();
@@ -276,9 +281,17 @@ export class ActiveProjectService implements IActiveProjectService {
 
         this._stopwatchService.start();
         this.onActionUpdate(actionId, ActionStatus.Running);
+
+        if (this._session) {
+          this._session.state = SessionState.Run;
+        }
       } else {
         this._stopwatchService.stop();
         this.onActionUpdate(actionId, ActionStatus.Paused);
+
+        if (this._session) {
+          this._session.state = SessionState.Paused;
+        }
       }
 
       const sessionId = this._session.id;
@@ -381,6 +394,14 @@ export class ActiveProjectService implements IActiveProjectService {
           if (toggleResult.isRunning !== isRunning) {
             throw new Error("The action status is different than expected.");
           }
+
+          if (this._session && toggleResult.isRunning) {
+            this._session.state = SessionState.Run;
+          }
+
+          if (this._session && toggleResult.isPaused) {
+            this._session.state = SessionState.Paused;
+          }
         }
       );
     } catch (error) {
@@ -420,6 +441,8 @@ export class ActiveProjectService implements IActiveProjectService {
         maxSpeed: 0,
         date,
       });
+
+      this._session.state = SessionState.Paused;
 
       this.on(
         "session-paused",
@@ -473,6 +496,8 @@ export class ActiveProjectService implements IActiveProjectService {
             date,
           });
 
+          this._session.state = SessionState.Paused;
+
           this.on(
             "session-paused",
             {
@@ -520,6 +545,8 @@ export class ActiveProjectService implements IActiveProjectService {
             SettingKey.LastSessionId,
             undefined
           );
+
+          this._session.state = SessionState.Finished;
 
           this.on(
             "session-finished",
