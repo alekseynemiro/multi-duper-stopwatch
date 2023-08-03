@@ -457,8 +457,11 @@ export class SessionService implements ISessionService {
   public async rename(request: RenameRequest): Promise<void> {
     this._loggerService.debug(
       SessionService.name,
-      this.finish.name,
-      request
+      this.rename.name,
+      "sessionId",
+      request.sessionId,
+      "name",
+      request.name
     );
 
     return this._databaseService.execute(
