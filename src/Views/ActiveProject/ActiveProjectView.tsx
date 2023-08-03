@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
@@ -196,40 +196,6 @@ export function ActiveProjectView(): JSX.Element {
   ) {
     load();
   }
-
-  useEffect(
-    (): { (): void } => {
-      mounted.current = true;
-
-      const sessionPausedSubscription = activeProjectService.addEventListener(
-        "session-paused",
-        (): void => {
-          /*if (activeProjectService.activeActionId) {
-            if (!activeAction) {
-              throw new Error("Active action is required.");
-            }
-
-            const newActions = actions.map((x: ActionModel): ActionModel => {
-              if (x.id === activeAction.id) {
-                x.status = ActionStatus.Paused;
-              } else {
-                x.status = ActionStatus.Idle;
-              }
-
-              return x;
-            });
-
-            setActions(newActions);
-            setActiveAction(newActions.find(activeActionPredicate));
-          }*/
-        }
-      );
-
-      return (): void => {
-        sessionPausedSubscription.remove();
-      };
-    },
-  );
 
   if (!activeProjectService.project) {
     return (
