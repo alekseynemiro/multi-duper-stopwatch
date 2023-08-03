@@ -290,6 +290,10 @@ export class SessionService implements ISessionService {
           return;
         }
 
+        if (session.state === SessionState.Finished) {
+          throw new Error(`The session #${request.sessionId} cannot be paused because it has already finished.`);
+        }
+
         if (request.date !== undefined) {
           const startDate = session.actionStartDate;
           let elapsedTime = request.date.getTime() - startDate.getTime();
