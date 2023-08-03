@@ -4,8 +4,6 @@ import { colors } from "./Colors";
 export const styles = StyleSheet.create({
   table: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
    },
    tableRow: {
     flex: 1,
