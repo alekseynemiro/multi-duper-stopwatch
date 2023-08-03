@@ -2,6 +2,8 @@ import { IMigrationRunner } from "@data";
 import { DatabaseService } from "@data/DatabaseService";
 import { IDatabaseService } from "@data/IDatabaseService";
 import { MigrationRunner } from "@data/Migrations/MigrationRunner";
+import { IActiveProjectService } from "@services/ActiveProject";
+import { ActiveProjectService } from "@services/ActiveProject/ActiveProjectService";
 import { IDateTimeService } from "@services/DateTime";
 import { DateTimeService } from "@services/DateTime/DateTimeService";
 import { IGuidService } from "@services/Guid";
@@ -38,6 +40,7 @@ serviceProvider.bind<ISessionLogService>(ServiceIdentifier.SessionLogService).to
 serviceProvider.bind<IMigrationRunner>(ServiceIdentifier.MigrationRunner).to(MigrationRunner).inSingletonScope();
 serviceProvider.bind<IStopwatchService>(ServiceIdentifier.StopwatchService).to(StopwatchService).inSingletonScope();
 serviceProvider.bind<ISettingsService>(ServiceIdentifier.SettingsService).to(SettingsService).inSingletonScope();
+serviceProvider.bind<IActiveProjectService>(ServiceIdentifier.ActiveProjectService).to(ActiveProjectService).inSingletonScope();
 serviceProvider.bind<IQueueService>(ServiceIdentifier.QueueService).to(QueueService).inSingletonScope();
 serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
 serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
