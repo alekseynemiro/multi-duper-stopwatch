@@ -513,7 +513,7 @@ export class SessionService implements ISessionService {
           items: sessions.map((x: Session): GetAllResultItem => {
             return {
               id: x.id,
-              sessionName: x.name,
+              sessionName: x.name ?? null,
               projectName: x.project.name,
               avgSpeed: x.avgSpeed,
               distance: x.distance,

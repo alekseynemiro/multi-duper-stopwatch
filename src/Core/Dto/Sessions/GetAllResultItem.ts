@@ -2,7 +2,7 @@ export type GetAllResultItem = {
 
   id: string;
 
-  sessionName: string | undefined;
+  sessionName: string | null;
 
   projectName: string;
 

@@ -13,7 +13,7 @@ export class Session {
     name: "Name",
     nullable: true,
   })
-  public name: string | undefined;
+  public name?: string | null;
 
   @Column({
     name: "State",
@@ -69,7 +69,7 @@ export class Session {
     name: "FinishDate",
     nullable: true,
   })
-  finishDate?: Date;
+  finishDate?: Date | null;
 
   @Column({
     name: "ActionStartDate",
@@ -81,7 +81,7 @@ export class Session {
     name: "ActionFinishDate",
     nullable: true,
   })
-  actionFinishDate?: Date;
+  actionFinishDate?: Date | null;
 
   @Column({
     name: "CreatedDate",
