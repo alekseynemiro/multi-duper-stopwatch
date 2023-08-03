@@ -4,6 +4,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { SessionState } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { IProjectService } from "@services/Projects";
@@ -80,7 +81,10 @@ export function HomePage(): JSX.Element {
         sessionFinishedSubscription.remove();
         projectLoadedSubscription.remove();
 
-        if (activeProjectService.session) {
+        if (
+          activeProjectService.session
+          && activeProjectService.session.state === SessionState.Run
+        ) {
           await activeProjectService.pause();
         }
 
