@@ -3,6 +3,7 @@ import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { SessionState } from "@data";
 import { HomePage } from "@pages/Home";
 import { InitialScreenPage } from "@pages/InitialScreen";
 import { ProjectEditorPage } from "@pages/ProjectEditor";
@@ -35,7 +36,10 @@ export function App(): JSX.Element {
         "change",
         async(nextAppState: AppStateStatus): Promise<void> => {
           if (nextAppState.match(/inactive|background/)) {
-            if (activeProjectService.session) {
+            if (
+              activeProjectService.session
+              && activeProjectService.session.state === SessionState.Run
+            ) {
               await activeProjectService.pause();
             }
           }
