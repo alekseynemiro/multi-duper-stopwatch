@@ -261,7 +261,10 @@ export class SessionService implements ISessionService {
     this._loggerService.debug(
       SessionService.name,
       this.pause.name,
-      request.sessionId
+      "sessionId",
+      request.sessionId,
+      "date",
+      request.date
     );
 
     return this._databaseService.execute(
@@ -287,62 +290,64 @@ export class SessionService implements ISessionService {
           return;
         }
 
-        const startDate = session.actionStartDate;
-        let elapsedTime = request.date.getTime() - startDate.getTime();
-        let log: SessionLog | undefined;
+        if (request.date !== undefined) {
+          const startDate = session.actionStartDate;
+          let elapsedTime = request.date.getTime() - startDate.getTime();
+          let log: SessionLog | undefined;
 
-        const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
-          .findOne({
-            where: {
+          const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
+            .findOne({
+              where: {
+                session,
+                finishDate: request.date,
+              },
+            });
+
+          if (existingLogEntryWithSameDate) {
+            this._loggerService.debug(
+              SessionService.name,
+              this.pause.name,
+              "sessionId",
+              request.sessionId,
+              `Pause without log because the current status ${SessionState[SessionState.Run]} and an entry with the date ${request.date} was found in the log.`,
+              "Elapsed time",
+              elapsedTime
+            );
+          } else {
+            this._loggerService.debug(
+              SessionService.name,
+              this.pause.name,
+              "sessionId",
+              request.sessionId,
+              `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
+              "Elapsed time",
+              elapsedTime
+            );
+
+            log = {
+              id: this._guidService.newGuid(),
               session,
+              action: { ...session.action }, // to kill reference
+              distance: request.distance,
+              avgSpeed: request.avgSpeed,
+              maxSpeed: request.maxSpeed,
+              steps: 0,
+              elapsedTime,
+              startDate,
               finishDate: request.date,
-            },
-          });
+              createdDate: this._dateTimeService.now,
+            };
 
-        if (existingLogEntryWithSameDate) {
-          this._loggerService.debug(
-            SessionService.name,
-            this.pause.name,
-            "sessionId",
-            request.sessionId,
-            `Pause without log because the current status ${SessionState[SessionState.Run]} and an entry with the date ${request.date} was found in the log.`,
-            "Elapsed time",
-            elapsedTime
-          );
-        } else {
-          this._loggerService.debug(
-            SessionService.name,
-            this.pause.name,
-            "sessionId",
-            request.sessionId,
-            `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
-            "Elapsed time",
-            elapsedTime
-          );
+            await this._databaseService.sessionLogs().insert(log);
+          }
 
-          log = {
-            id: this._guidService.newGuid(),
-            session,
-            action: { ...session.action }, // to kill reference
-            distance: request.distance,
-            avgSpeed: request.avgSpeed,
-            maxSpeed: request.maxSpeed,
-            steps: 0,
-            elapsedTime,
-            startDate,
-            finishDate: request.date,
-            createdDate: this._dateTimeService.now,
-          };
-
-          await this._databaseService.sessionLogs().insert(log);
-        }
-
-        if (log) {
-          session.distance += log.distance;
-          session.elapsedTime += log.elapsedTime;
-          session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
-          session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
-          session.actionFinishDate = log.finishDate;
+          if (log) {
+            session.distance += log.distance;
+            session.elapsedTime += log.elapsedTime;
+            session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
+            session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
+            session.actionFinishDate = log.finishDate;
+          }
         }
 
         session.state = SessionState.Paused;
