@@ -16,6 +16,6 @@ export class Setting {
     name: "Value",
     nullable: true,
   })
-  value?: string;
+  value?: string | null;
 
 }

@@ -205,7 +205,7 @@ export class ActiveProjectService implements IActiveProjectService {
 
         await this._settingsService.set(
           SettingKey.LastSessionId,
-          undefined
+          null
         );
       }
     }
@@ -543,7 +543,7 @@ export class ActiveProjectService implements IActiveProjectService {
 
           await this._settingsService.set(
             SettingKey.LastSessionId,
-            undefined
+            null
           );
 
           this._session.state = SessionState.Finished;

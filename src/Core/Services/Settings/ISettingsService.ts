@@ -5,8 +5,8 @@ export interface ISettingsService {
 
   getAll(): Promise<GetAllResult>;
 
-  get(key: SettingKey): Promise<string | undefined>;
+  get(key: SettingKey): Promise<string | null | undefined>;
 
-  set(key: SettingKey, value: string | undefined): Promise<void>;
+  set(key: SettingKey, value: string | null): Promise<void>;
 
 }
