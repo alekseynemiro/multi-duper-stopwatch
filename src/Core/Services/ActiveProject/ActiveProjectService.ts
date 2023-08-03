@@ -1,6 +1,6 @@
 import { NativeEventSubscription } from "react-native";
 import { ServiceIdentifier } from "@config";
-import { SettingKey } from "@data";
+import { SessionState, SettingKey } from "@data";
 import { Action, ActionStatus, Project } from "@dto/ActiveProject";
 import { GetResultAction } from "@dto/Projects";
 import { GetResult as Session } from "@dto/Sessions";
@@ -171,6 +171,29 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       await this._localStorageService.removeItem<LocalStorageKeys>("shouldReset");
+    }
+
+    const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
+
+    if (lastSessionId) {
+      const session = await this._sessionService.get(lastSessionId);
+
+      if (session.state === SessionState.Run) {
+        this._loggerService.debug(
+          ActiveProjectService.name,
+          this.checkForCrash.name,
+          `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`,
+          `Should be paused with date ${session.id === sessionId && date || undefined}.`
+        );
+
+        await this._sessionService.pause({
+          sessionId: session.id,
+          date: session.id === sessionId && date || undefined,
+          avgSpeed: 0,
+          distance: 0,
+          maxSpeed: 0,
+        });
+      }
     }
   }
 
