@@ -38,6 +38,7 @@ module.exports = {
           "@config": "./Config",
           "@data": "./Data",
           "@dto": "./Core/Dto",
+          "@localization": "./Localization",
           "@pages": "./Pages",
           "@services": "./Core/Services",
           "@styles": "./Styles",

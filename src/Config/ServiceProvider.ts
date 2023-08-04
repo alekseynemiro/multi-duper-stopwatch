@@ -10,6 +10,8 @@ import { IGuidService } from "@services/Guid";
 import { GuidService } from "@services/Guid/GuidService";
 import { IJsonService } from "@services/Json";
 import { JsonService } from "@services/Json/JsonService";
+import { ILocalizationService } from "@services/Localization";
+import { LocalizationService } from "@services/Localization/LocalizationService";
 import { ILoggerService } from "@services/Logger";
 import { LoggerService } from "@services/Logger/LoggerService";
 import { IProjectService } from "@services/Projects";
@@ -44,5 +46,6 @@ serviceProvider.bind<IActiveProjectService>(ServiceIdentifier.ActiveProjectServi
 serviceProvider.bind<IQueueService>(ServiceIdentifier.QueueService).to(QueueService).inSingletonScope();
 serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
 serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
+serviceProvider.bind<ILocalizationService>(ServiceIdentifier.LocalizationService).to(LocalizationService).inSingletonScope();
 
 export { serviceProvider };
