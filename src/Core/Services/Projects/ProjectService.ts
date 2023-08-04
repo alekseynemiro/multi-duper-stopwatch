@@ -10,6 +10,7 @@ import {
 } from "@dto/Projects";
 import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
+import { ILoggerService } from "@services/Logger";
 import { inject, injectable } from "inversify";
 import { In } from "typeorm";
 import { IProjectService } from "./IProjectService";
@@ -24,14 +25,18 @@ export class ProjectService implements IProjectService {
 
   private readonly _guidService: IGuidService;
 
+  private readonly _loggerService: ILoggerService;
+
   constructor(
     @inject(ServiceIdentifier.DatabaseService) databaseService: IDatabaseService,
     @inject(ServiceIdentifier.DateTimeService) dateTimeService: IDateTimeService,
-    @inject(ServiceIdentifier.GuidService) guidService: IGuidService
+    @inject(ServiceIdentifier.GuidService) guidService: IGuidService,
+    @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
   ) {
     this._databaseService = databaseService;
     this._dateTimeService = dateTimeService;
     this._guidService = guidService;
+    this._loggerService = loggerService;
   }
 
   public get(id: ProjectId): Promise<GetResult> {
@@ -75,6 +80,11 @@ export class ProjectService implements IProjectService {
   }
 
   public async getAll(): Promise<GetAllResult> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.getAll.name
+    );
+
     return this._databaseService.execute(
       async(): Promise<GetAllResult> => {
         const data = await this._databaseService.projects().find();
@@ -95,6 +105,17 @@ export class ProjectService implements IProjectService {
   }
 
   public async create(request: CreateProjectRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.create.name,
+      "projectId",
+      request.id,
+      "projectName",
+      request.name,
+      "actions",
+      request.actions.length
+    );
+
     return this._databaseService.execute(
       async(): Promise<void> => {
         // TODO: Use transaction
@@ -129,6 +150,7 @@ export class ProjectService implements IProjectService {
               newAction.color = action.color;
               newAction.name = action.name;
               newAction.isGlobal = false;
+              newAction.isDeleted = false;
               newAction.createdDate = now;
 
               const createdAction = await this._databaseService.actions().save(newAction);
@@ -149,6 +171,13 @@ export class ProjectService implements IProjectService {
   }
 
   public async delete(id: ProjectId): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.delete.name,
+      "projectId",
+      id
+    );
+
     return this._databaseService.execute(
       async (): Promise<void> => {
         const project = await this._databaseService.projects()
@@ -164,6 +193,14 @@ export class ProjectService implements IProjectService {
         await this._databaseService.projects().delete(id);
 
         if (project.actionsInProjects && project.actionsInProjects.length > 0) {
+          this._loggerService.debug(
+            ProjectService.name,
+            this.delete.name,
+            "projectId",
+            id,
+            `Include ${project.actionsInProjects.length} relations.`
+          );
+
           await this._databaseService.actionsInProjects().delete(
             project.actionsInProjects.map(
               (x: ActionInProject): string => {
@@ -171,12 +208,50 @@ export class ProjectService implements IProjectService {
               }
             )
           );
+
+          const actions = project.actionsInProjects
+            .map(
+              (x: ActionInProject): Action => {
+                return x.action;
+              }
+            )
+            .filter(
+              (x: Action): boolean => {
+                return !x.isGlobal && !x.isDeleted;
+              }
+            );
+
+          actions.forEach(
+            (x: Action): void => {
+              x.isDeleted = true;
+            }
+          );
+
+          if (actions?.length > 0) {
+            this._loggerService.debug(
+              ProjectService.name,
+              this.delete.name,
+              "projectId",
+              id,
+              `Include ${actions.length} actions.`
+            );
+          }
+
+          await this._databaseService.actions().save(actions);
         }
-      }
+      },
+      `${ProjectService.name}.${this.delete.name}`
     );
   }
 
   public async update(request: UpdateProjectRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.update.name,
+      "projectId",
+      request.id
+    );
+
     return this._databaseService.execute(
       async (): Promise<void> => {
         // TODO: Use transaction
@@ -212,7 +287,7 @@ export class ProjectService implements IProjectService {
             )
           );
 
-          // delete private actions
+          // mark as deleted private actions
           const privateActionsToDelete = await this._databaseService.actions().find({
             where: {
               id: In(request.actionsToDelete),
@@ -220,9 +295,13 @@ export class ProjectService implements IProjectService {
             },
           });
 
-          await this._databaseService.actions().delete(
-            privateActionsToDelete.map((x: Action): string => x.id)
+          privateActionsToDelete.forEach(
+            (x: Action): void => {
+              x.isDeleted = true;
+            }
           );
+
+          await this._databaseService.actions().save(privateActionsToDelete);
         }
 
         if (request.actions?.length > 0) {
@@ -265,6 +344,7 @@ export class ProjectService implements IProjectService {
                 newAction.color = action.color;
                 newAction.name = action.name;
                 newAction.isGlobal = false;
+                newAction.isDeleted = false;
                 newAction.createdDate = now;
 
                 const createdAction = await this._databaseService.actions().save(newAction);
@@ -281,7 +361,8 @@ export class ProjectService implements IProjectService {
             }
           }
         }
-      }
+      },
+      `${ProjectService.name}.${this.update.name}`
     );
   }
 

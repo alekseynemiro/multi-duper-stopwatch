@@ -35,6 +35,12 @@ export class Action {
   public isGlobal!: boolean;
 
   @Column({
+    name: "IsDeleted",
+    nullable: false,
+  })
+  public isDeleted!: boolean;
+
+  @Column({
     name: "CreatedDate",
     nullable: false,
   })
