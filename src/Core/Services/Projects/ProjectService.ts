@@ -151,7 +151,27 @@ export class ProjectService implements IProjectService {
   public async delete(id: ProjectId): Promise<void> {
     return this._databaseService.execute(
       async (): Promise<void> => {
+        const project = await this._databaseService.projects()
+          .findOneOrFail({
+            where: {
+              id,
+            },
+            relations: {
+              actionsInProjects: true,
+            },
+          });
+
         await this._databaseService.projects().delete(id);
+
+        if (project.actionsInProjects && project.actionsInProjects.length > 0) {
+          await this._databaseService.actionsInProjects().delete(
+            project.actionsInProjects.map(
+              (x: ActionInProject): string => {
+                return x.id;
+              }
+            )
+          );
+        }
       }
     );
   }
