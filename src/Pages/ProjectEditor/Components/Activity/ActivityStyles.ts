@@ -8,6 +8,7 @@ export const activityStyles = StyleSheet.create({
   positionCol: {
     width: 32,
     justifyContent: "center",
+    marginTop: 4,
   },
   nameCol: {
     ...styles.tableCell,
