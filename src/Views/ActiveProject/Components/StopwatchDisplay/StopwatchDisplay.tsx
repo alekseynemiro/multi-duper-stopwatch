@@ -14,23 +14,23 @@ const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifie
 
 export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
-    activeActivity,
+    currentActivity,
   } = props;
 
   const localization = useLocalization();
 
-  const [showActiveActivity, setShowActiveActivity] = useState<boolean>();
+  const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>();
 
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
-        if (showActiveActivity) {
+        if (showCurrentActivity) {
           stopwatchService.clearOffset();
-          setShowActiveActivity(false);
+          setShowCurrentActivity(false);
         } else {
           stopwatchService.setOffset();
-          setShowActiveActivity(true);
+          setShowCurrentActivity(true);
         }
       }}
     >
@@ -38,22 +38,22 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
         style={stopwatchDisplayStyles.elapsedContainer}
       >
         {
-          activeActivity
+          currentActivity
           && (
             <View>
               {
-                showActiveActivity
+                showCurrentActivity
                 && (
                   <Text
                     style={[
                       stopwatchDisplayStyles.mode,
                       {
-                        backgroundColor: getColorCode((activeActivity as ActivityModel).color),
-                        color: getContrastColorCode((activeActivity as ActivityModel).color),
+                        backgroundColor: getColorCode((currentActivity as ActivityModel).color),
+                        color: getContrastColorCode((currentActivity as ActivityModel).color),
                       },
                     ]}
                   >
-                    {activeActivity?.name}
+                    {currentActivity?.name}
                   </Text>
                 )
                 || (

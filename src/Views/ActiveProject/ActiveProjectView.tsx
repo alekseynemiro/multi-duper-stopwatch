@@ -28,15 +28,15 @@ export function ActiveProjectView(): JSX.Element {
   const currentProjectId = useRef<string | undefined>();
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [activities, setActivities] = useState<Array<ActivityModel>>([]);
-  const [activeActivity, setActiveActivity] = useState<ActivityModel | undefined>(undefined);
+  const [currentActivity, setCurrentActivity] = useState<ActivityModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
 
-  const activeActivityPredicate = useCallback(
+  const currentActivityPredicate = useCallback(
     (x: ActivityModel): boolean => {
-      return x.id === activeActivity?.id;
+      return x.id === currentActivity?.id;
     },
     [
-      activeActivity,
+      currentActivity,
     ]
   );
 
@@ -61,7 +61,7 @@ export function ActiveProjectView(): JSX.Element {
         ) || [],
       );
 
-      setActiveActivity(undefined);
+      setCurrentActivity(undefined);
       setShowLoadingIndicator(false);
 
       currentProjectId.current = activeProjectService.project.id;
@@ -78,9 +78,9 @@ export function ActiveProjectView(): JSX.Element {
       );
 
       const isRunning = activity?.status !== ActivityStatus.Running;
-      const isPaused = activity?.status === ActivityStatus.Running && activeActivity?.id === activity.id;
+      const isPaused = activity?.status === ActivityStatus.Running && currentActivity?.id === activity.id;
 
-      activeProjectService.setActiveActivity(
+      activeProjectService.setCurrentActivity(
         activityId,
         isRunning
       );
@@ -103,33 +103,33 @@ export function ActiveProjectView(): JSX.Element {
         }
       );
 
-      const newActiveActivity = newActivities.find(
+      const newCurrentActivity = newActivities.find(
         (x: ActivityModel): boolean => {
           return x.id === activityId;
         }
       );
 
       setActivities(newActivities);
-      setActiveActivity(newActiveActivity);
+      setCurrentActivity(newCurrentActivity);
     },
     [
       activities,
-      activeActivity,
+      currentActivity,
     ]
   );
 
   const toggleActive = useCallback(
     async(): Promise<void> => {
-      if (!activeActivity) {
+      if (!currentActivity) {
         throw new Error("Active activity is required.");
       }
 
-      const isRunning = activeActivity.status !== ActivityStatus.Running;
+      const isRunning = currentActivity.status !== ActivityStatus.Running;
 
-      await activeProjectService.toggleActiveActivity();
+      await activeProjectService.toggleCurrentActivity();
 
       const newActivities = activities.map((x: ActivityModel): ActivityModel => {
-        if (x.id === activeActivity.id) {
+        if (x.id === currentActivity.id) {
           if (isRunning) {
             x.status = ActivityStatus.Running;
           } else {
@@ -143,12 +143,12 @@ export function ActiveProjectView(): JSX.Element {
       });
 
       setActivities(newActivities);
-      setActiveActivity(newActivities.find(activeActivityPredicate));
+      setCurrentActivity(newActivities.find(currentActivityPredicate));
     },
     [
-      activeActivity,
+      currentActivity,
       activities,
-      activeActivityPredicate,
+      currentActivityPredicate,
     ]
   );
 
@@ -220,7 +220,7 @@ export function ActiveProjectView(): JSX.Element {
         style={activeProjectViewStyles.stopwatchContainer}
       >
         <StopwatchDisplay
-          activeActivity={activeActivity}
+          currentActivity={currentActivity}
         />
       </View>
       <View
@@ -237,12 +237,12 @@ export function ActiveProjectView(): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          disabled={!activeActivity}
+          disabled={!currentActivity}
           onPress={toggleActive}
         >
           <Text>
             {
-              activeActivity?.status === ActivityStatus.Paused
+              currentActivity?.status === ActivityStatus.Paused
                 && localization.get("activeProject.resume")
                 || localization.get("activeProject.pause")
             }

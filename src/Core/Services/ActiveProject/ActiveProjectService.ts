@@ -25,7 +25,7 @@ type LocalStorageKeys =
   | "date"
   | "shouldPause"
   | "shouldFinish"
-  | "shouldToggleActive"
+  | "shouldToggleCurrentActivity"
   | "shouldReset";
 
 @injectable()
@@ -53,7 +53,7 @@ export class ActiveProjectService implements IActiveProjectService {
 
   private _session: Session | undefined;
 
-  private _activeActivityId: string | undefined;
+  private _currentActivityId: string | undefined;
 
   private _listeners = new Map<ActiveProjectServiceEventType, Array<ActiveProjectServiceEvent>>();
 
@@ -65,8 +65,8 @@ export class ActiveProjectService implements IActiveProjectService {
     return this._session;
   }
 
-  public get activeActivityId(): string | undefined {
-    return this._activeActivityId;
+  public get currentActivityId(): string | undefined {
+    return this._currentActivityId;
   }
 
   public get activities(): Array<Activity> | undefined {
@@ -103,7 +103,7 @@ export class ActiveProjectService implements IActiveProjectService {
     const shouldReset = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldReset");
     const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
     const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
-    const shouldToggleActive = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleActive");
+    const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
     const time = await this._localStorageService.getItem<LocalStorageKeys, number>("date");
     const date = time ? new Date(time) : undefined;
 
@@ -153,14 +153,14 @@ export class ActiveProjectService implements IActiveProjectService {
       );
     }
 
-    if (shouldToggleActive) {
+    if (shouldToggleCurrentActivity) {
       this._loggerService.debug(
         ActiveProjectService.name,
         this.checkForCrash.name,
-        "shouldToggleActive: Ignore because it is not yet clear how to handle it."
+        "shouldToggleCurrentActivity: Ignore because it is not yet clear how to handle it."
       );
 
-      await this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleActive");
+      await this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity");
     }
 
     if (shouldReset) {
@@ -232,12 +232,12 @@ export class ActiveProjectService implements IActiveProjectService {
     return this.setProjectId(projectId);
   }
 
-  public async setActiveActivity(activityId: string, isRunning: boolean): Promise<void> {
+  public async setCurrentActivity(activityId: string, isRunning: boolean): Promise<void> {
     const date = this._dateTimeService.now;
 
     this._loggerService.debug(
       ActiveProjectService.name,
-      this.setActiveActivity.name,
+      this.setCurrentActivity.name,
       "activityId",
       activityId,
       "isRunning",
@@ -250,7 +250,7 @@ export class ActiveProjectService implements IActiveProjectService {
       throw new Error("Project is required. Please use `setProjectId` to set project.");
     }
 
-    this._activeActivityId = activityId;
+    this._currentActivityId = activityId;
 
     if (!this._session) {
       this._stopwatchService.start();
@@ -324,10 +324,10 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  public async toggleActiveActivity(): Promise<void> {
+  public async toggleCurrentActivity(): Promise<void> {
     try {
       await Promise.all([
-        this._localStorageService.setItem<LocalStorageKeys>("shouldToggleActive", 1),
+        this._localStorageService.setItem<LocalStorageKeys>("shouldToggleCurrentActivity", 1),
         this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session?.id),
       ]);
 
@@ -335,34 +335,34 @@ export class ActiveProjectService implements IActiveProjectService {
 
       this._loggerService.debug(
         ActiveProjectService.name,
-        this.toggleActiveActivity.name,
+        this.toggleCurrentActivity.name,
         "time",
         date.getTime(),
         "activityId",
-        this._activeActivityId
+        this._currentActivityId
       );
 
       if (!this._session) {
         throw new Error("Session is required.");
       }
 
-      if (!this._activeActivityId) {
-        throw new Error("There is no active activity. Please use `setActiveActivity` to set activity.");
+      if (!this._currentActivityId) {
+        throw new Error("There is no active activity. Please use `setCurrentActivity` to set activity.");
       }
 
-      const activeActivity = this.activities?.find(
+      const currentActivity = this.activities?.find(
         (x: Activity): boolean => {
-          return x.id === this._activeActivityId;
+          return x.id === this._currentActivityId;
         }
       );
 
-      if (!activeActivity) {
-        throw new Error(`Activity #${this._activeActivityId} not found.`);
+      if (!currentActivity) {
+        throw new Error(`Activity #${this._currentActivityId} not found.`);
       }
 
-      if (activeActivity.status === ActivityStatus.Running) {
+      if (currentActivity.status === ActivityStatus.Running) {
         this.onActivityUpdate(
-          this._activeActivityId,
+          this._currentActivityId,
           ActivityStatus.Paused
         );
       } else {
@@ -374,14 +374,14 @@ export class ActiveProjectService implements IActiveProjectService {
 
         this._stopwatchService.start();
         this.onActivityUpdate(
-          this._activeActivityId,
+          this._currentActivityId,
           ActivityStatus.Running
         );
       }
 
       const sessionId = this._session.id;
-      const activityId = this._activeActivityId;
-      const isRunning = activeActivity.status === ActivityStatus.Running;
+      const activityId = this._currentActivityId;
+      const isRunning = currentActivity.status === ActivityStatus.Running;
 
       this._queueService.push(
         async(): Promise<void> => {
@@ -395,7 +395,7 @@ export class ActiveProjectService implements IActiveProjectService {
           });
 
           await Promise.all([
-            this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleActive"),
+            this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
             this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
             this.removeDate(),
           ]);
@@ -420,7 +420,7 @@ export class ActiveProjectService implements IActiveProjectService {
       );
     } catch (error) {
       await Promise.all([
-        this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleActive"),
+        this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
         this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
       ]);
 
@@ -467,7 +467,7 @@ export class ActiveProjectService implements IActiveProjectService {
         "session-paused",
         {
           sessionId: this._session.id,
-          activityId: this._activeActivityId,
+          activityId: this._currentActivityId,
         }
       );
     } finally {
@@ -526,7 +526,7 @@ export class ActiveProjectService implements IActiveProjectService {
             "session-paused",
             {
               sessionId: this._session.id,
-              activityId: this._activeActivityId,
+              activityId: this._currentActivityId,
             }
           );
         } finally {
@@ -604,14 +604,14 @@ export class ActiveProjectService implements IActiveProjectService {
       this._project = undefined;
       this._activities = undefined;
       this._session = undefined;
-      this._activeActivityId = undefined;
+      this._currentActivityId = undefined;
 
       this._localStorageService.removeItem<LocalStorageKeys>("projectId");
       this._localStorageService.removeItem<LocalStorageKeys>("sessionId");
       this._localStorageService.removeItem<LocalStorageKeys>("activityId");
       this._localStorageService.removeItem<LocalStorageKeys>("date");
       this._localStorageService.removeItem<LocalStorageKeys>("shouldPause");
-      this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleActive");
+      this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity");
 
       this._stopwatchService.clearOffset();
       this._stopwatchService.reset();

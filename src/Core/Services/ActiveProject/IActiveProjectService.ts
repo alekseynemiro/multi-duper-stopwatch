@@ -13,7 +13,7 @@ export interface IActiveProjectService {
 
   readonly session: Session | undefined;
 
-  readonly activeActivityId: string | undefined;
+  readonly currentActivityId: string | undefined;
 
   checkForCrash(): Promise<void>;
 
@@ -23,9 +23,9 @@ export interface IActiveProjectService {
 
   useProjectId(projectId: string): Promise<void>;
 
-  setActiveActivity(activityId: string, isRunning: boolean): Promise<void>;
+  setCurrentActivity(activityId: string, isRunning: boolean): Promise<void>;
 
-  toggleActiveActivity(): Promise<void>;
+  toggleCurrentActivity(): Promise<void>;
 
   pause(): Promise<void>;
 
