@@ -117,7 +117,8 @@ export class StopwatchService implements IStopwatchService {
   public setOffset(): void {
     this._loggerService.debug(
       StopwatchService.name,
-      this.setOffset.name
+      this.setOffset.name,
+      this._snapped
     );
 
     this._offset = this._snapped;
