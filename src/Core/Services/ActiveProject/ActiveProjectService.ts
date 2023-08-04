@@ -310,6 +310,11 @@ export class ActiveProjectService implements IActiveProjectService {
           if (toggleResult.isRunning !== isRunning) {
             throw new Error("The action status is different than expected.");
           }
+
+          await this._settingsService.set(
+            SettingKey.LastSessionId,
+            sessionId
+          );
         }
       );
     }
@@ -402,6 +407,11 @@ export class ActiveProjectService implements IActiveProjectService {
           if (this._session && toggleResult.isPaused) {
             this._session.state = SessionState.Paused;
           }
+
+          await this._settingsService.set(
+            SettingKey.LastSessionId,
+            sessionId
+          );
         }
       );
     } catch (error) {
@@ -441,6 +451,11 @@ export class ActiveProjectService implements IActiveProjectService {
         maxSpeed: 0,
         date,
       });
+
+      await this._settingsService.set(
+        SettingKey.LastSessionId,
+        this._session.id
+      );
 
       this._session.state = SessionState.Paused;
 
@@ -495,6 +510,11 @@ export class ActiveProjectService implements IActiveProjectService {
             maxSpeed: 0,
             date,
           });
+
+          await this._settingsService.set(
+            SettingKey.LastSessionId,
+            this._session.id
+          );
 
           this._session.state = SessionState.Paused;
 
