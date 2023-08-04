@@ -7,6 +7,7 @@ import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { SessionState } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
+import { ILoggerService } from "@services/Logger";
 import { IProjectService } from "@services/Projects";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
@@ -15,6 +16,7 @@ import { homePageStyles } from "./HomePageStyles";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
 
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
@@ -31,8 +33,25 @@ export function HomePage(): JSX.Element {
 
   const load = useCallback(
     async(): Promise<void> => {
-      if (activeProjectService.project?.id !== projectId) {
+      loggerService.debug(
+        HomePage.name,
+        "load",
+        "projectId",
+        projectId,
+        "sessionId",
+        sessionId
+      );
+
+      if (sessionId) {
+        await activeProjectService.useSessionId(sessionId);
+      }
+
+      if (!sessionId && projectId) {
         await activeProjectService.useProjectId(projectId);
+      }
+
+      if (!sessionId && !projectId && !activeProjectService.session) {
+        await activeProjectService.useLastSessionId();
       }
 
       const projects = await projectService.getAll();
@@ -42,6 +61,7 @@ export function HomePage(): JSX.Element {
     },
     [
       projectId,
+      sessionId,
     ]
   );
 
