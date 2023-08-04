@@ -8,6 +8,11 @@
     "applicationSettings": "Настройки",
     "exit": "Выход"
   },
+  "home": {
+    "createProject": "Создать новый проект",
+    "openProject": "Открыть существующий проект",
+    "or": "или"
+  },
   "activeProject": {
     "pause": "Пауза",
     "resume": "Продолжить",

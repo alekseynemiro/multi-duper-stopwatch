@@ -9,6 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { ILoggerService } from "@services/Logger";
 import { IProjectService } from "@services/Projects";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
 import { ReportView, ReportViewProps } from "@views/Report";
@@ -23,6 +24,7 @@ export function HomePage(): JSX.Element {
 
   const navigation = useNavigation();
   const route = useRoute<Routes.Home>();
+  const localization = useLocalization();
 
   const reportViewRef = useRef<ReportViewProps>();
 
@@ -139,7 +141,7 @@ export function HomePage(): JSX.Element {
       >
         <Button
           variant="secondary"
-          title="Create new project"
+          title={localization.get("home.createProject")}
           style={homePageStyles.createProjectButton}
           onPress={(): void => {
             navigation.navigate(Routes.Project);
@@ -148,11 +150,11 @@ export function HomePage(): JSX.Element {
         <Text
           style={homePageStyles.text}
         >
-          - or -
+          - {localization.get("home.or")} -
         </Text>
         <Button
           variant="secondary"
-          title="Open project"
+          title={localization.get("home.openProject")}
           disabled={!canOpenProject}
           style={homePageStyles.openProjectButton}
           onPress={(): void => {

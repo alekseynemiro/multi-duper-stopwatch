@@ -8,6 +8,11 @@
     "applicationSettings": "Application settings",
     "exit": "Exit"
   },
+  "home": {
+    "createProject": "Create project",
+    "openProject": "Open project",
+    "or": "or"
+  },
   "activeProject": {
     "pause": "Pause",
     "resume": "Resume",
