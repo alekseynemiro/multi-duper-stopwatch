@@ -5,14 +5,19 @@ import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { SessionState, SettingKey } from "@data";
 import { GetAllResultItem } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
 import { IProjectService } from "@services/Projects";
+import { ISessionService } from "@services/Sessions";
+import { ISettingsService } from "@services/Settings";
 import { styles } from "@styles";
 import { useNavigation } from "@utils/NavigationUtils";
 import { projectListPageStyles } from "./ProjectListPageStyles";
 
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
+const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
+const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.SettingsService);
 
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
@@ -102,7 +107,30 @@ export function ProjectListPage(): JSX.Element {
                   <View style={styles.tableCell}>
                     <Button
                       variant="primary"
-                      onPress={(): void => {
+                      onPress={async(): Promise<void> => {
+                        // TODO: Business logic service
+                        const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
+
+                        if (lastSessionId) {
+                          const session = await sessionService.get(lastSessionId);
+
+                          if (session.state !== SessionState.Finished) {
+                            await sessionService.finish({
+                              sessionId: lastSessionId,
+                              avgSpeed: 0,
+                              distance: 0,
+                              maxSpeed: 0,
+                              date: undefined,
+                            });
+                          }
+
+                          await settingsService.set(
+                            SettingKey.LastSessionId,
+                            null
+                          );
+                        }
+                        // --
+
                         navigation.navigate(
                           Routes.Home,
                           {
