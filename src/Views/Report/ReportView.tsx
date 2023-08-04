@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { DurationFormatter } from "@components/DurationFormatter";
 import { Icon } from "@components/Icon";
@@ -30,6 +31,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
 
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [logs, setLogs] = useState<Array<ReportItemModel>>([]);
+  const [filteredLogs, setFilteredLogs] = useState<Array<ReportItemModel> | undefined>(undefined);
+  const [filterByAction, setFilterByAction] = useState<string | undefined>(undefined);
   const [totalTime, setTotalTime] = useState<number>(0);
 
   const scrollToBottom = useCallback(
@@ -58,6 +61,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
 
           return {
             id: x.id,
+            actionId: x.actionId,
             name: x.actionName,
             color: x.actionColor,
             avgSpeed: x.avgSpeed,
@@ -111,6 +115,17 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     );
   }
 
+  const total = filteredLogs
+    ? (
+      filteredLogs.reduce(
+        (result: number, x: ReportItemModel): number => {
+          return result + x.elapsedTime;
+        },
+        0
+      )
+    )
+    : totalTime;
+
   return (
     <ScrollView
       ref={scrollViewRef}
@@ -159,15 +174,30 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           </View>
         </View>
         {
-          logs.map((x: ReportItemModel): JSX.Element => {
+          (filteredLogs ?? logs).map((x: ReportItemModel): JSX.Element => {
             return (
-              <View
+              <TouchableOpacity
                 key={x.id}
                 style={[
                   styles.tableRow,
                   styles.border,
                   styles.pb8,
                 ]}
+                onPress={(): void => {
+                  if (filterByAction === x.actionId) {
+                    setFilterByAction(undefined);
+                    setFilteredLogs(undefined);
+                  } else {
+                    setFilterByAction(x.actionId);
+                    setFilteredLogs(
+                      logs.filter(
+                        (xx: ReportItemModel): boolean => {
+                          return xx.actionId === x.actionId;
+                        }
+                      )
+                    );
+                  }
+                }}
               >
                 <View
                   style={[
@@ -203,7 +233,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                     value={getTimeSpan(x.elapsedTime)}
                   />
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })
         }
@@ -232,7 +262,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           >
             <Text style={styles.bold}>
               <DurationFormatter
-                value={getTimeSpan(totalTime)}
+                value={getTimeSpan(total)}
               />
             </Text>
           </View>

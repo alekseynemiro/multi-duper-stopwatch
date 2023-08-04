@@ -4,6 +4,8 @@ export type GetAllResultItem = {
 
   id: string;
 
+  actionId: string;
+
   actionName: string;
 
   actionColor: ColorPalette;

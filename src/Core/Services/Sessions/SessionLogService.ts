@@ -59,6 +59,7 @@ export class SessionLogService implements ISessionLogService {
                 finishDate: x.finishDate,
                 actionColor: x.action.color,
                 actionName: x.action.name,
+                actionId: x.action.id,
                 maxSpeed: x.maxSpeed,
                 startDate: x.startDate,
               };

@@ -4,6 +4,8 @@ export type ReportItemModel = {
 
   id: string;
 
+  actionId: string;
+
   name: string;
 
   color: ColorPalette;
