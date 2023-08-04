@@ -21,6 +21,11 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: "IsDeleted",
+            type: "int",
+            isNullable: false,
+          },
+          {
             name: "CreatedDate",
             type: "int",
             isNullable: false,

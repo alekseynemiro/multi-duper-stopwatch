@@ -16,6 +16,12 @@ export class Project {
   public name!: string;
 
   @Column({
+    name: "IsDeleted",
+    nullable: false,
+  })
+  public isDeleted!: boolean;
+
+  @Column({
     name: "CreatedDate",
     nullable: false,
   })

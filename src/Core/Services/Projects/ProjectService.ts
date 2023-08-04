@@ -87,7 +87,12 @@ export class ProjectService implements IProjectService {
 
     return this._databaseService.execute(
       async(): Promise<GetAllResult> => {
-        const data = await this._databaseService.projects().find();
+        const data = await this._databaseService.projects().find({
+          where: {
+            isDeleted: false,
+          },
+        });
+
         const items = data.map<GetAllResultItem>(
           (x: Project): GetAllResultItem => {
             return {
@@ -124,6 +129,7 @@ export class ProjectService implements IProjectService {
 
         project.id = request.id;
         project.name = request.name;
+        project.isDeleted = false;
         project.createdDate = now;
 
         await this._databaseService.projects().save(project);
@@ -190,7 +196,9 @@ export class ProjectService implements IProjectService {
             },
           });
 
-        await this._databaseService.projects().delete(id);
+        project.isDeleted = true;
+
+        await this._databaseService.projects().save(project);
 
         if (project.actionsInProjects && project.actionsInProjects.length > 0) {
           this._loggerService.debug(
