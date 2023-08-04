@@ -19,4 +19,6 @@ export type ActionProps = {
 
   onDelete(code: string): void;
 
+  onDrag(): void;
+
 };

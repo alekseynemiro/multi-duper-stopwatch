@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import DraggableFlatList, { RenderItemParams } from "react-native-draggable-flatlist";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { FormRow } from "@components/FormRow";
@@ -18,7 +19,6 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { IGuidService } from "@services/Guid";
 import { IProjectService } from "@services/Projects";
-import { styles } from "@styles";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
 import { Action, ActionChangeEventArgs, SelectColorModal } from "./Components";
@@ -75,6 +75,7 @@ export function ProjectEditorPage(): JSX.Element {
             code: x.id,
             color: x.color,
             name: x.name,
+            position: x.position,
             isDeleted: false,
           };
         }),
@@ -102,16 +103,16 @@ export function ProjectEditorPage(): JSX.Element {
               id: x.id as string,
               name: x.name,
               color: x.color,
-              position: 0, // TODO: position
+              position: x.position,
             };
           }),
         actionsToDelete: (values.actions as Array<ActionModel>)
-        .filter((x: ActionModel): boolean => {
-          return x.isDeleted && !!x.id;
-        })
-        .map((x: ActionModel): string => {
-          return x.id as string;
-        }),
+          .filter((x: ActionModel): boolean => {
+            return x.isDeleted && !!x.id;
+          })
+          .map((x: ActionModel): string => {
+            return x.id as string;
+          }),
       };
 
       await projectService.update(updateRequest);
@@ -166,7 +167,9 @@ export function ProjectEditorPage(): JSX.Element {
   }
 
   return (
-    <ScrollView style={styles.contentView}>
+    <View
+      style={projectEditorPageStyles.container}
+    >
       <Formik<ProjectModel>
         initialValues={model}
         enableReinitialize={true}
@@ -184,7 +187,7 @@ export function ProjectEditorPage(): JSX.Element {
             values,
           }): JSX.Element => {
             return (
-              <View>
+              <View style={projectEditorPageStyles.form}>
                 <FormRow>
                   <TextInputField
                     label="Project Name:"
@@ -194,62 +197,95 @@ export function ProjectEditorPage(): JSX.Element {
                     onBlur={handleBlur("name")}
                   />
                 </FormRow>
-                <FormRow>
+                <FormRow style={projectEditorPageStyles.actions}>
                   <Label>
                     Actions:
                   </Label>
                   <View
-                    style={[
-                      styles.table,
-                    ]}
+                    style={projectEditorPageStyles.actionsTable}
                   >
-                    {
-                      values.actions
-                        ?.filter((action: ActionModel): boolean => {
-                          return !action.isDeleted;
-                        })
-                        .map((action: ActionModel, index: number): JSX.Element => {
-                          return (
-                            <Action
-                              key={action.code}
-                              actionCode={action.code}
-                              actionId={action.id}
-                              actionName={action.name}
-                              actionColor={action.color}
-                              error={touched.actions && (errors.actions?.[index] as unknown as ActionModel)?.name}
-                              onSelectColorClick={(): void => {
-                                showSelectColorModal(action.code);
-                              }}
-                              onChange={(e: ActionChangeEventArgs): void => {
-                                const actionIndex = findActionIndexByCode(values?.actions, e.code);
-                                setFieldValue(`actions[${actionIndex}].${e.fieldName}`, e.value);
-                              }}
-                              onDelete={(actionCode: string): void => {
-                                const actionIndex = findActionIndexByCode(values?.actions, actionCode);
-                                setFieldValue(`actions[${actionIndex}].isDeleted`, true);
-                              }}
-                            />
-                          );
-                        })
-                    }
+                    <DraggableFlatList
+                      scrollEnabled={true}
+                      data={
+                        values.actions
+                          ?.filter((action: ActionModel): boolean => {
+                            return !action.isDeleted;
+                          }) ?? []
+                      }
+                      onDragEnd={({ data }): void => {
+                        setFieldValue(
+                          "actions",
+                          [
+                            ...data.map(
+                              (x: ActionModel, index: number): ActionModel => {
+                                return {
+                                  ...x,
+                                  // here we need to take into account the removed elements
+                                  // but I don't think it's a significant problem
+                                  position: index,
+                                };
+                              }
+                            ),
+                            ...values.actions
+                            ?.filter((action: ActionModel): boolean => {
+                              return action.isDeleted;
+                            }) ?? [],
+                          ]
+                        );
+                      }}
+                      keyExtractor={(item: ActionModel): string => {
+                        return item.code;
+                      }}
+                      renderItem={({ item: action, drag, getIndex }: RenderItemParams<ActionModel>) => {
+                        const index = getIndex() as number;
+
+                        return (
+                          <Action
+                            key={action.code}
+                            actionCode={action.code}
+                            actionId={action.id}
+                            actionName={action.name}
+                            actionColor={action.color}
+                            error={touched.actions && (errors.actions?.[index] as unknown as ActionModel)?.name}
+                            onSelectColorClick={(): void => {
+                              showSelectColorModal(action.code);
+                            }}
+                            onChange={(e: ActionChangeEventArgs): void => {
+                              const actionIndex = findActionIndexByCode(values?.actions, e.code);
+                              setFieldValue(`actions[${actionIndex}].${e.fieldName}`, e.value);
+                            }}
+                            onDelete={(actionCode: string): void => {
+                              const actionIndex = findActionIndexByCode(values?.actions, actionCode);
+                              setFieldValue(`actions[${actionIndex}].isDeleted`, true);
+                            }}
+                            onDrag={drag}
+                          />
+                        );
+                      }}
+                    />
                   </View>
-                  <Button
-                    title="Add action"
-                    onPress={(): void => {
-                      setFieldValue(
-                        "actions",
-                        [
-                          ...values?.actions || [],
-                          {
-                            code: guidService.newGuid(),
-                            name: "",
-                            color: "",
-                            isDeleted: false,
-                          },
-                        ]
-                      );
-                    }}
-                  />
+                  <View
+                    style={projectEditorPageStyles.addActionButtonContainer}
+                  >
+                    <Button
+                      title="Add action"
+                      onPress={(): void => {
+                        setFieldValue(
+                          "actions",
+                          [
+                            ...values?.actions || [],
+                            {
+                              code: guidService.newGuid(),
+                              name: "",
+                              color: "",
+                              position: values.actions?.length ?? 0,
+                              isDeleted: false,
+                            },
+                          ]
+                        );
+                      }}
+                    />
+                  </View>
                 </FormRow>
                 <FormRow>
                   <HorizontalLine />
@@ -281,6 +317,6 @@ export function ProjectEditorPage(): JSX.Element {
           }
         }
       </Formik>
-    </ScrollView>
+    </View>
   );
 }

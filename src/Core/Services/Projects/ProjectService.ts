@@ -46,16 +46,21 @@ export class ProjectService implements IProjectService {
           });
 
         const actions = project.actionsInProjects
-          ?.sort((a, b): number => {
-            return a.position - b.position;
-          })
-          ?.map<GetResultAction>(x => {
-            return {
-              id: x.action.id,
-              color: x.action.color,
-              name: x.action.name,
-            };
-          }) ?? [];
+          ?.sort(
+            (a: ActionInProject, b: ActionInProject): number => {
+              return a.position - b.position;
+            }
+          )
+          ?.map<GetResultAction>(
+            (x: ActionInProject): GetResultAction => {
+              return {
+                id: x.action.id,
+                color: x.action.color,
+                name: x.action.name,
+                position: x.position,
+              };
+            }
+          ) ?? [];
 
         const result: GetResult = {
           id: project.id,
@@ -73,12 +78,14 @@ export class ProjectService implements IProjectService {
     return this._databaseService.execute(
       async(): Promise<GetAllResult> => {
         const data = await this._databaseService.projects().find();
-        const items = data.map<GetAllResultItem>(x => {
-          return {
-            id: x.id,
-            name: x.name,
-          };
-        });
+        const items = data.map<GetAllResultItem>(
+          (x: Project): GetAllResultItem => {
+            return {
+              id: x.id,
+              name: x.name,
+            };
+          }
+        );
 
         return {
           items,

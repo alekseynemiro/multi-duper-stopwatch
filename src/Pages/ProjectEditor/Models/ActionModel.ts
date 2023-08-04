@@ -10,6 +10,8 @@ export type ActionModel = {
 
   color: ColorPalette;
 
+  position: number;
+
   isDeleted: boolean;
 
 };

@@ -8,4 +8,6 @@ export type GetResultAction = {
 
   color: ColorPalette;
 
+  position: number;
+
 };

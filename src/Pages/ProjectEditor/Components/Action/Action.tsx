@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
@@ -18,28 +18,27 @@ export function Action(props: ActionProps): JSX.Element {
     onSelectColorClick,
     onChange,
     onDelete,
+    onDrag,
   } = props;
 
   return (
-    <View style={styles.tableRow}>
-      <View
-        style={[
-          styles.tableCell,
-          actionStyles.positionCol,
-        ]}
+    <View style={actionStyles.container}>
+      <TouchableOpacity
+        onPressIn={onDrag}
       >
-        {/*TODO: Drag'n'Drop*/}
-        <Icon
-          variant="secondary"
-          name="grip-lines"
-          size={24}
-        />
-      </View>
+        <View
+          style={actionStyles.positionCol}
+        >
+          {/*TODO: Drag'n'Drop*/}
+          <Icon
+            variant="secondary"
+            name="grip-lines"
+            size={24}
+          />
+        </View>
+      </TouchableOpacity>
       <View
-        style={[
-          styles.tableCell,
-          actionStyles.nameCol,
-        ]}
+        style={actionStyles.nameCol}
       >
         <TextInputField
           value={actionName}
@@ -54,10 +53,7 @@ export function Action(props: ActionProps): JSX.Element {
         />
       </View>
       <View
-        style={[
-          styles.tableCell,
-          actionStyles.colorCol,
-        ]}
+        style={actionStyles.colorCol}
       >
         <Button
           style={[
@@ -84,10 +80,7 @@ export function Action(props: ActionProps): JSX.Element {
         </Button>
       </View>
       <View
-        style={[
-          styles.tableCell,
-          actionStyles.deleteCol,
-        ]}
+        style={actionStyles.deleteCol}
       >
         <Button
           variant="danger"
