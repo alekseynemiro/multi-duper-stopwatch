@@ -35,7 +35,7 @@ export function App(): JSX.Element {
       const subscription = AppState.addEventListener(
         "change",
         async(nextAppState: AppStateStatus): Promise<void> => {
-          if (nextAppState.match(/inactive|background/)) {
+          if (nextAppState.match(/inactive/)) {
             if (
               activeProjectService.session
               && activeProjectService.session.state === SessionState.Run
