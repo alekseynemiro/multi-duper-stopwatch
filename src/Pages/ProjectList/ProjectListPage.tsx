@@ -184,7 +184,7 @@ export function ProjectListPage(): JSX.Element {
             list.length === 0
               && (
                 <View>
-                  <Text>
+                  <Text style={projectListPageStyles.noProjects}>
                     {localization.get("projectList.noProjects")}
                   </Text>
                   <Button

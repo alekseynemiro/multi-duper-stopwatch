@@ -10,4 +10,7 @@ export const projectListPageStyles = StyleSheet.create({
   projectNameCol: {
     flex: 1,
   },
+  noProjects: {
+    textAlign: "center",
+  },
 });
