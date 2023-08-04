@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
-import { SessionState } from "@data";
+import { IMigrationRunner, SessionState } from "@data";
 import { ApplicationSettingsPage } from "@pages/ApplicationSettings";
 import { HomePage } from "@pages/Home";
 import { InitialScreenPage } from "@pages/InitialScreen";
@@ -21,8 +21,9 @@ import { AppNavigation } from "./AppNavigation";
 
 const Drawer = createDrawerNavigator();
 
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
 const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function App(): JSX.Element {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
@@ -38,12 +39,13 @@ export function App(): JSX.Element {
 
   useEffect(
     (): void => {
-      const initLang = async(): Promise<void> => {
+      const initApp = async(): Promise<void> => {
+        await migrationRunner.run();
         await localizationService.init();
         setShowLoadingIndicator(false);
       };
 
-      initLang();
+      initApp();
     },
     [
       setShowLoadingIndicator,

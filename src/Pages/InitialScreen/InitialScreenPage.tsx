@@ -2,13 +2,11 @@ import { useCallback, useState } from "react";
 import React, { View } from "react-native";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
-import { IMigrationRunner } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { IActiveProjectService } from "@services/ActiveProject";
 import { useNavigation } from "@utils/NavigationUtils";
 import { initialScreenPageStyles } from "./InitialScreenPageStyles";
 
-const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function InitialScreenPage(): JSX.Element {
@@ -18,8 +16,6 @@ export function InitialScreenPage(): JSX.Element {
 
   const load = useCallback(
     async(): Promise<void> => {
-      await migrationRunner.run();
-
       await activeProjectService.checkForCrash();
       await activeProjectService.reset();
       await activeProjectService.useLastSessionId();
