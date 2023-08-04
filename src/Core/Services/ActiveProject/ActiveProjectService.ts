@@ -224,8 +224,12 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  public async useProjectId(projectId: string): Promise<void> {
-    await this.setProjectId(projectId);
+  public useSessionId(sessionId: string): Promise<void> {
+    return this.setSessionId(sessionId);
+  }
+
+  public useProjectId(projectId: string): Promise<void> {
+    return this.setProjectId(projectId);
   }
 
   public async setActiveAction(actionId: string, isRunning: boolean): Promise<void> {

@@ -19,7 +19,9 @@ export interface IActiveProjectService {
 
   useLastSessionId(): Promise<void>;
 
-  useProjectId(projectId?: string | undefined): Promise<void>;
+  useSessionId(sessionId: string): Promise<void>;
+
+  useProjectId(projectId: string): Promise<void>;
 
   setActiveAction(actionId: string, isRunning: boolean): Promise<void>;
 
