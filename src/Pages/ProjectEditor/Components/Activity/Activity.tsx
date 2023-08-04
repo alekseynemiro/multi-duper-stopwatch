@@ -29,7 +29,6 @@ export function Activity(props: ActivityProps): JSX.Element {
         <View
           style={activityStyles.positionCol}
         >
-          {/*TODO: Drag'n'Drop*/}
           <Icon
             variant="secondary"
             name="grip-lines"
