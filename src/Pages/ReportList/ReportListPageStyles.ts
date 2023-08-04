@@ -46,4 +46,7 @@ export const reportListPageStyles = StyleSheet.create({
   detailsButtonCol: {
     width: 64,
   },
+  noData: {
+    textAlign: "center",
+  },
 });

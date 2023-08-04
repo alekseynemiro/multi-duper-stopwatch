@@ -230,7 +230,9 @@ export function ReportListPage(): JSX.Element {
             list.length === 0
             && (
               <View>
-                <Text>
+                <Text
+                  style={reportListPageStyles.noData}
+                >
                   {localization.get("reportList.noData")}
                 </Text>
               </View>
