@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Alert, View } from "react-native";
+import { Alert, NativeModules, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { FormRow } from "@components/FormRow";
@@ -22,7 +22,8 @@ export function ApplicationSettingsPage(): JSX.Element {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
   const load = async(): Promise<void> => {
-    const lang = await settingsService.get(SettingKey.Language);
+    const lang = await settingsService.get(SettingKey.Language)
+      ?? NativeModules.I18nManager.localeIdentifier.substring(0, 2);
 
     setLanguage(lang ?? "en");
     setShowLoadingIndicator(false);
