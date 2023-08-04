@@ -128,7 +128,7 @@ export function ProjectEditorPage(): JSX.Element {
             return {
               name: x.name,
               color: x.color,
-              position: 0, // TODO: position
+              position: x.position,
             };
           }),
       };
