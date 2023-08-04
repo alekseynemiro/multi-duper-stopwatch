@@ -15,4 +15,6 @@ export type RouteParamList = {
 
   [Routes.ReportList]: undefined;
 
+  [Routes.ApplicationSettings]: undefined;
+
 };

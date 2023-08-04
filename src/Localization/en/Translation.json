@@ -58,5 +58,14 @@
     "events": "Events",
     "time": "Time",
     "noData": "You have not finished any session yet."
+  },
+  "applicationSettings": {
+    "warningTitle": "Restart",
+    "warningMessage": "For the changes to take effect, you must restart the application.",
+    "no": "No, thanks",
+    "yes": "Yes, exit now",
+    "save": "Save",
+    "ok": "Ok",
+    "language": "Language:"
   }
 }

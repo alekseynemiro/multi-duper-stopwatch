@@ -55,7 +55,7 @@ export function AppNavigation(): JSX.Element {
           label={localizationService.get("menu.applicationSettings")}
           icon={applicationSettingsIcon}
           onPress={(): void => {
-            // TODO:
+            navigation.navigate(Routes.ApplicationSettings);
           }}
         />
         <HorizontalLine />

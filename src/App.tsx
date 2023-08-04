@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AppHeader } from "@components/AppHeader";
+import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { SessionState } from "@data";
+import { ApplicationSettingsPage } from "@pages/ApplicationSettings";
 import { HomePage } from "@pages/Home";
 import { InitialScreenPage } from "@pages/InitialScreen";
 import { ProjectEditorPage } from "@pages/ProjectEditor";
@@ -22,9 +24,9 @@ const Drawer = createDrawerNavigator();
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
 
-localizationService.init();
-
 export function App(): JSX.Element {
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
+
   const appHeader = useCallback(
     (props: DrawerHeaderProps): JSX.Element => {
       return (
@@ -32,6 +34,20 @@ export function App(): JSX.Element {
       );
     },
     []
+  );
+
+  useEffect(
+    (): void => {
+      const initLang = async(): Promise<void> => {
+        await localizationService.init();
+        setShowLoadingIndicator(false);
+      };
+
+      initLang();
+    },
+    [
+      setShowLoadingIndicator,
+    ]
   );
 
   useEffect(
@@ -56,6 +72,12 @@ export function App(): JSX.Element {
     },
     []
   );
+
+  if (showLoadingIndicator) {
+    return (
+      <ContentLoadIndicator />
+    );
+  }
 
   return (
     <GestureHandlerRootView
@@ -105,6 +127,13 @@ export function App(): JSX.Element {
             component={ReportListPage}
             options={{
               title: localizationService.get("menu.reports"),
+            }}
+          />
+          <Drawer.Screen
+            name={Routes.ApplicationSettings}
+            component={ApplicationSettingsPage}
+            options={{
+              title: localizationService.get("menu.applicationSettings"),
             }}
           />
         </Drawer.Navigator>

@@ -43,4 +43,11 @@ export type LocalizationKey =
   | "report.activity"
   | "report.time"
   | "report.total"
+  | "applicationSettings.warningTitle"
+  | "applicationSettings.warningMessage"
+  | "applicationSettings.no"
+  | "applicationSettings.yes"
+  | "applicationSettings.ok"
+  | "applicationSettings.save"
+  | "applicationSettings.language"
 ;
