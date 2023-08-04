@@ -1,3 +1,62 @@
 {
-  "_comment": "Localization/ru/Translation.json"
+  "_comment": "Localization/ru/Translation.json",
+  "menu": {
+    "home": "Текущий проект",
+    "projectList": "Проекты",
+    "reports": "Отчёты",
+    "createProject": "Создать проект",
+    "applicationSettings": "Настройки",
+    "exit": "Выход"
+  },
+  "activeProject": {
+    "pause": "Пауза",
+    "resume": "Продолжить",
+    "finish": "Завершить",
+    "total": "Общее время",
+    "sessionNameModal": {
+      "sessionName": "Имя сеанса:",
+      "ok": "Ok",
+      "cancel": "Отмена"
+    }
+  },
+  "report": {
+    "pageTitle": "Отчёт",
+    "action": "Активность",
+    "time": "Время",
+    "total": "Всего:"
+  },
+  "projectList": {
+    "confirmationTitle": "Подтверждение",
+    "confirmationMessage": "Вы действительно хотите удалить проект {{projectName}}?\n\nВосстановить проект, и связанные с ним отчёты, после удаления будет невозможно.",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "noProjects": "У вас еще нет ни одного проекта.",
+    "createProject": "Создать проект"
+  },
+  "projectEditor": {
+    "createProject": "Новый проект",
+    "editProject": "Редактировать проект",
+    "projectName": "Имя проекта:",
+    "actions": "Активности:",
+    "addAction": "Добавить активность",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "selectColor": {
+      "title": "Нажмите на цвет, чтобы выбрать его:",
+      "close": "Закрыть"
+    },
+    "validation": {
+      "actionNameIsRequired": "Требуется имя активности.",
+      "projectNameIsRequired": "Требуется имя проекта.",
+      "actionsIsRequired": "Необходимо добавить хотя бы одну активность."
+    }
+  },
+  "reportList": {
+    "session": "Сеанс",
+    "start": "Начало",
+    "finish": "Завершение",
+    "events": "События",
+    "time": "Время",
+    "noData": "У вас еще нет ни одного завершенного сеанса."
+  }
 }

@@ -2,9 +2,12 @@ import React from "react";
 import { BackHandler, SafeAreaView, ScrollView } from "react-native";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Icon } from "@components/Icon";
-import { Routes } from "@config";
+import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { DrawerItem } from "@react-navigation/drawer";
+import { ILocalizationService } from "@services/Localization";
 import { useNavigation } from "@utils/NavigationUtils";
+
+const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
 
 export function AppNavigation(): JSX.Element {
   const navigation = useNavigation();
@@ -20,28 +23,28 @@ export function AppNavigation(): JSX.Element {
     <SafeAreaView>
       <ScrollView>
         <DrawerItem
-          label="Home"
+          label={localizationService.get("menu.home")}
           icon={homeIcon}
           onPress={(): void => {
             navigation.navigate(Routes.Home);
           }}
         />
         <DrawerItem
-          label="Create project"
+          label={localizationService.get("menu.createProject")}
           icon={createProjectIcon}
           onPress={(): void => {
             navigation.navigate(Routes.Project, undefined);
           }}
         />
         <DrawerItem
-          label="Project list"
+          label={localizationService.get("menu.projectList")}
           icon={projectListIcon}
           onPress={(): void => {
             navigation.navigate(Routes.ProjectList);
           }}
         />
         <DrawerItem
-          label="Reports"
+          label={localizationService.get("menu.reports")}
           icon={reportsIcon}
           onPress={(): void => {
             navigation.navigate(Routes.ReportList);
@@ -49,7 +52,7 @@ export function AppNavigation(): JSX.Element {
         />
         <HorizontalLine />
         <DrawerItem
-          label="Application settings"
+          label={localizationService.get("menu.applicationSettings")}
           icon={applicationSettingsIcon}
           onPress={(): void => {
             // TODO:
@@ -57,7 +60,7 @@ export function AppNavigation(): JSX.Element {
         />
         <HorizontalLine />
         <DrawerItem
-          label="Exit"
+          label={localizationService.get("menu.exit")}
           icon={exitIcon}
           onPress={(): void => {
             BackHandler.exitApp();

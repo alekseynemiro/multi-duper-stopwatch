@@ -3,10 +3,13 @@ import { Modal, View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { TextInputField } from "@components/TextInputField";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { SessionNameModalProps } from "./SessionNameModalProps";
 import { sessionNameModalStyles } from "./SessionNameModalStyles";
 
 export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModalProps): JSX.Element {
+  const localization = useLocalization();
+
   const [sessionName, setSessionName] = useState<string | undefined>();
 
   if (!show) {
@@ -26,7 +29,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
           <View style={sessionNameModalStyles.modalView}>
             <View style={sessionNameModalStyles.row}>
               <TextInputField
-                label="Session name:"
+                label={localization.get("activeProject.sessionNameModal.sessionName")}
                 value={sessionName}
                 onChangeText={setSessionName}
               />
@@ -37,7 +40,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
             <View style={sessionNameModalStyles.footer}>
               <Button
                 variant="primary"
-                title="Ok"
+                title={localization.get("activeProject.sessionNameModal.ok")}
                 style={sessionNameModalStyles.button}
                 onPress={(): void => {
                   onConfirm({
@@ -47,7 +50,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
               />
               <Button
                 variant="secondary"
-                title="Cancel"
+                title={localization.get("activeProject.sessionNameModal.cancel")}
                 style={sessionNameModalStyles.button}
                 onPress={onCancel}
               />

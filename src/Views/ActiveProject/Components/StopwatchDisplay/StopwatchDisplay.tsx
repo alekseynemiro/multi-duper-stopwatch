@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import {
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { Action as ActionModel } from "@dto/ActiveProject";
 import { IStopwatchService } from "@services/Stopwatch";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
@@ -18,6 +16,8 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
     activeAction,
   } = props;
+
+  const localization = useLocalization();
 
   const [showActiveAction, setShowActiveAction] = useState<boolean>();
 
@@ -62,7 +62,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                       stopwatchDisplayStyles.mode,
                     ]}
                   >
-                    Total
+                    {localization.get("activeProject.total")}
                   </Text>
                 )
               }
@@ -74,7 +74,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                 stopwatchDisplayStyles.mode,
               ]}
             >
-              Total
+              {localization.get("activeProject.total")}
             </Text>
           )
         }

@@ -1,3 +1,62 @@
 {
-  "_comment": "Localization/en/Translation.json"
+  "_comment": "Localization/en/Translation.json",
+  "menu": {
+    "home": "Home",
+    "projectList": "Project list",
+    "reports": "Reports",
+    "createProject": "Create project",
+    "applicationSettings": "Application settings",
+    "exit": "Exit"
+  },
+  "activeProject": {
+    "pause": "Pause",
+    "resume": "Resume",
+    "finish": "Finish",
+    "total": "Total",
+    "sessionNameModal": {
+      "sessionName": "Session name:",
+      "ok": "Ok",
+      "cancel": "Cancel"
+    }
+  },
+  "report": {
+    "pageTitle": "Report",
+    "action": "Action",
+    "time": "Time",
+    "total": "Total:"
+  },
+  "projectList": {
+    "confirmationTitle": "Confirmation",
+    "confirmationMessage": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "noProjects": "You don't have any projects yet.",
+    "createProject": "Create a new project"
+  },
+  "projectEditor": {
+    "createProject": "Create project",
+    "editProject": "Edit project",
+    "projectName": "Project name:",
+    "actions": "Actions:",
+    "addAction": "Add action",
+    "save": "Save",
+    "cancel": "Cancel",
+    "selectColor": {
+      "title": "Tap to color for select:",
+      "close": "Close"
+    },
+    "validation": {
+      "actionNameIsRequired": "Action name is required.",
+      "projectNameIsRequired": "Project name is required.",
+      "actionsIsRequired": "At least one action is required."
+    }
+  },
+  "reportList": {
+    "session": "Session",
+    "start": "Start",
+    "finish": "Finish",
+    "events": "Events",
+    "time": "Time",
+    "noData": "You have not finished any session yet."
+  }
 }

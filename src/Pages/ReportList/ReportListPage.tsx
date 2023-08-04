@@ -10,6 +10,7 @@ import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { GetAllResultItem } from "@dto/Sessions";
 import { useFocusEffect } from "@react-navigation/native";
 import { ISessionService } from "@services/Sessions";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { reportListPageStyles } from "./ReportListPageStyles";
@@ -19,6 +20,7 @@ const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.Se
 export function ReportListPage(): JSX.Element {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
+  const localization = useLocalization();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
@@ -64,7 +66,7 @@ export function ReportListPage(): JSX.Element {
               ]}
             >
               <Text style={reportListPageStyles.tableHeaderText}>
-                Session
+                {localization.get("reportList.session")}
               </Text>
             </View>
             {
@@ -78,7 +80,7 @@ export function ReportListPage(): JSX.Element {
                     ]}
                   >
                     <Text style={reportListPageStyles.tableHeaderText}>
-                      Start
+                      {localization.get("reportList.start")}
                     </Text>
                   </View>
                   <View
@@ -88,7 +90,7 @@ export function ReportListPage(): JSX.Element {
                     ]}
                   >
                     <Text style={reportListPageStyles.tableHeaderText}>
-                      Finish
+                      {localization.get("reportList.finish")}
                     </Text>
                   </View>
                 </>
@@ -101,7 +103,7 @@ export function ReportListPage(): JSX.Element {
               ]}
             >
               <Text style={reportListPageStyles.tableHeaderText}>
-                Events
+                {localization.get("reportList.events")}
               </Text>
             </View>
             <View
@@ -111,7 +113,7 @@ export function ReportListPage(): JSX.Element {
               ]}
             >
               <Text style={reportListPageStyles.tableHeaderText}>
-                Time
+                {localization.get("reportList.time")}
               </Text>
             </View>
             <View
@@ -229,7 +231,7 @@ export function ReportListPage(): JSX.Element {
             && (
               <View>
                 <Text>
-                  You have not started any session yet.
+                  {localization.get("reportList.noData")}
                 </Text>
               </View>
             )

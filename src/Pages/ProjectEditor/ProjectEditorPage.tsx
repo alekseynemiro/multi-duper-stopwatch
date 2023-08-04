@@ -19,6 +19,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { IGuidService } from "@services/Guid";
 import { IProjectService } from "@services/Projects";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
 import { Action, ActionChangeEventArgs, SelectColorModal } from "./Components";
@@ -32,6 +33,7 @@ const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.Pr
 export function ProjectEditorPage(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute<Routes.Project>();
+  const localization = useLocalization();
 
   const initialModel = useRef<ProjectModel>({
     name: "",
@@ -60,8 +62,17 @@ export function ProjectEditorPage(): JSX.Element {
       if (!route.params?.projectId) {
         setModel(initialModel.current);
         setShowLoadingIndicator(false);
+
+        navigation.setOptions({
+          title: localization.get("projectEditor.createProject"),
+        });
+
         return;
       }
+
+      navigation.setOptions({
+        title: localization.get("projectEditor.editProject"),
+      });
 
       setShowLoadingIndicator(true);
 
@@ -86,6 +97,8 @@ export function ProjectEditorPage(): JSX.Element {
     [
       route,
       initialModel,
+      localization,
+      navigation,
     ]
   );
 
@@ -190,7 +203,7 @@ export function ProjectEditorPage(): JSX.Element {
               <View style={projectEditorPageStyles.form}>
                 <FormRow>
                   <TextInputField
-                    label="Project Name:"
+                    label={localization.get("projectEditor.projectName")}
                     value={values.name}
                     error={touched.name && errors.name}
                     onChangeText={handleChange("name")}
@@ -199,7 +212,7 @@ export function ProjectEditorPage(): JSX.Element {
                 </FormRow>
                 <FormRow style={projectEditorPageStyles.actions}>
                   <Label>
-                    Actions:
+                    {localization.get("projectEditor.actions")}
                   </Label>
                   <View
                     style={projectEditorPageStyles.actionsTable}
@@ -268,7 +281,7 @@ export function ProjectEditorPage(): JSX.Element {
                     style={projectEditorPageStyles.addActionButtonContainer}
                   >
                     <Button
-                      title="Add action"
+                      title={localization.get("projectEditor.addAction")}
                       onPress={(): void => {
                         setFieldValue(
                           "actions",
@@ -292,12 +305,12 @@ export function ProjectEditorPage(): JSX.Element {
                   <View style={projectEditorPageStyles.buttons}>
                     <Button
                       variant="primary"
-                      title="Save"
+                      title={localization.get("projectEditor.save")}
                       onPress={handleSubmit}
                     />
                     <Button
                       variant="secondary"
-                      title="Cancel"
+                      title={localization.get("projectEditor.cancel")}
                       onPress={navigation.goBack}
                     />
                   </View>

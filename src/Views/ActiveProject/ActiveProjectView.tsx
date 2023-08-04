@@ -6,6 +6,7 @@ import { Icon } from "@components/Icon";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { Action as ActionModel, ActionStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult, IActiveProjectService } from "@services/ActiveProject";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
@@ -20,6 +21,8 @@ const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceI
 export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
   const loaded = useRef(false);
+
+  const localization = useLocalization();
 
   const finishActionRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -240,8 +243,8 @@ export function ActiveProjectView(): JSX.Element {
           <Text>
             {
               activeAction?.status === ActionStatus.Paused
-                && "Resume"
-                || "Pause"
+                && localization.get("activeProject.resume")
+                || localization.get("activeProject.pause")
             }
           </Text>
         </Button>
@@ -254,7 +257,7 @@ export function ActiveProjectView(): JSX.Element {
             name="finish"
           />
           <Text>
-            Finish
+            {localization.get("activeProject.finish")}
           </Text>
         </Button>
       </View>

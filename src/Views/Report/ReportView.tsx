@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ISessionLogService } from "@services/Sessions";
 import { colors, styles } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { ReportItemModel } from "./Models/ReportItemModel";
 import { ReportViewProps } from "./ReportViewProps";
@@ -22,6 +23,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     sessionId,
     autoScrollToBottom,
   } = props;
+
+  const localization = useLocalization();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
 
@@ -133,7 +136,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             ]}
           >
             <Text style={styles.bold}>
-              Action
+              {localization.get("report.action")}
             </Text>
           </View>
           <View
@@ -151,7 +154,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                 name="elapsed-time"
               />
               {" "}
-              Time
+              {localization.get("report.time")}
             </Text>
           </View>
         </View>
@@ -218,7 +221,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             ]}
           >
             <Text style={styles.bold}>
-              Total:
+              {localization.get("report.total")}
             </Text>
           </View>
           <View

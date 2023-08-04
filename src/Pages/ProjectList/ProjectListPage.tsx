@@ -12,6 +12,7 @@ import { IProjectService } from "@services/Projects";
 import { ISessionService } from "@services/Sessions";
 import { ISettingsService } from "@services/Settings";
 import { styles } from "@styles";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation } from "@utils/NavigationUtils";
 import { projectListPageStyles } from "./ProjectListPageStyles";
 
@@ -21,6 +22,7 @@ const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.
 
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
+  const localization = useLocalization();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
@@ -37,17 +39,15 @@ export function ProjectListPage(): JSX.Element {
 
   const requestToDeleteProject = (project: GetAllResultItem): void => {
     Alert.alert(
-      "Confirmation",
-      `Are you sure you want to delete project ${project.name}?`
-      + "\n\n"
-      + "It will be impossible to restore the project after deletion.",
+      localization.get("projectList.confirmationTitle"),
+      localization.get("projectList.confirmationMessage", { projectName: project.name }),
       [
         {
-          text: "Cancel",
+          text: localization.get("projectList.cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: localization.get("projectList.delete"),
           onPress: (): void => {
             deleteProject(project.id);
           },
@@ -185,10 +185,10 @@ export function ProjectListPage(): JSX.Element {
               && (
                 <View>
                   <Text>
-                    You don't have any projects yet.
+                    {localization.get("projectList.noProjects")}
                   </Text>
                   <Button
-                    title="Create a new project"
+                    title={localization.get("projectList.createProject")}
                     variant="primary"
                     style={styles.mt16}
                     onPress={(): void => {

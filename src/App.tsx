@@ -13,12 +13,16 @@ import { ReportListPage } from "@pages/ReportList";
 import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { IActiveProjectService } from "@services/ActiveProject";
+import { ILocalizationService } from "@services/Localization";
 import { styles } from "@styles";
 import { AppNavigation } from "./AppNavigation";
 
 const Drawer = createDrawerNavigator();
 
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
+
+localizationService.init();
 
 export function App(): JSX.Element {
   const appHeader = useCallback(
@@ -82,7 +86,7 @@ export function App(): JSX.Element {
             name={Routes.ProjectList}
             component={ProjectListPage}
             options={{
-              title: "Project list",
+              title: localizationService.get("menu.projectList"),
             }}
           />
           <Drawer.Screen
@@ -92,12 +96,15 @@ export function App(): JSX.Element {
           <Drawer.Screen
             name={Routes.Report}
             component={ReportPage}
+            options={{
+              title: localizationService.get("report.pageTitle"),
+            }}
           />
           <Drawer.Screen
             name={Routes.ReportList}
             component={ReportListPage}
             options={{
-              title: "Reports",
+              title: localizationService.get("menu.reports"),
             }}
           />
         </Drawer.Navigator>
