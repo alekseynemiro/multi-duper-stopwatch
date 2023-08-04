@@ -368,7 +368,7 @@ export class SessionService implements ISessionService {
       "sessionId",
       request.sessionId,
       "time",
-      request.date.getTime()
+      request.date?.getTime()
     );
 
     return this._databaseService.execute(
@@ -387,28 +387,30 @@ export class SessionService implements ISessionService {
           throw new Error("The session has already finished.");
         }
 
-        const startDate = session.actionStartDate;
-        let elapsedTime = request.date.getTime() - startDate.getTime();
+        if (request.date !== undefined) {
+          const startDate = session.actionStartDate;
+          let elapsedTime = request.date.getTime() - startDate.getTime();
 
-        if (session.state === SessionState.Paused) {
-          elapsedTime = (session.actionFinishDate as Date).getTime() - session.actionStartDate.getTime();
+          if (session.state === SessionState.Paused) {
+            elapsedTime = (session.actionFinishDate as Date).getTime() - session.actionStartDate.getTime();
+          }
+
+          const log: SessionLog = {
+            id: this._guidService.newGuid(),
+            session,
+            action: { ...session.action }, // to kill reference
+            distance: request.distance,
+            avgSpeed: request.avgSpeed,
+            maxSpeed: request.maxSpeed,
+            steps: 0,
+            elapsedTime,
+            startDate,
+            finishDate: request.date,
+            createdDate: this._dateTimeService.now,
+          };
+
+          await this._databaseService.sessionLogs().insert(log);
         }
-
-        const log: SessionLog = {
-          id: this._guidService.newGuid(),
-          session,
-          action: { ...session.action }, // to kill reference
-          distance: request.distance,
-          avgSpeed: request.avgSpeed,
-          maxSpeed: request.maxSpeed,
-          steps: 0,
-          elapsedTime,
-          startDate,
-          finishDate: request.date,
-          createdDate: this._dateTimeService.now,
-        };
-
-        await this._databaseService.sessionLogs().insert(log);
 
         const allLogs = await this._databaseService.sessionLogs()
           .find({
@@ -448,7 +450,7 @@ export class SessionService implements ISessionService {
         );
 
         session.state = SessionState.Finished;
-        session.finishDate = request.date;
+        session.finishDate = request.date ?? this._dateTimeService.now;
         session.elapsedTime = stats.elapsedTime;
         session.steps = stats.steps;
         session.distance = stats.distance;

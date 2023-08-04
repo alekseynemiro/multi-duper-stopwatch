@@ -8,6 +8,6 @@ export type FinishRequest = {
 
   maxSpeed: number;
 
-  date: Date;
+  date: Date | undefined;
 
 };
