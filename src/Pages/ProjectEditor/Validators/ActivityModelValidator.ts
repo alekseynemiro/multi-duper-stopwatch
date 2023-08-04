@@ -1,8 +1,8 @@
 import { useLocalization } from "@utils/LocalizationUtils";
 import { Validator } from "fluentvalidation-ts";
-import { ActionModel } from "../Models";
+import { ActivityModel } from "../Models";
 
-export class ActionModelValidator extends Validator<ActionModel> {
+export class ActivityModelValidator extends Validator<ActivityModel> {
 
   constructor() {
     super();
@@ -12,7 +12,7 @@ export class ActionModelValidator extends Validator<ActionModel> {
 
     this.ruleFor("name")
       .notEmpty()
-      .withMessage(localization.get("projectEditor.validation.actionNameIsRequired"));
+      .withMessage(localization.get("projectEditor.validation.activityNameIsRequired"));
   }
 
 }

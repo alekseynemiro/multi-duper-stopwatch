@@ -1,8 +1,8 @@
 import { NativeEventSubscription } from "react-native";
 import { ServiceIdentifier } from "@config";
 import { SessionState, SettingKey } from "@data";
-import { Action, ActionStatus, Project } from "@dto/ActiveProject";
-import { GetResultAction } from "@dto/Projects";
+import { Activity, ActivityStatus, Project } from "@dto/ActiveProject";
+import { GetResultActivity } from "@dto/Projects";
 import { GetResult as Session } from "@dto/Sessions";
 import { IDateTimeService } from "@services/DateTime";
 import { ILoggerService } from "@services/Logger";
@@ -21,7 +21,7 @@ import { IActiveProjectService } from "./IActiveProjectService";
 type LocalStorageKeys =
   | "sessionId"
   | "projectId"
-  | "actionId"
+  | "activityId"
   | "date"
   | "shouldPause"
   | "shouldFinish"
@@ -49,11 +49,11 @@ export class ActiveProjectService implements IActiveProjectService {
 
   private _project: Project | undefined;
 
-  private _actions: Array<Action> | undefined;
+  private _activities: Array<Activity> | undefined;
 
   private _session: Session | undefined;
 
-  private _activeActionId: string | undefined;
+  private _activeActivityId: string | undefined;
 
   private _listeners = new Map<ActiveProjectServiceEventType, Array<ActiveProjectServiceEvent>>();
 
@@ -65,12 +65,12 @@ export class ActiveProjectService implements IActiveProjectService {
     return this._session;
   }
 
-  public get activeActionId(): string | undefined {
-    return this._activeActionId;
+  public get activeActivityId(): string | undefined {
+    return this._activeActivityId;
   }
 
-  public get actions(): Array<Action> | undefined {
-    return this._actions;
+  public get activities(): Array<Activity> | undefined {
+    return this._activities;
   }
 
   constructor(
@@ -232,14 +232,14 @@ export class ActiveProjectService implements IActiveProjectService {
     return this.setProjectId(projectId);
   }
 
-  public async setActiveAction(actionId: string, isRunning: boolean): Promise<void> {
+  public async setActiveActivity(activityId: string, isRunning: boolean): Promise<void> {
     const date = this._dateTimeService.now;
 
     this._loggerService.debug(
       ActiveProjectService.name,
-      this.setActiveAction.name,
-      "actionId",
-      actionId,
+      this.setActiveActivity.name,
+      "activityId",
+      activityId,
       "isRunning",
       isRunning,
       "time",
@@ -250,14 +250,14 @@ export class ActiveProjectService implements IActiveProjectService {
       throw new Error("Project is required. Please use `setProjectId` to set project.");
     }
 
-    this._activeActionId = actionId;
+    this._activeActivityId = activityId;
 
     if (!this._session) {
       this._stopwatchService.start();
 
       const session = await this._sessionService.create({
         projectId: this._project.id,
-        actionId,
+        activityId,
         date,
       });
 
@@ -269,7 +269,7 @@ export class ActiveProjectService implements IActiveProjectService {
       await this.setSessionId(session.id);
 
       this.on("session-started");
-      this.onActionUpdate(actionId, ActionStatus.Running);
+      this.onActivityUpdate(activityId, ActivityStatus.Running);
 
       if (this._session) {
         // To fix "Property 'state' does not exist on type 'never'" o_O
@@ -284,14 +284,14 @@ export class ActiveProjectService implements IActiveProjectService {
         }
 
         this._stopwatchService.start();
-        this.onActionUpdate(actionId, ActionStatus.Running);
+        this.onActivityUpdate(activityId, ActivityStatus.Running);
 
         if (this._session) {
           this._session.state = SessionState.Run;
         }
       } else {
         this._stopwatchService.stop();
-        this.onActionUpdate(actionId, ActionStatus.Paused);
+        this.onActivityUpdate(activityId, ActivityStatus.Paused);
 
         if (this._session) {
           this._session.state = SessionState.Paused;
@@ -304,7 +304,7 @@ export class ActiveProjectService implements IActiveProjectService {
         async(): Promise<void> => {
           const toggleResult = await this._sessionService.toggle({
             sessionId,
-            actionId,
+            activityId,
             avgSpeed: 0,
             distance: 0,
             maxSpeed: 0,
@@ -312,7 +312,7 @@ export class ActiveProjectService implements IActiveProjectService {
           });
 
           if (toggleResult.isRunning !== isRunning) {
-            throw new Error("The action status is different than expected.");
+            throw new Error("The activity status is different than expected.");
           }
 
           await this._settingsService.set(
@@ -324,7 +324,7 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  public async toggleActiveAction(): Promise<void> {
+  public async toggleActiveActivity(): Promise<void> {
     try {
       await Promise.all([
         this._localStorageService.setItem<LocalStorageKeys>("shouldToggleActive", 1),
@@ -335,35 +335,35 @@ export class ActiveProjectService implements IActiveProjectService {
 
       this._loggerService.debug(
         ActiveProjectService.name,
-        this.toggleActiveAction.name,
+        this.toggleActiveActivity.name,
         "time",
         date.getTime(),
-        "actionId",
-        this._activeActionId
+        "activityId",
+        this._activeActivityId
       );
 
       if (!this._session) {
         throw new Error("Session is required.");
       }
 
-      if (!this._activeActionId) {
-        throw new Error("There is no active action. Please use `setActiveAction` to set action.");
+      if (!this._activeActivityId) {
+        throw new Error("There is no active activity. Please use `setActiveActivity` to set activity.");
       }
 
-      const activeAction = this.actions?.find(
-        (x: Action): boolean => {
-          return x.id === this._activeActionId;
+      const activeActivity = this.activities?.find(
+        (x: Activity): boolean => {
+          return x.id === this._activeActivityId;
         }
       );
 
-      if (!activeAction) {
-        throw new Error(`Action #${this._activeActionId} not found.`);
+      if (!activeActivity) {
+        throw new Error(`Activity #${this._activeActivityId} not found.`);
       }
 
-      if (activeAction.status === ActionStatus.Running) {
-        this.onActionUpdate(
-          this._activeActionId,
-          ActionStatus.Paused
+      if (activeActivity.status === ActivityStatus.Running) {
+        this.onActivityUpdate(
+          this._activeActivityId,
+          ActivityStatus.Paused
         );
       } else {
         this._stopwatchService.snap();
@@ -373,21 +373,21 @@ export class ActiveProjectService implements IActiveProjectService {
         }
 
         this._stopwatchService.start();
-        this.onActionUpdate(
-          this._activeActionId,
-          ActionStatus.Running
+        this.onActivityUpdate(
+          this._activeActivityId,
+          ActivityStatus.Running
         );
       }
 
       const sessionId = this._session.id;
-      const actionId = this._activeActionId;
-      const isRunning = activeAction.status === ActionStatus.Running;
+      const activityId = this._activeActivityId;
+      const isRunning = activeActivity.status === ActivityStatus.Running;
 
       this._queueService.push(
         async(): Promise<void> => {
           const toggleResult = await this._sessionService.toggle({
             sessionId,
-            actionId,
+            activityId,
             avgSpeed: 0,
             distance: 0,
             maxSpeed: 0,
@@ -401,7 +401,7 @@ export class ActiveProjectService implements IActiveProjectService {
           ]);
 
           if (toggleResult.isRunning !== isRunning) {
-            throw new Error("The action status is different than expected.");
+            throw new Error("The activity status is different than expected.");
           }
 
           if (this._session && toggleResult.isRunning) {
@@ -467,7 +467,7 @@ export class ActiveProjectService implements IActiveProjectService {
         "session-paused",
         {
           sessionId: this._session.id,
-          actionId: this._activeActionId,
+          activityId: this._activeActivityId,
         }
       );
     } finally {
@@ -526,7 +526,7 @@ export class ActiveProjectService implements IActiveProjectService {
             "session-paused",
             {
               sessionId: this._session.id,
-              actionId: this._activeActionId,
+              activityId: this._activeActivityId,
             }
           );
         } finally {
@@ -602,13 +602,13 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       this._project = undefined;
-      this._actions = undefined;
+      this._activities = undefined;
       this._session = undefined;
-      this._activeActionId = undefined;
+      this._activeActivityId = undefined;
 
       this._localStorageService.removeItem<LocalStorageKeys>("projectId");
       this._localStorageService.removeItem<LocalStorageKeys>("sessionId");
-      this._localStorageService.removeItem<LocalStorageKeys>("actionId");
+      this._localStorageService.removeItem<LocalStorageKeys>("activityId");
       this._localStorageService.removeItem<LocalStorageKeys>("date");
       this._localStorageService.removeItem<LocalStorageKeys>("shouldPause");
       this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleActive");
@@ -678,13 +678,13 @@ export class ActiveProjectService implements IActiveProjectService {
       name: project.name,
     };
 
-    this._actions = project.actions?.map(
-      (x: GetResultAction): Action => {
+    this._activities = project.activities?.map(
+      (x: GetResultActivity): Activity => {
         return {
           id: x.id,
           color: x.color,
           name: x.name,
-          status: ActionStatus.Idle,
+          status: ActivityStatus.Idle,
         };
       }
     ) ?? [];
@@ -707,15 +707,15 @@ export class ActiveProjectService implements IActiveProjectService {
       await this.setProjectId(session.projectId);
     }
 
-    if (session.actionId) {
-      const action = this.actions?.find(
-        (x: Action): boolean => {
-          return x.id === session.actionId;
+    if (session.activityId) {
+      const activity = this.activities?.find(
+        (x: Activity): boolean => {
+          return x.id === session.activityId;
         }
       );
 
-      if (!action) {
-        throw new Error(`Action #${session.actionId} not found.`);
+      if (!activity) {
+        throw new Error(`Activity #${session.activityId} not found.`);
       }
     }
 
@@ -734,21 +734,21 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  private onActionUpdate(actionId: string, status: ActionStatus): void {
-    const action = this._actions?.find((x: Action): boolean => {
-      return x.id === actionId;
+  private onActivityUpdate(activityId: string, status: ActivityStatus): void {
+    const activity = this._activities?.find((x: Activity): boolean => {
+      return x.id === activityId;
     });
 
-    if (!action) {
-      throw new Error(`Action #${actionId} not found.`);
+    if (!activity) {
+      throw new Error(`Activity #${activityId} not found.`);
     }
 
-    action.status = status;
+    activity.status = status;
 
     this.on(
-      "action-updated",
+      "activity-updated",
       {
-        actionId,
+        activityId,
         status,
       }
     );

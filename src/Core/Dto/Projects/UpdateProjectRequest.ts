@@ -1,4 +1,4 @@
-import { UpdateProjectRequestAction } from "./UpdateProjectRequestAction";
+import { UpdateProjectRequestActivity } from "./UpdateProjectRequestActivity";
 
 export type UpdateProjectRequest = {
 
@@ -6,8 +6,8 @@ export type UpdateProjectRequest = {
 
   name: string;
 
-  actions: Array<UpdateProjectRequestAction>;
+  activities: Array<UpdateProjectRequestActivity>;
 
-  actionsToDelete: Array<string>;
+  activitiesToDelete: Array<string>;
 
 };

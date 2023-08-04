@@ -1,7 +1,7 @@
 import { useLocalization } from "@utils/LocalizationUtils";
 import { Validator } from "fluentvalidation-ts";
 import { ProjectModel } from "../Models";
-import { ActionModelValidator } from "./ActionModelValidator";
+import { ActivityModelValidator } from "./ActivityModelValidator";
 
 export class ProjectModelValidator extends Validator<ProjectModel> {
 
@@ -15,12 +15,12 @@ export class ProjectModelValidator extends Validator<ProjectModel> {
       .notEmpty()
       .withMessage(localization.get("projectEditor.validation.projectNameIsRequired"));
 
-    this.ruleFor("actions")
+    this.ruleFor("activities")
       .notNull()
-      .withMessage(localization.get("projectEditor.validation.actionsIsRequired"));
+      .withMessage(localization.get("projectEditor.validation.activitiesIsRequired"));
 
-    this.ruleForEach("actions")
-      .setValidator(() => new ActionModelValidator());
+    this.ruleForEach("activities")
+      .setValidator(() => new ActivityModelValidator());
   }
 
 }

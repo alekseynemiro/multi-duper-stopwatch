@@ -3,8 +3,8 @@ import { DataSource, Repository } from "typeorm";
 import { ServiceIdentifier } from "../Config";
 import { ILoggerService } from "../Core/Services/Logger";
 import {
-  Action,
-  ActionInProject,
+  Activity,
+  ActivityInProject,
   Info,
   Project,
   Session,
@@ -20,9 +20,9 @@ export class DatabaseService implements IDatabaseService {
 
   private readonly _loggerService: ILoggerService;
 
-  public readonly actions = (): Repository<Action> => this._dataSource.getRepository(Action);
+  public readonly activities = (): Repository<Activity> => this._dataSource.getRepository(Activity);
 
-  public readonly actionsInProjects = (): Repository<ActionInProject> => this._dataSource.getRepository(ActionInProject);
+  public readonly activitiesInProjects = (): Repository<ActivityInProject> => this._dataSource.getRepository(ActivityInProject);
 
   public readonly infos = (): Repository<Info> => this._dataSource.getRepository(Info);
 
@@ -44,8 +44,8 @@ export class DatabaseService implements IDatabaseService {
       logger: "debug",
       synchronize: false,
       entities: [
-        Action,
-        ActionInProject,
+        Activity,
+        ActivityInProject,
         Info,
         Project,
         Session,

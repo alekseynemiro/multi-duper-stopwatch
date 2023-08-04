@@ -4,13 +4,13 @@ import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { Action as ActionModel, ActionStatus } from "@dto/ActiveProject";
+import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult, IActiveProjectService } from "@services/ActiveProject";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
-  HorizontalListLayoutActionPressEventArgs,
+  HorizontalListLayoutActivityPressEventArgs,
   SessionNameModal,
   SessionNameModalEventArgs,
   StopwatchDisplay,
@@ -24,19 +24,19 @@ export function ActiveProjectView(): JSX.Element {
 
   const localization = useLocalization();
 
-  const finishActionRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
+  const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
-  const [actions, setActions] = useState<Array<ActionModel>>([]);
-  const [activeAction, setActiveAction] = useState<ActionModel | undefined>(undefined);
+  const [activities, setActivities] = useState<Array<ActivityModel>>([]);
+  const [activeActivity, setActiveActivity] = useState<ActivityModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
 
-  const activeActionPredicate = useCallback(
-    (x: ActionModel): boolean => {
-      return x.id === activeAction?.id;
+  const activeActivityPredicate = useCallback(
+    (x: ActivityModel): boolean => {
+      return x.id === activeActivity?.id;
     },
     [
-      activeAction,
+      activeActivity,
     ]
   );
 
@@ -48,20 +48,20 @@ export function ActiveProjectView(): JSX.Element {
         throw new Error("Project is required.");
       }
 
-      setActions(
-        activeProjectService.actions?.map(
-          (x: ActionModel): ActionModel => {
+      setActivities(
+        activeProjectService.activities?.map(
+          (x: ActivityModel): ActivityModel => {
             return {
               color: x.color,
               id: x.id,
               name: x.name,
-              status: ActionStatus.Idle,
+              status: ActivityStatus.Idle,
             };
           }
         ) || [],
       );
 
-      setActiveAction(undefined);
+      setActiveActivity(undefined);
       setShowLoadingIndicator(false);
 
       currentProjectId.current = activeProjectService.project.id;
@@ -70,126 +70,126 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const toggle = useCallback(
-    async({ actionId }: HorizontalListLayoutActionPressEventArgs): Promise<void> => {
-      const action = actions.find(
-        (x: ActionModel): boolean => {
-          return x.id === actionId;
+    async({ activityId }: HorizontalListLayoutActivityPressEventArgs): Promise<void> => {
+      const activity = activities.find(
+        (x: ActivityModel): boolean => {
+          return x.id === activityId;
         }
       );
 
-      const isRunning = action?.status !== ActionStatus.Running;
-      const isPaused = action?.status === ActionStatus.Running && activeAction?.id === action.id;
+      const isRunning = activity?.status !== ActivityStatus.Running;
+      const isPaused = activity?.status === ActivityStatus.Running && activeActivity?.id === activity.id;
 
-      activeProjectService.setActiveAction(
-        actionId,
+      activeProjectService.setActiveActivity(
+        activityId,
         isRunning
       );
 
-      const newActions = actions.map(
-        (x: ActionModel): ActionModel => {
-          if (x.id === actionId) {
+      const newActivities = activities.map(
+        (x: ActivityModel): ActivityModel => {
+          if (x.id === activityId) {
             if (isRunning) {
-              x.status = ActionStatus.Running;
+              x.status = ActivityStatus.Running;
             } else if (isPaused) {
-              x.status = ActionStatus.Paused;
+              x.status = ActivityStatus.Paused;
             } else {
-              x.status = ActionStatus.Idle;
+              x.status = ActivityStatus.Idle;
             }
           } else {
-            x.status = ActionStatus.Idle;
+            x.status = ActivityStatus.Idle;
           }
 
           return x;
         }
       );
 
-      const newActiveAction = newActions.find(
-        (x: ActionModel): boolean => {
-          return x.id === actionId;
+      const newActiveActivity = newActivities.find(
+        (x: ActivityModel): boolean => {
+          return x.id === activityId;
         }
       );
 
-      setActions(newActions);
-      setActiveAction(newActiveAction);
+      setActivities(newActivities);
+      setActiveActivity(newActiveActivity);
     },
     [
-      actions,
-      activeAction,
+      activities,
+      activeActivity,
     ]
   );
 
   const toggleActive = useCallback(
     async(): Promise<void> => {
-      if (!activeAction) {
-        throw new Error("Active action is required.");
+      if (!activeActivity) {
+        throw new Error("Active activity is required.");
       }
 
-      const isRunning = activeAction.status !== ActionStatus.Running;
+      const isRunning = activeActivity.status !== ActivityStatus.Running;
 
-      await activeProjectService.toggleActiveAction();
+      await activeProjectService.toggleActiveActivity();
 
-      const newActions = actions.map((x: ActionModel): ActionModel => {
-        if (x.id === activeAction.id) {
+      const newActivities = activities.map((x: ActivityModel): ActivityModel => {
+        if (x.id === activeActivity.id) {
           if (isRunning) {
-            x.status = ActionStatus.Running;
+            x.status = ActivityStatus.Running;
           } else {
-            x.status = ActionStatus.Paused;
+            x.status = ActivityStatus.Paused;
           }
         } else {
-          x.status = ActionStatus.Idle;
+          x.status = ActivityStatus.Idle;
         }
 
         return x;
       });
 
-      setActions(newActions);
-      setActiveAction(newActions.find(activeActionPredicate));
+      setActivities(newActivities);
+      setActiveActivity(newActivities.find(activeActivityPredicate));
     },
     [
-      activeAction,
-      actions,
-      activeActionPredicate,
+      activeActivity,
+      activities,
+      activeActivityPredicate,
     ]
   );
 
   const finishRequest = useCallback(
     async(): Promise<void> => {
-      finishActionRef.current = await activeProjectService.finish();
+      finishActivityRef.current = await activeProjectService.finish();
 
       setShowSessionNameModal(true);
     },
     [
-      finishActionRef,
+      finishActivityRef,
     ]
   );
 
   const finishConfirm = useCallback(
     async(e: SessionNameModalEventArgs): Promise<void> => {
-      if (!finishActionRef.current) {
-        throw new Error("Finish action is not initiated.");
+      if (!finishActivityRef.current) {
+        throw new Error("Finish activity is not initiated.");
       }
 
       setShowSessionNameModal(false);
 
-      await finishActionRef.current.confirm(e.sessionName);
+      await finishActivityRef.current.confirm(e.sessionName);
     },
     [
-      finishActionRef,
+      finishActivityRef,
     ]
   );
 
   const finishCancel = useCallback(
     async(): Promise<void> => {
-      if (!finishActionRef.current) {
-        throw new Error("Finish action is not initiated.");
+      if (!finishActivityRef.current) {
+        throw new Error("Finish activity is not initiated.");
       }
 
       setShowSessionNameModal(false);
 
-      await finishActionRef.current.cancel();
+      await finishActivityRef.current.cancel();
     },
     [
-      finishActionRef,
+      finishActivityRef,
     ]
   );
 
@@ -220,15 +220,15 @@ export function ActiveProjectView(): JSX.Element {
         style={activeProjectViewStyles.stopwatchContainer}
       >
         <StopwatchDisplay
-          activeAction={activeAction}
+          activeActivity={activeActivity}
         />
       </View>
       <View
-        style={activeProjectViewStyles.actionsContainer}
+        style={activeProjectViewStyles.activitiesContainer}
       >
         <HorizontalListLayout
-          actions={actions}
-          onActionPress={toggle}
+          activities={activities}
+          onActivityPress={toggle}
         />
       </View>
       <View
@@ -237,12 +237,12 @@ export function ActiveProjectView(): JSX.Element {
         <Button
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
-          disabled={!activeAction}
+          disabled={!activeActivity}
           onPress={toggleActive}
         >
           <Text>
             {
-              activeAction?.status === ActionStatus.Paused
+              activeActivity?.status === ActivityStatus.Paused
                 && localization.get("activeProject.resume")
                 || localization.get("activeProject.pause")
             }

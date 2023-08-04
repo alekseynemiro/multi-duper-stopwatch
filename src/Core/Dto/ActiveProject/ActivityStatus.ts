@@ -1,4 +1,4 @@
-export enum ActionStatus {
+export enum ActivityStatus {
   Idle,
   Running,
   Paused,

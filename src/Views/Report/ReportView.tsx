@@ -32,7 +32,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [logs, setLogs] = useState<Array<ReportItemModel>>([]);
   const [filteredLogs, setFilteredLogs] = useState<Array<ReportItemModel> | undefined>(undefined);
-  const [filterByAction, setFilterByAction] = useState<string | undefined>(undefined);
+  const [filterByActivity, setFilterByActivity] = useState<string | undefined>(undefined);
   const [totalTime, setTotalTime] = useState<number>(0);
 
   const scrollToBottom = useCallback(
@@ -61,9 +61,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
 
           return {
             id: x.id,
-            actionId: x.actionId,
-            name: x.actionName,
-            color: x.actionColor,
+            activityId: x.activityId,
+            name: x.activityName,
+            color: x.activityColor,
             avgSpeed: x.avgSpeed,
             elapsedTime: x.elapsedTime,
             maxSpeed: x.maxSpeed,
@@ -151,7 +151,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             ]}
           >
             <Text style={styles.bold}>
-              {localization.get("report.action")}
+              {localization.get("report.activity")}
             </Text>
           </View>
           <View
@@ -184,15 +184,15 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                   styles.pb8,
                 ]}
                 onPress={(): void => {
-                  if (filterByAction === x.actionId) {
-                    setFilterByAction(undefined);
+                  if (filterByActivity === x.activityId) {
+                    setFilterByActivity(undefined);
                     setFilteredLogs(undefined);
                   } else {
-                    setFilterByAction(x.actionId);
+                    setFilterByActivity(x.activityId);
                     setFilteredLogs(
                       logs.filter(
                         (xx: ReportItemModel): boolean => {
-                          return xx.actionId === x.actionId;
+                          return xx.activityId === x.activityId;
                         }
                       )
                     );

@@ -1,5 +1,5 @@
 import { NativeEventSubscription } from "react-native";
-import { Action, Project } from "@dto/ActiveProject";
+import { Activity, Project } from "@dto/ActiveProject";
 import { GetResult as Session } from "@dto/Sessions";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
@@ -9,11 +9,11 @@ export interface IActiveProjectService {
 
   readonly project: Project | undefined;
 
-  readonly actions: Array<Action> | undefined;
+  readonly activities: Array<Activity> | undefined;
 
   readonly session: Session | undefined;
 
-  readonly activeActionId: string | undefined;
+  readonly activeActivityId: string | undefined;
 
   checkForCrash(): Promise<void>;
 
@@ -23,9 +23,9 @@ export interface IActiveProjectService {
 
   useProjectId(projectId: string): Promise<void>;
 
-  setActiveAction(actionId: string, isRunning: boolean): Promise<void>;
+  setActiveActivity(activityId: string, isRunning: boolean): Promise<void>;
 
-  toggleActiveAction(): Promise<void>;
+  toggleActiveActivity(): Promise<void>;
 
   pause(): Promise<void>;
 

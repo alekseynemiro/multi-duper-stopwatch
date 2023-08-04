@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { colors, styles } from "@styles";
 
-export const actionStyles = StyleSheet.create({
+export const activityStyles = StyleSheet.create({
   container: {
     ...styles.tableRow,
   },

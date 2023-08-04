@@ -1,3 +1,3 @@
-export type { Action } from "./Action";
-export { ActionStatus } from "./ActionStatus";
+export type { Activity } from "./Activity";
+export { ActivityStatus } from "./ActivityStatus";
 export type { Project } from "./Project";

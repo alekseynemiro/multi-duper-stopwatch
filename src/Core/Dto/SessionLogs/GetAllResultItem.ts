@@ -1,14 +1,14 @@
-import { ColorPalette } from "../../../Data";
+import { ColorPalette } from "@data";
 
 export type GetAllResultItem = {
 
   id: string;
 
-  actionId: string;
+  activityId: string;
 
-  actionName: string;
+  activityName: string;
 
-  actionColor: ColorPalette;
+  activityColor: ColorPalette;
 
   elapsedTime: number;
 

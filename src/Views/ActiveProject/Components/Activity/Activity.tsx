@@ -2,13 +2,13 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
-import { ActionStatus } from "@dto/ActiveProject";
+import { ActivityStatus } from "@dto/ActiveProject";
 import { colors, defaultFontSize } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
-import { ActionProps } from "./ActionProps";
-import { actionStyles } from "./ActionStyles";
+import { ActivityProps } from "./ActivityProps";
+import { activityStyles } from "./ActivityStyles";
 
-export function Action(props: ActionProps): JSX.Element {
+export function Activity(props: ActivityProps): JSX.Element {
   const {
     id,
     name,
@@ -33,7 +33,7 @@ export function Action(props: ActionProps): JSX.Element {
         },
       ]}
       childWrapperStyle={[
-        actionStyles.button,
+        activityStyles.button,
       ]}
       onPress={(): void => {
         onPress(id);
@@ -41,11 +41,11 @@ export function Action(props: ActionProps): JSX.Element {
     >
       <View
         style={[
-          actionStyles.iconContainer,
+          activityStyles.iconContainer,
         ]}
       >
         {
-          status === ActionStatus.Running
+          status === ActivityStatus.Running
           && (
             <Icon
               name="play"
@@ -57,7 +57,7 @@ export function Action(props: ActionProps): JSX.Element {
           )
         }
         {
-          status === ActionStatus.Paused
+          status === ActivityStatus.Paused
           && (
             <Icon
               name="pause"
@@ -71,14 +71,14 @@ export function Action(props: ActionProps): JSX.Element {
       </View>
       <Text
         style={[
-          actionStyles.bold,
+          activityStyles.bold,
           textColor,
         ]}
       >
         {name}
       </Text>
       <View
-        style={actionStyles.padding}
+        style={activityStyles.padding}
       />
     </Button>
   );

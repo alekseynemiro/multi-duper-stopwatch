@@ -48,8 +48,8 @@ export class SessionService implements ISessionService {
       this.create.name,
       "projectId",
       request.projectId,
-      "actionId",
-      request.actionId
+      "activityId",
+      request.activityId
     );
 
     return this._databaseService.execute(
@@ -57,14 +57,14 @@ export class SessionService implements ISessionService {
         const project = await this._databaseService.projects()
           .findOneByOrFail({ id: request.projectId });
 
-        const action = await this._databaseService.actions()
-          .findOneByOrFail({ id: request.actionId });
+        const activity = await this._databaseService.activities()
+          .findOneByOrFail({ id: request.activityId });
 
         const session = new Session();
 
         session.id = this._guidService.newGuid();
         session.project = project;
-        session.action = action;
+        session.activity = activity;
         session.state = SessionState.Run;
         session.elapsedTime = 0;
         session.steps = 0;
@@ -73,7 +73,7 @@ export class SessionService implements ISessionService {
         session.avgSpeed = 0;
         session.events = 0;
         session.startDate = request.date;
-        session.actionStartDate = request.date;
+        session.activityStartDate = request.date;
         session.createdDate = this._dateTimeService.now;
 
         await this._databaseService.sessions().insert(session);
@@ -104,8 +104,8 @@ export class SessionService implements ISessionService {
               id: request.sessionId,
             },
             relations: {
-              action: true,
-            } as any, // to fix: Type '{ action: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+              activity: true,
+            } as any, // to fix: Type '{ activity: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
           });
 
         if (![SessionState.Run, SessionState.Paused].includes(session.state)) {
@@ -115,26 +115,26 @@ export class SessionService implements ISessionService {
           ].join(" "));
         }
 
-        const action = await this._databaseService.actions()
-          .findOneByOrFail({ id: request.actionId });
+        const activity = await this._databaseService.activities()
+          .findOneByOrFail({ id: request.activityId });
 
-        const startDate = session.actionStartDate;
+        const startDate = session.activityStartDate;
         let elapsedTime = request.date.getTime() - startDate.getTime();
 
-        if (session.state === SessionState.Paused && session.action.id !== action.id) {
-          elapsedTime = (session.actionFinishDate as Date).getTime() - session.actionStartDate.getTime();
+        if (session.state === SessionState.Paused && session.activity.id !== activity.id) {
+          elapsedTime = (session.activityFinishDate as Date).getTime() - session.activityStartDate.getTime();
         }
 
         if (session.state === SessionState.Run) {
-          if (session.action.id === action.id) {
+          if (session.activity.id === activity.id) {
             this._loggerService.debug(
               SessionService.name,
               this.toggle.name,
               "sessionId",
               request.sessionId,
-              "actionId",
-              request.actionId,
-              `Pause and add log because the current status ${SessionState[SessionState.Run]} and actions are same.`,
+              "activityId",
+              request.activityId,
+              `Pause and add log because the current status ${SessionState[SessionState.Run]} and activities are same.`,
               "Elapsed time",
               elapsedTime
             );
@@ -142,7 +142,7 @@ export class SessionService implements ISessionService {
             log = {
               id: this._guidService.newGuid(),
               session,
-              action: { ...session.action }, // to kill reference
+              activity: { ...session.activity }, // to kill reference
               distance: request.distance,
               avgSpeed: request.avgSpeed,
               maxSpeed: request.maxSpeed,
@@ -156,16 +156,16 @@ export class SessionService implements ISessionService {
             await this._databaseService.sessionLogs().insert(log);
 
             session.state = SessionState.Paused;
-            session.actionFinishDate = request.date;
+            session.activityFinishDate = request.date;
           } else {
             this._loggerService.debug(
               SessionService.name,
               this.toggle.name,
               "sessionId",
               request.sessionId,
-              "actionId",
-              request.actionId,
-              `Add log for action ${session.action.id} because the current status ${SessionState[SessionState.Run]} and actions are different.`,
+              "activityId",
+              request.activityId,
+              `Add log for activity ${session.activity.id} because the current status ${SessionState[SessionState.Run]} and activities are different.`,
               "Elapsed time",
               elapsedTime
             );
@@ -173,7 +173,7 @@ export class SessionService implements ISessionService {
             log = {
               id: this._guidService.newGuid(),
               session,
-              action: { ...session.action }, // to kill reference
+              activity: { ...session.activity }, // to kill reference
               distance: request.distance,
               avgSpeed: request.avgSpeed,
               maxSpeed: request.maxSpeed,
@@ -186,41 +186,41 @@ export class SessionService implements ISessionService {
 
             await this._databaseService.sessionLogs().insert(log);
 
-            session.action = action;
-            session.actionStartDate = request.date;
-            session.actionFinishDate = undefined;
+            session.activity = activity;
+            session.activityStartDate = request.date;
+            session.activityFinishDate = undefined;
           }
         } else if (session.state === SessionState.Paused) {
-          if (session.action.id !== action.id) {
+          if (session.activity.id !== activity.id) {
             this._loggerService.debug(
               SessionService.name,
               this.toggle.name,
               "sessionId",
               request.sessionId,
-              "actionId",
-              request.actionId,
-              `Run because the current status ${SessionState[SessionState.Paused]} and actions are different.`,
+              "activityId",
+              request.activityId,
+              `Run because the current status ${SessionState[SessionState.Paused]} and activities are different.`,
               "Elapsed time",
               elapsedTime
             );
 
-            session.action = action;
-            session.actionFinishDate = undefined;
+            session.activity = activity;
+            session.activityFinishDate = undefined;
           } else {
             this._loggerService.debug(
               SessionService.name,
               this.toggle.name,
               "sessionId",
               request.sessionId,
-              "actionId",
-              request.actionId,
-              `Run because the current status ${SessionState[SessionState.Paused]} and actions are same.`
+              "activityId",
+              request.activityId,
+              `Run because the current status ${SessionState[SessionState.Paused]} and activities are same.`
             );
           }
 
           session.state = SessionState.Run;
-          session.actionStartDate = request.date;
-          session.actionFinishDate = undefined;
+          session.activityStartDate = request.date;
+          session.activityFinishDate = undefined;
         } else {
           throw new Error(`The state ${session.state} is not supported.`);
         }
@@ -240,8 +240,8 @@ export class SessionService implements ISessionService {
           details: log
             ? {
               id: log.id,
-              actionName: log.action.name,
-              actionColor: log.action.color,
+              activityName: log.activity.name,
+              activityColor: log.activity.color,
               avgSpeed: log.avgSpeed,
               maxSpeed: log.maxSpeed,
               distance: log.distance,
@@ -275,8 +275,8 @@ export class SessionService implements ISessionService {
               id: request.sessionId,
             },
             relations: {
-              action: true,
-            } as any, // to fix: Type '{ action: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+              activity: true,
+            } as any, // to fix: Type '{ activity: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
           });
 
         if (session.state === SessionState.Paused) {
@@ -295,7 +295,7 @@ export class SessionService implements ISessionService {
         }
 
         if (request.date !== undefined) {
-          const startDate = session.actionStartDate;
+          const startDate = session.activityStartDate;
           let elapsedTime = request.date.getTime() - startDate.getTime();
           let log: SessionLog | undefined;
 
@@ -331,7 +331,7 @@ export class SessionService implements ISessionService {
             log = {
               id: this._guidService.newGuid(),
               session,
-              action: { ...session.action }, // to kill reference
+              activity: { ...session.activity }, // to kill reference
               distance: request.distance,
               avgSpeed: request.avgSpeed,
               maxSpeed: request.maxSpeed,
@@ -350,7 +350,7 @@ export class SessionService implements ISessionService {
             session.elapsedTime += log.elapsedTime;
             session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
             session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
-            session.actionFinishDate = log.finishDate;
+            session.activityFinishDate = log.finishDate;
           }
         }
 
@@ -379,8 +379,8 @@ export class SessionService implements ISessionService {
               id: request.sessionId,
             },
             relations: {
-              action: true,
-            } as any, // to fix: Type '{ action: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+              activity: true,
+            } as any, // to fix: Type '{ activity: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
           });
 
         if (session.state === SessionState.Finished) {
@@ -388,17 +388,17 @@ export class SessionService implements ISessionService {
         }
 
         if (request.date !== undefined) {
-          const startDate = session.actionStartDate;
+          const startDate = session.activityStartDate;
           let elapsedTime = request.date.getTime() - startDate.getTime();
 
           if (session.state === SessionState.Paused) {
-            elapsedTime = (session.actionFinishDate as Date).getTime() - session.actionStartDate.getTime();
+            elapsedTime = (session.activityFinishDate as Date).getTime() - session.activityStartDate.getTime();
           }
 
           const log: SessionLog = {
             id: this._guidService.newGuid(),
             session,
-            action: { ...session.action }, // to kill reference
+            activity: { ...session.activity }, // to kill reference
             distance: request.distance,
             avgSpeed: request.avgSpeed,
             maxSpeed: request.maxSpeed,
@@ -551,14 +551,14 @@ export class SessionService implements ISessionService {
             },
             relations: {
               project: true,
-              action: true,
+              activity: true,
             } as any,
           });
 
         const result: GetResult = {
           id: session.id,
           projectId: session.project.id,
-          actionId: session.action?.id,
+          activityId: session.activity?.id,
           avgSpeed: session.avgSpeed,
           distance: session.distance,
           elapsedTime: session.elapsedTime,

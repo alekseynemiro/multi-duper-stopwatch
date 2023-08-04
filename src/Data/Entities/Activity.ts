@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { ColorPalette } from "../Enums";
-import { ActionInProject } from "./ActionInProject";
+import { ActivityInProject } from "./ActivityInProject";
 
-@Entity({ name: "Actions" })
-export class Action {
+@Entity({ name: "Activities" })
+export class Activity {
 
   @PrimaryColumn({ name: "Id" })
   public id!: string;
@@ -46,7 +46,7 @@ export class Action {
   })
   public createdDate!: Date;
 
-  @OneToMany(() => ActionInProject, (x) => x.action)
-  public actionsInProjects?: Array<ActionInProject>;
+  @OneToMany(() => ActivityInProject, (x) => x.activity)
+  public activitiesInProjects?: Array<ActivityInProject>;
 
 }

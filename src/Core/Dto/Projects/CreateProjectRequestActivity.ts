@@ -1,8 +1,8 @@
 import { ColorPalette } from "@data";
 
-export type UpdateProjectRequestAction = {
+export type CreateProjectRequestActivity = {
 
-  id: string;
+  id?: string;
 
   name: string;
 

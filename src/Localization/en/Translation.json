@@ -21,7 +21,7 @@
   },
   "report": {
     "pageTitle": "Report",
-    "action": "Action",
+    "activity": "Activity",
     "time": "Time",
     "total": "Total:"
   },
@@ -37,8 +37,8 @@
     "createProject": "Create project",
     "editProject": "Edit project",
     "projectName": "Project name:",
-    "actions": "Actions:",
-    "addAction": "Add action",
+    "activities": "Activities:",
+    "addActivity": "Add activity",
     "save": "Save",
     "cancel": "Cancel",
     "selectColor": {
@@ -46,9 +46,9 @@
       "close": "Close"
     },
     "validation": {
-      "actionNameIsRequired": "Action name is required.",
+      "activityNameIsRequired": "Activity name is required.",
       "projectNameIsRequired": "Project name is required.",
-      "actionsIsRequired": "At least one action is required."
+      "activitiesIsRequired": "At least one activity is required."
     }
   },
   "reportList": {

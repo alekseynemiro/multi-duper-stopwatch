@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { ActionInProject } from "./ActionInProject";
+import { ActivityInProject } from "./ActivityInProject";
 
 @Entity({ name: "Projects" })
 export class Project {
@@ -27,7 +27,7 @@ export class Project {
   })
   public createdDate!: Date;
 
-  @OneToMany(() => ActionInProject, x => x.project)
-  public actionsInProjects?: Array<ActionInProject>;
+  @OneToMany(() => ActivityInProject, x => x.project)
+  public activitiesInProjects?: Array<ActivityInProject>;
 
 }

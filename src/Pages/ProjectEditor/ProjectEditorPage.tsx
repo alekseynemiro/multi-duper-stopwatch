@@ -11,10 +11,10 @@ import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { ColorPalette } from "@data";
 import {
   CreateProjectRequest,
-  CreateProjectRequestAction,
-  GetResultAction,
+  CreateProjectRequestActivity,
+  GetResultActivity,
   UpdateProjectRequest,
-  UpdateProjectRequestAction,
+  UpdateProjectRequestActivity,
 } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
 import { IGuidService } from "@services/Guid";
@@ -22,8 +22,8 @@ import { IProjectService } from "@services/Projects";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
-import { Action, ActionChangeEventArgs, SelectColorModal } from "./Components";
-import { ActionModel, ProjectModel } from "./Models";
+import { Activity, ActivityChangeEventArgs, SelectColorModal } from "./Components";
+import { ActivityModel, ProjectModel } from "./Models";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
 
@@ -37,7 +37,7 @@ export function ProjectEditorPage(): JSX.Element {
 
   const initialModel = useRef<ProjectModel>({
     name: "",
-    actions: [],
+    activities: [],
   });
 
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
@@ -45,9 +45,9 @@ export function ProjectEditorPage(): JSX.Element {
   const [showSelectColor, setShowSelectColor] = useState<boolean>(false);
   const [activeCode, setActiveCode] = useState<string | undefined>();
 
-  const showSelectColorModal = (actionCode: string): void => {
+  const showSelectColorModal = (activityCode: string): void => {
     setShowSelectColor(true);
-    setActiveCode(actionCode);
+    setActiveCode(activityCode);
   };
 
   const hideSelectColorModal = (): void => {
@@ -80,7 +80,7 @@ export function ProjectEditorPage(): JSX.Element {
 
       setModel({
         name: data.name,
-        actions: data.actions?.map((x: GetResultAction): ActionModel => {
+        activities: data.activities?.map((x: GetResultActivity): ActivityModel => {
           return {
             id: x.id,
             code: x.id,
@@ -107,11 +107,11 @@ export function ProjectEditorPage(): JSX.Element {
       const updateRequest: UpdateProjectRequest = {
         id: route.params.projectId,
         name: values.name as string,
-        actions: (values.actions as Array<ActionModel>)
-          .filter((x: ActionModel): boolean => {
+        activities: (values.activities as Array<ActivityModel>)
+          .filter((x: ActivityModel): boolean => {
             return !x.isDeleted;
           })
-          .map((x: ActionModel): UpdateProjectRequestAction => {
+          .map((x: ActivityModel): UpdateProjectRequestActivity => {
             return {
               id: x.id as string,
               name: x.name,
@@ -119,11 +119,11 @@ export function ProjectEditorPage(): JSX.Element {
               position: x.position,
             };
           }),
-        actionsToDelete: (values.actions as Array<ActionModel>)
-          .filter((x: ActionModel): boolean => {
+        activitiesToDelete: (values.activities as Array<ActivityModel>)
+          .filter((x: ActivityModel): boolean => {
             return x.isDeleted && !!x.id;
           })
-          .map((x: ActionModel): string => {
+          .map((x: ActivityModel): string => {
             return x.id as string;
           }),
       };
@@ -133,11 +133,11 @@ export function ProjectEditorPage(): JSX.Element {
       const createRequest: CreateProjectRequest = {
         id: guidService.newGuid(),
         name: values.name as string,
-        actions: (values.actions as Array<ActionModel>)
-          .filter((x: ActionModel): boolean => {
+        activities: (values.activities as Array<ActivityModel>)
+          .filter((x: ActivityModel): boolean => {
             return !x.isDeleted;
           })
-          .map((x: ActionModel): CreateProjectRequestAction => {
+          .map((x: ActivityModel): CreateProjectRequestActivity => {
             return {
               name: x.name,
               color: x.color,
@@ -152,12 +152,12 @@ export function ProjectEditorPage(): JSX.Element {
     navigation.goBack();
   };
 
-  const findActionIndexByCode = (actions: Array<ActionModel> | undefined, code: string): number => {
-    if (!actions) {
-      throw new Error("Actions are expected.");
+  const findActivityIndexByCode = (activities: Array<ActivityModel> | undefined, code: string): number => {
+    if (!activities) {
+      throw new Error("Activities are expected.");
     }
 
-    return actions.findIndex((x: ActionModel): boolean => {
+    return activities.findIndex((x: ActivityModel): boolean => {
       return x.code === code;
     });
   };
@@ -210,27 +210,27 @@ export function ProjectEditorPage(): JSX.Element {
                     onBlur={handleBlur("name")}
                   />
                 </FormRow>
-                <FormRow style={projectEditorPageStyles.actions}>
+                <FormRow style={projectEditorPageStyles.activities}>
                   <Label>
-                    {localization.get("projectEditor.actions")}
+                    {localization.get("projectEditor.activities")}
                   </Label>
                   <View
-                    style={projectEditorPageStyles.actionsTable}
+                    style={projectEditorPageStyles.activitiesTable}
                   >
                     <DraggableFlatList
                       scrollEnabled={true}
                       data={
-                        values.actions
-                          ?.filter((action: ActionModel): boolean => {
-                            return !action.isDeleted;
+                        values.activities
+                          ?.filter((activity: ActivityModel): boolean => {
+                            return !activity.isDeleted;
                           }) ?? []
                       }
                       onDragEnd={({ data }): void => {
                         setFieldValue(
-                          "actions",
+                          "activities",
                           [
                             ...data.map(
-                              (x: ActionModel, index: number): ActionModel => {
+                              (x: ActivityModel, index: number): ActivityModel => {
                                 return {
                                   ...x,
                                   // here we need to take into account the removed elements
@@ -239,37 +239,37 @@ export function ProjectEditorPage(): JSX.Element {
                                 };
                               }
                             ),
-                            ...values.actions
-                            ?.filter((action: ActionModel): boolean => {
-                              return action.isDeleted;
+                            ...values.activities
+                            ?.filter((activity: ActivityModel): boolean => {
+                              return activity.isDeleted;
                             }) ?? [],
                           ]
                         );
                       }}
-                      keyExtractor={(item: ActionModel): string => {
+                      keyExtractor={(item: ActivityModel): string => {
                         return item.code;
                       }}
-                      renderItem={({ item: action, drag, getIndex }: RenderItemParams<ActionModel>) => {
+                      renderItem={({ item: activity, drag, getIndex }: RenderItemParams<ActivityModel>) => {
                         const index = getIndex() as number;
 
                         return (
-                          <Action
-                            key={action.code}
-                            actionCode={action.code}
-                            actionId={action.id}
-                            actionName={action.name}
-                            actionColor={action.color}
-                            error={touched.actions && (errors.actions?.[index] as unknown as ActionModel)?.name}
+                          <Activity
+                            key={activity.code}
+                            activityCode={activity.code}
+                            activityId={activity.id}
+                            activityName={activity.name}
+                            activityColor={activity.color}
+                            error={touched.activities && (errors.activities?.[index] as unknown as ActivityModel)?.name}
                             onSelectColorClick={(): void => {
-                              showSelectColorModal(action.code);
+                              showSelectColorModal(activity.code);
                             }}
-                            onChange={(e: ActionChangeEventArgs): void => {
-                              const actionIndex = findActionIndexByCode(values?.actions, e.code);
-                              setFieldValue(`actions[${actionIndex}].${e.fieldName}`, e.value);
+                            onChange={(e: ActivityChangeEventArgs): void => {
+                              const activityIndex = findActivityIndexByCode(values?.activities, e.code);
+                              setFieldValue(`activities[${activityIndex}].${e.fieldName}`, e.value);
                             }}
-                            onDelete={(actionCode: string): void => {
-                              const actionIndex = findActionIndexByCode(values?.actions, actionCode);
-                              setFieldValue(`actions[${actionIndex}].isDeleted`, true);
+                            onDelete={(activityCode: string): void => {
+                              const activityIndex = findActivityIndexByCode(values?.activities, activityCode);
+                              setFieldValue(`activities[${activityIndex}].isDeleted`, true);
                             }}
                             onDrag={drag}
                           />
@@ -278,20 +278,20 @@ export function ProjectEditorPage(): JSX.Element {
                     />
                   </View>
                   <View
-                    style={projectEditorPageStyles.addActionButtonContainer}
+                    style={projectEditorPageStyles.addActivityButtonContainer}
                   >
                     <Button
-                      title={localization.get("projectEditor.addAction")}
+                      title={localization.get("projectEditor.addActivity")}
                       onPress={(): void => {
                         setFieldValue(
-                          "actions",
+                          "activities",
                           [
-                            ...values?.actions || [],
+                            ...values?.activities || [],
                             {
                               code: guidService.newGuid(),
                               name: "",
                               color: "",
-                              position: values.actions?.length ?? 0,
+                              position: values.activities?.length ?? 0,
                               isDeleted: false,
                             },
                           ]
@@ -315,12 +315,12 @@ export function ProjectEditorPage(): JSX.Element {
                     />
                   </View>
                   <SelectColorModal
-                    actionCode={activeCode}
+                    activityCode={activeCode}
                     show={showSelectColor}
                     onClose={hideSelectColorModal}
-                    onSelect={(actionCode: string, color: ColorPalette): void => {
-                      const actionIndex = findActionIndexByCode(values?.actions, actionCode);
-                      setFieldValue(`actions[${actionIndex}].color`, color);
+                    onSelect={(activityCode: string, color: ColorPalette): void => {
+                      const activityIndex = findActivityIndexByCode(values?.activities, activityCode);
+                      setFieldValue(`activities[${activityIndex}].color`, color);
                       hideSelectColorModal();
                     }}
                   />

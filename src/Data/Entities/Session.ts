@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
 import { SessionState } from "../Enums";
-import { Action } from "./Action";
+import { Activity } from "./Activity";
 import { Project } from "./Project";
 
 @Entity({ name: "Sessions" })
@@ -72,16 +72,16 @@ export class Session {
   finishDate?: Date | null;
 
   @Column({
-    name: "ActionStartDate",
+    name: "ActivityStartDate",
     nullable: false,
   })
-  actionStartDate!: Date;
+  activityStartDate!: Date;
 
   @Column({
-    name: "ActionFinishDate",
+    name: "ActivityFinishDate",
     nullable: true,
   })
-  actionFinishDate?: Date | null;
+  activityFinishDate?: Date | null;
 
   @Column({
     name: "CreatedDate",
@@ -93,8 +93,8 @@ export class Session {
   @JoinColumn({ name: "ProjectId" })
   public project!: Project;
 
-  @OneToOne(() => Action, x => x.id)
-  @JoinColumn({ name: "ActionId" })
-  public action!: Action;
+  @OneToOne(() => Activity, x => x.id)
+  @JoinColumn({ name: "ActivityId" })
+  public activity!: Activity;
 
 }

@@ -6,14 +6,14 @@ import { Icon } from "@components/Icon";
 import { TextInputField } from "@components/TextInputField";
 import { styles } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
-import { ActionProps } from "./ActionProps";
-import { actionStyles } from "./ActionStyles";
+import { ActivityProps } from "./ActivityProps";
+import { activityStyles } from "./ActivityStyles";
 
-export function Action(props: ActionProps): JSX.Element {
+export function Activity(props: ActivityProps): JSX.Element {
   const {
-    actionCode,
-    actionName,
-    actionColor,
+    activityCode,
+    activityName,
+    activityColor,
     error,
     onSelectColorClick,
     onChange,
@@ -22,12 +22,12 @@ export function Action(props: ActionProps): JSX.Element {
   } = props;
 
   return (
-    <View style={actionStyles.container}>
+    <View style={activityStyles.container}>
       <TouchableOpacity
         onPressIn={onDrag}
       >
         <View
-          style={actionStyles.positionCol}
+          style={activityStyles.positionCol}
         >
           {/*TODO: Drag'n'Drop*/}
           <Icon
@@ -38,14 +38,14 @@ export function Action(props: ActionProps): JSX.Element {
         </View>
       </TouchableOpacity>
       <View
-        style={actionStyles.nameCol}
+        style={activityStyles.nameCol}
       >
         <TextInputField
-          value={actionName}
+          value={activityName}
           error={error}
           onChangeText={(value: string): void => {
             onChange({
-              code: actionCode,
+              code: activityCode,
               fieldName: "name",
               value,
             });
@@ -53,21 +53,21 @@ export function Action(props: ActionProps): JSX.Element {
         />
       </View>
       <View
-        style={actionStyles.colorCol}
+        style={activityStyles.colorCol}
       >
         <Button
           style={[
-            actionStyles.selectColorButton,
+            activityStyles.selectColorButton,
             {
-              backgroundColor: actionColor
-                ? getColorCode(actionColor)
-                : actionStyles.selectColorButton.backgroundColor,
+              backgroundColor: activityColor
+                ? getColorCode(activityColor)
+                : activityStyles.selectColorButton.backgroundColor,
             },
           ]}
           onPress={onSelectColorClick}
         >
           {
-            !actionColor
+            !activityColor
               ? (
                 <Icon
                   name="color"
@@ -80,13 +80,13 @@ export function Action(props: ActionProps): JSX.Element {
         </Button>
       </View>
       <View
-        style={actionStyles.deleteCol}
+        style={activityStyles.deleteCol}
       >
         <Button
           variant="danger"
           style={styles.w100}
           onPress={(): void => {
-            onDelete(actionCode);
+            onDelete(activityCode);
           }}
         >
           <Icon

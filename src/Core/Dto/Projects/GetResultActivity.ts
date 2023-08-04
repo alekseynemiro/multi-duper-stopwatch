@@ -1,7 +1,6 @@
 import { ColorPalette } from "@data";
-import { ActionStatus } from "./ActionStatus";
 
-export type Action = {
+export type GetResultActivity = {
 
   id: string;
 
@@ -9,6 +8,6 @@ export type Action = {
 
   color: ColorPalette;
 
-  status: ActionStatus;
+  position: number;
 
 };

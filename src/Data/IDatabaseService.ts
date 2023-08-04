@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import {
-  Action,
-  ActionInProject,
+  Activity,
+  ActivityInProject,
   Info,
   Project,
   Session,
@@ -11,9 +11,9 @@ import {
 
 export interface IDatabaseService {
 
-  actions: { (): Repository<Action> };
+  activities: { (): Repository<Activity> };
 
-  actionsInProjects: { (): Repository<ActionInProject> };
+  activitiesInProjects: { (): Repository<ActivityInProject> };
 
   infos: { (): Repository<Info> };
 

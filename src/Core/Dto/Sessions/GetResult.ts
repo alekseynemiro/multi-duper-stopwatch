@@ -6,7 +6,7 @@ export type GetResult = {
 
   projectId: string;
 
-  actionId: string;
+  activityId: string;
 
   elapsedTime: number;
 

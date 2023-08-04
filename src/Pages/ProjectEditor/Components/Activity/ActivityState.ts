@@ -1,4 +1,4 @@
-export type ActionState = {
+export type ActivityState = {
 
   name: string;
 

@@ -1,4 +1,4 @@
-import { GetResultAction } from "./GetResultAction";
+import { GetResultActivity } from "./GetResultActivity";
 
 export type GetResult = {
 
@@ -8,6 +8,6 @@ export type GetResult = {
 
   createdDate: Date;
 
-  actions?: Array<GetResultAction>;
+  activities?: Array<GetResultActivity>;
 
 };

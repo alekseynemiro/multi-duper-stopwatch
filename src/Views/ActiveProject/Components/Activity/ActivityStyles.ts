@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { defaultFontSize } from "@styles";
 
-export const actionStyles = StyleSheet.create({
+export const activityStyles = StyleSheet.create({
   button: {
     paddingHorizontal: 8,
     flexDirection: "row",

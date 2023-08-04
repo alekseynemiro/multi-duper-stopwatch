@@ -1,10 +1,10 @@
-import { Action as ActionModel } from "@dto/ActiveProject";
-import { HorizontalListLayoutActionPressEventArgs } from "./HorizontalListLayoutActionPressEventArgs";
+import { Activity as ActivityModel } from "@dto/ActiveProject";
+import { HorizontalListLayoutActivityPressEventArgs } from "./HorizontalListLayoutActivityPressEventArgs";
 
 export type HorizontalListLayoutProps = {
 
-  actions: Array<ActionModel> | undefined;
+  activities: Array<ActivityModel> | undefined;
 
-  onActionPress(e: HorizontalListLayoutActionPressEventArgs): Promise<void>;
+  onActivityPress(e: HorizontalListLayoutActivityPressEventArgs): Promise<void>;
 
 };

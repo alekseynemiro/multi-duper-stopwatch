@@ -60,7 +60,7 @@ export class InitialMigration implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: "Actions",
+        name: "Activities",
         columns: [
           {
             name: "Id",
@@ -104,7 +104,7 @@ export class InitialMigration implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: "ActionsInProjects",
+        name: "ActivitiesInProjects",
         columns: [
           {
             name: "Id",
@@ -113,7 +113,7 @@ export class InitialMigration implements MigrationInterface {
             isUnique: true,
           },
           {
-            name: "ActionId",
+            name: "ActivityId",
             type: "text",
             isNullable: false,
           },
@@ -152,7 +152,7 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "ActionId",
+            name: "ActivityId",
             type: "text",
             isNullable: false,
           },
@@ -207,12 +207,12 @@ export class InitialMigration implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: "ActionStartDate",
+            name: "ActivityStartDate",
             type: "int",
             isNullable: false,
           },
           {
-            name: "ActionFinishDate",
+            name: "ActivityFinishDate",
             type: "int",
             isNullable: true,
           },
@@ -241,7 +241,7 @@ export class InitialMigration implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: "ActionId",
+            name: "ActivityId",
             type: "text",
             isNullable: false,
           },
@@ -338,8 +338,8 @@ export class InitialMigration implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable("SessionLogs");
     await queryRunner.dropTable("Sessions");
-    await queryRunner.dropTable("ActionsInProjects");
-    await queryRunner.dropTable("Actions");
+    await queryRunner.dropTable("ActivitiesInProjects");
+    await queryRunner.dropTable("Activities");
     await queryRunner.dropTable("Projects");
     await queryRunner.dropTable("Settings");
     await queryRunner.dropTable("Infos");

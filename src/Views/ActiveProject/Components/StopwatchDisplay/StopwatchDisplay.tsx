@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
-import { Action as ActionModel } from "@dto/ActiveProject";
+import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { IStopwatchService } from "@services/Stopwatch";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { useLocalization } from "@utils/LocalizationUtils";
@@ -14,23 +14,23 @@ const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifie
 
 export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
-    activeAction,
+    activeActivity,
   } = props;
 
   const localization = useLocalization();
 
-  const [showActiveAction, setShowActiveAction] = useState<boolean>();
+  const [showActiveActivity, setShowActiveActivity] = useState<boolean>();
 
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
-        if (showActiveAction) {
+        if (showActiveActivity) {
           stopwatchService.clearOffset();
-          setShowActiveAction(false);
+          setShowActiveActivity(false);
         } else {
           stopwatchService.setOffset();
-          setShowActiveAction(true);
+          setShowActiveActivity(true);
         }
       }}
     >
@@ -38,22 +38,22 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
         style={stopwatchDisplayStyles.elapsedContainer}
       >
         {
-          activeAction
+          activeActivity
           && (
             <View>
               {
-                showActiveAction
+                showActiveActivity
                 && (
                   <Text
                     style={[
                       stopwatchDisplayStyles.mode,
                       {
-                        backgroundColor: getColorCode((activeAction as ActionModel).color),
-                        color: getContrastColorCode((activeAction as ActionModel).color),
+                        backgroundColor: getColorCode((activeActivity as ActivityModel).color),
+                        color: getContrastColorCode((activeActivity as ActivityModel).color),
                       },
                     ]}
                   >
-                    {activeAction?.name}
+                    {activeActivity?.name}
                   </Text>
                 )
                 || (

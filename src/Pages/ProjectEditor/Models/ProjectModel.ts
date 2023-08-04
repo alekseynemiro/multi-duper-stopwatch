@@ -1,9 +1,9 @@
-import { ActionModel } from "./ActionModel";
+import { ActivityModel } from "./ActivityModel";
 
 export type ProjectModel = {
 
   name?: string;
 
-  actions?: Array<ActionModel>;
+  activities?: Array<ActivityModel>;
 
 };

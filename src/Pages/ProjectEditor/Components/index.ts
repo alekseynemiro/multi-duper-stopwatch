@@ -1,2 +1,2 @@
-export * from "./Action";
+export * from "./Activity";
 export * from "./SelectColorModal";

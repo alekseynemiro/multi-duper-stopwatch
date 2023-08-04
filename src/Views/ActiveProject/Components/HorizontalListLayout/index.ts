@@ -1,2 +1,2 @@
 export { HorizontalListLayout } from "./HorizontalListLayout";
-export type { HorizontalListLayoutActionPressEventArgs } from "./HorizontalListLayoutActionPressEventArgs";
+export type { HorizontalListLayoutActivityPressEventArgs } from "./HorizontalListLayoutActivityPressEventArgs";

@@ -2,7 +2,7 @@ export type ToggleRequest = {
 
   sessionId: string;
 
-  actionId: string;
+  activityId: string;
 
   distance: number;
 

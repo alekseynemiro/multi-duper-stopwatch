@@ -1,4 +1,4 @@
-import { CreateProjectRequestAction } from "./CreateProjectRequestAction";
+import { CreateProjectRequestActivity } from "./CreateProjectRequestActivity";
 
 export type CreateProjectRequest = {
 
@@ -6,6 +6,6 @@ export type CreateProjectRequest = {
 
   name: string;
 
-  actions: Array<CreateProjectRequestAction>;
+  activities: Array<CreateProjectRequestActivity>;
 
 };

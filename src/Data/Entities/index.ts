@@ -1,5 +1,5 @@
-export { Action } from "./Action";
-export { ActionInProject } from "./ActionInProject";
+export { Activity } from "./Activity";
+export { ActivityInProject } from "./ActivityInProject";
 export { Info } from "./Info";
 export { Project } from "./Project";
 export { Session } from "./Session";

@@ -4,7 +4,7 @@ export type ReportItemModel = {
 
   id: string;
 
-  actionId: string;
+  activityId: string;
 
   name: string;
 

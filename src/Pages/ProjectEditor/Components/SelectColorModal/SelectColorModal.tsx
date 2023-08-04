@@ -35,7 +35,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
                           backgroundColor: x.color,
                         }}
                         onPress={(): void => {
-                          props.onSelect(props.actionCode, getColorByCode(x.color));
+                          props.onSelect(props.activityCode, getColorByCode(x.color));
                         }}
                       />
                     );

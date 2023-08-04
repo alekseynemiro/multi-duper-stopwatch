@@ -21,7 +21,7 @@
   },
   "report": {
     "pageTitle": "Отчёт",
-    "action": "Активность",
+    "activity": "Активность",
     "time": "Время",
     "total": "Всего:"
   },
@@ -37,8 +37,8 @@
     "createProject": "Новый проект",
     "editProject": "Редактировать проект",
     "projectName": "Имя проекта:",
-    "actions": "Активности:",
-    "addAction": "Добавить активность",
+    "activities": "Активности:",
+    "addActivity": "Добавить активность",
     "save": "Сохранить",
     "cancel": "Отмена",
     "selectColor": {
@@ -46,9 +46,9 @@
       "close": "Закрыть"
     },
     "validation": {
-      "actionNameIsRequired": "Требуется имя активности.",
+      "activityNameIsRequired": "Требуется имя активности.",
       "projectNameIsRequired": "Требуется имя проекта.",
-      "actionsIsRequired": "Необходимо добавить хотя бы одну активность."
+      "activitiesIsRequired": "Необходимо добавить хотя бы одну активность."
     }
   },
   "reportList": {

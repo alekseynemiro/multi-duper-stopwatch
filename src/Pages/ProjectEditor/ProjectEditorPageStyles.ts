@@ -9,10 +9,10 @@ export const projectEditorPageStyles = StyleSheet.create({
   form: {
     flex: 1,
   },
-  actions: {
+  activities: {
     flex: 1,
   },
-  actionsTable: {
+  activitiesTable: {
     ...styles.table,
   },
   buttons: {
@@ -21,7 +21,7 @@ export const projectEditorPageStyles = StyleSheet.create({
     justifyContent: "flex-start",
     marginHorizontal: 0,
   },
-  addActionButtonContainer: {
+  addActivityButtonContainer: {
     marginTop: 16,
   },
 });
