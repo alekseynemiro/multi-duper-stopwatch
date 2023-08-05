@@ -635,6 +635,28 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
+  public async keep(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.keep.name
+    );
+
+    const result = this._dateTimeService.now;
+
+    if (this._session?.state === SessionState.Run) {
+      await Promise.all([
+        this._localStorageService.setItem<LocalStorageKeys>(
+          "date",
+          result.getTime()
+        ),
+        this._localStorageService.setItem<LocalStorageKeys>(
+          "sessionId",
+          this._session.id
+        ),
+      ]);
+    }
+  }
+
   public addEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): NativeEventSubscription {
     this._loggerService.debug(
       ActiveProjectService.name,
@@ -674,28 +696,6 @@ export class ActiveProjectService implements IActiveProjectService {
     }
 
     eventType.splice(index, 1);
-  }
-
-  public async keep(): Promise<void> {
-    this._loggerService.debug(
-      ActiveProjectService.name,
-      this.keep.name
-    );
-
-    const result = this._dateTimeService.now;
-
-    if (this._session?.state === SessionState.Run) {
-      await Promise.all([
-        this._localStorageService.setItem<LocalStorageKeys>(
-          "date",
-          result.getTime()
-        ),
-        this._localStorageService.setItem<LocalStorageKeys>(
-          "sessionId",
-          this._session.id
-        ),
-      ]);
-    }
   }
 
   private async setProjectId(projectId: string): Promise<void> {
