@@ -17,4 +17,5 @@ export type IconName =
   | "details"
   | "back"
   | "menu"
-  | "home";
+  | "home"
+  | "stopwatch";
