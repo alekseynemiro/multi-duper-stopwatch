@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { IStopwatchService } from "@services/Stopwatch";
+import { colors } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { ElapsedTime } from "./ElapsedTime";
@@ -57,8 +58,12 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                     style={[
                       stopwatchDisplayStyles.mode,
                       {
-                        backgroundColor: getColorCode((currentActivity as ActivityModel).color),
-                        color: getContrastColorCode((currentActivity as ActivityModel).color),
+                        backgroundColor: currentActivity?.color
+                          ? getColorCode((currentActivity as ActivityModel).color)
+                          : colors.white,
+                        color: currentActivity?.color
+                          ? getContrastColorCode((currentActivity as ActivityModel).color)
+                          : colors.text,
                       },
                     ]}
                   >
