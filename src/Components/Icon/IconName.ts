@@ -20,4 +20,5 @@ export type IconName =
   | "home"
   | "stopwatch"
   | "info"
-  | "github";
+  | "github"
+  | "thumbs-up";
