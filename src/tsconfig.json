@@ -14,6 +14,7 @@
       "@data": ["./Data"],
       "@data/*": ["./Data/*"],
       "@dto/*": ["./Core/Dto/*"],
+      "@images/*": ["./Images/*"],
       "@localization": ["./Localization/index"],
       "@localization/*": ["./Localization/*"],
       "@pages/*": ["./Pages/*"],

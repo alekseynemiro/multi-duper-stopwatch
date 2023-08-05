@@ -13,6 +13,7 @@ module.exports = {
     "^@config(.*)$": "<rootDir>/Config/$1",
     "^@data(.*)$": "<rootDir>/Data/$1",
     "^@dto(.*)$": "<rootDir>/Core/Dto/$1",
+    "^@images(.*)$": "<rootDir>/Images/$1",
     "^@localization(.*)$": "<rootDir>/Localization/$1",
     "^@pages(.*)$": "<rootDir>/Pages/$1",
     "^@services(.*)$": "<rootDir>/Core/Services/$1",
