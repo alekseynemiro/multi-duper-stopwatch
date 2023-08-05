@@ -35,9 +35,14 @@ export function ReportListPage(): JSX.Element {
     setShowLoadingIndicator(false);
   };
 
-  const canShowAdditionalColumns = (): boolean => {
-    return width >= 400;
-  };
+  const canShowAdditionalColumns = useCallback(
+    (): boolean => {
+      return width >= 600;
+    },
+    [
+      width,
+    ]
+  );
 
   useFocusEffect(
     useCallback(
