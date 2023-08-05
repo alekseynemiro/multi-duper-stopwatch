@@ -616,12 +616,14 @@ export class ActiveProjectService implements IActiveProjectService {
       this._session = undefined;
       this._currentActivityId = undefined;
 
-      this._localStorageService.removeItem<LocalStorageKeys>("projectId");
-      this._localStorageService.removeItem<LocalStorageKeys>("sessionId");
-      this._localStorageService.removeItem<LocalStorageKeys>("activityId");
-      this._localStorageService.removeItem<LocalStorageKeys>("date");
-      this._localStorageService.removeItem<LocalStorageKeys>("shouldPause");
-      this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity");
+      await Promise.all([
+        this._localStorageService.removeItem<LocalStorageKeys>("projectId"),
+        this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
+        this._localStorageService.removeItem<LocalStorageKeys>("activityId"),
+        this._localStorageService.removeItem<LocalStorageKeys>("date"),
+        this._localStorageService.removeItem<LocalStorageKeys>("shouldPause"),
+        this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
+      ]);
 
       this._stopwatchService.clearOffset();
       this._stopwatchService.reset();
