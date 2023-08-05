@@ -679,24 +679,23 @@ export class ActiveProjectService implements IActiveProjectService {
   public async keep(): Promise<void> {
     this._loggerService.debug(
       ActiveProjectService.name,
-      this.keep.name,
+      this.keep.name
     );
 
     const result = this._dateTimeService.now;
 
-    await Promise.all([
-      this._localStorageService.setItem<LocalStorageKeys>(
-        "date",
-        result.getTime()
-      ),
-      this._session
-        ? this._localStorageService.setItem<LocalStorageKeys>(
-        "sessionId",
+    if (this._session?.state === SessionState.Run) {
+      await Promise.all([
+        this._localStorageService.setItem<LocalStorageKeys>(
+          "date",
+          result.getTime()
+        ),
+        this._localStorageService.setItem<LocalStorageKeys>(
+          "sessionId",
           this._session.id
-        )
-        : this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
-    ]);
-
+        ),
+      ]);
+    }
   }
 
   private async setProjectId(projectId: string): Promise<void> {
