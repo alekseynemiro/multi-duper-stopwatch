@@ -25,4 +25,5 @@ export type IconName =
   | "smile"
   | "comments"
   | "vk"
-  | "home-page";
+  | "home-page"
+  | "star";
