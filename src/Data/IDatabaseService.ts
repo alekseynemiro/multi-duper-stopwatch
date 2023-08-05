@@ -2,7 +2,6 @@ import { Repository } from "typeorm";
 import {
   Activity,
   ActivityInProject,
-  Info,
   Project,
   Session,
   SessionLog,
@@ -14,8 +13,6 @@ export interface IDatabaseService {
   activities: { (): Repository<Activity> };
 
   activitiesInProjects: { (): Repository<ActivityInProject> };
-
-  infos: { (): Repository<Info> };
 
   projects: { (): Repository<Project> };
 

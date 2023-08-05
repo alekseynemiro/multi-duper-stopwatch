@@ -5,7 +5,6 @@ import { ILoggerService } from "../Core/Services/Logger";
 import {
   Activity,
   ActivityInProject,
-  Info,
   Project,
   Session,
   SessionLog,
@@ -24,8 +23,6 @@ export class DatabaseService implements IDatabaseService {
 
   public readonly activitiesInProjects = (): Repository<ActivityInProject> => this._dataSource.getRepository(ActivityInProject);
 
-  public readonly infos = (): Repository<Info> => this._dataSource.getRepository(Info);
-
   public readonly projects = (): Repository<Project> => this._dataSource.getRepository(Project);
 
   public readonly sessions = (): Repository<Session> => this._dataSource.getRepository(Session);
@@ -39,14 +36,13 @@ export class DatabaseService implements IDatabaseService {
   ) {
     const dataSource = new DataSource({
       type: "react-native",
-      database: "table_20230715_1227",
+      database: "default.data",
       location: "default",
       logger: "debug",
       synchronize: false,
       entities: [
         Activity,
         ActivityInProject,
-        Info,
         Project,
         Session,
         SessionLog,
@@ -79,9 +75,9 @@ export class DatabaseService implements IDatabaseService {
         name ?? "action"
       );
 
-    await this.open();
+      await this.open();
 
-    return await action();
+      return await action();
     } finally {
       this._loggerService.debug(
         DatabaseService.name,

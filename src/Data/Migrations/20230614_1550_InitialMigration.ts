@@ -36,30 +36,6 @@ export class InitialMigration implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: "Infos",
-        columns: [
-          {
-            name: "Key",
-            type: "int",
-            isPrimary: true,
-            isNullable: false,
-          },
-          {
-            name: "Value",
-            type: "blob",
-            isNullable: true,
-          },
-          {
-            name: "ReadOnly",
-            type: "int",
-            isNullable: false,
-          },
-        ],
-      })
-    );
-
-    await queryRunner.createTable(
-      new Table({
         name: "Activities",
         columns: [
           {
@@ -342,7 +318,6 @@ export class InitialMigration implements MigrationInterface {
     await queryRunner.dropTable("Activities");
     await queryRunner.dropTable("Projects");
     await queryRunner.dropTable("Settings");
-    await queryRunner.dropTable("Infos");
     await queryRunner.dropTable("Migrations");
   }
 

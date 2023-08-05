@@ -3,7 +3,6 @@ import { DataSource, Repository } from "typeorm";
 import {
   Activity,
   ActivityInProject,
-  Info,
   Project,
   Session,
   SessionLog,
@@ -19,8 +18,6 @@ export class DatabaseService implements IDatabaseService {
   public readonly activities = (): Repository<Activity> => this._dataSource.getRepository(Activity);
 
   public readonly activitiesInProjects = (): Repository<ActivityInProject> => this._dataSource.getRepository(ActivityInProject);
-
-  public readonly infos = (): Repository<Info> => this._dataSource.getRepository(Info);
 
   public readonly projects = (): Repository<Project> => this._dataSource.getRepository(Project);
 
@@ -39,7 +36,6 @@ export class DatabaseService implements IDatabaseService {
       entities: [
         Activity,
         ActivityInProject,
-        Info,
         Project,
         Session,
         SessionLog,
