@@ -50,4 +50,5 @@ export type LocalizationKey =
   | "applicationSettings.ok"
   | "applicationSettings.save"
   | "applicationSettings.language"
+  | "dateTimeFormatter.at"
 ;

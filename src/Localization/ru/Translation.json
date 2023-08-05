@@ -72,5 +72,8 @@
     "save": "Сохранить",
     "ok": "Ok",
     "language": "Язык:"
+  },
+  "dateTimeFormatter": {
+    "at": "в"
   }
 }

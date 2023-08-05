@@ -1,8 +1,11 @@
 import React from "react";
 import { Text } from "react-native";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { DateTimeFormatterProps } from "./DateTimeFormatterProps";
 
 export function DateTimeFormatter(props: DateTimeFormatterProps): JSX.Element {
+  const localization = useLocalization();
+
   const {
     value,
     style,
@@ -25,7 +28,9 @@ export function DateTimeFormatter(props: DateTimeFormatterProps): JSX.Element {
   return (
     <Text style={style}>
       {formattedDate}
-      {" at "}
+      {" "}
+      {localization.get("dateTimeFormatter.at")}
+      {" "}
       {formattedTime}
     </Text>
   );

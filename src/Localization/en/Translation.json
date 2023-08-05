@@ -72,5 +72,8 @@
     "save": "Save",
     "ok": "Ok",
     "language": "Language:"
+  },
+  "dateTimeFormatter": {
+    "at": "at"
   }
 }
