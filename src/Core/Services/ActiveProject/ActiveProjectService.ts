@@ -225,10 +225,20 @@ export class ActiveProjectService implements IActiveProjectService {
   }
 
   public useSessionId(sessionId: string): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.useSessionId.name
+    );
+
     return this.setSessionId(sessionId);
   }
 
   public useProjectId(projectId: string): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.useProjectId.name
+    );
+
     return this.setProjectId(projectId);
   }
 
