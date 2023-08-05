@@ -263,6 +263,9 @@ export function ActiveProjectView(): JSX.Element {
           disabled={!currentActivity}
           onPress={toggleActive}
         >
+          <Icon
+            name="stopwatch"
+          />
           <Text>
             {
               currentActivity?.status === ActivityStatus.Paused
