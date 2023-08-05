@@ -391,25 +391,65 @@ export class SessionService implements ISessionService {
           const startDate = session.activityStartDate;
           let elapsedTime = request.date.getTime() - startDate.getTime();
 
-          if (session.state === SessionState.Paused) {
-            elapsedTime = (session.activityFinishDate as Date).getTime() - session.activityStartDate.getTime();
+          if (session.state === SessionState.Run) {
+            let log: SessionLog | undefined;
+
+            const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
+              .findOne({
+                where: {
+                  session,
+                  finishDate: request.date,
+                },
+              });
+
+            if (existingLogEntryWithSameDate) {
+              this._loggerService.debug(
+                SessionService.name,
+                this.finish.name,
+                "sessionId",
+                request.sessionId,
+                `Finish without log because the current status ${SessionState[session.state]} and an entry with the date ${request.date} was found in the log.`,
+                "Elapsed time",
+                elapsedTime
+              );
+            } else {
+              this._loggerService.debug(
+                SessionService.name,
+                this.finish.name,
+                "sessionId",
+                request.sessionId,
+                `Finish and add log because the current status ${SessionState[session.state]}.`,
+                "Elapsed time",
+                elapsedTime
+              );
+
+              log = {
+                id: this._guidService.newGuid(),
+                session,
+                activity: { ...session.activity }, // to kill reference
+                distance: request.distance,
+                avgSpeed: request.avgSpeed,
+                maxSpeed: request.maxSpeed,
+                steps: 0,
+                elapsedTime,
+                startDate,
+                finishDate: request.date,
+                createdDate: this._dateTimeService.now,
+              };
+
+              await this._databaseService.sessionLogs().insert(log);
+            }
+          } else {
+            this._loggerService.debug(
+              SessionService.name,
+              this.finish.name,
+              "sessionId",
+              request.sessionId,
+              `Finish without log because the current status ${SessionState[session.state]}.`,
+              "Elapsed time",
+              elapsedTime
+            );
           }
-
-          const log: SessionLog = {
-            id: this._guidService.newGuid(),
-            session,
-            activity: { ...session.activity }, // to kill reference
-            distance: request.distance,
-            avgSpeed: request.avgSpeed,
-            maxSpeed: request.maxSpeed,
-            steps: 0,
-            elapsedTime,
-            startDate,
-            finishDate: request.date,
-            createdDate: this._dateTimeService.now,
-          };
-
-          await this._databaseService.sessionLogs().insert(log);
         }
 
         const allLogs = await this._databaseService.sessionLogs()
