@@ -127,6 +127,9 @@ export function App(): JSX.Element {
           <Drawer.Screen
             name={Routes.Home}
             component={HomePage}
+            options={{
+              title: localizationService.get("menu.home"),
+            }}
           />
           <Drawer.Screen
             name={Routes.ProjectList}
