@@ -22,4 +22,5 @@ export type IconName =
   | "info"
   | "github"
   | "thumbs-up"
-  | "smile";
+  | "smile"
+  | "comments";
