@@ -15,4 +15,5 @@ export const iconMap = new Map<IconName, string>()
   .set("details", "eye")
   .set("back", "arrow-left")
   .set("menu", "bars")
-  .set("info", "info-circle");
+  .set("info", "info-circle")
+  .set("home-page", "house-user");
