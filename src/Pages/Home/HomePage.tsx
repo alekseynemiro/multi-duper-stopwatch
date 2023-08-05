@@ -4,6 +4,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { SessionState } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { ILoggerService } from "@services/Logger";
@@ -67,6 +68,15 @@ export function HomePage(): JSX.Element {
         if (!sessionId && !projectId) {
           await activeProjectService.useLastSessionId();
         }
+
+        if (activeProjectService.session?.state === SessionState.Finished) {
+          navigation.navigate(
+            Routes.Home,
+            {
+              projectId,
+            }
+          );
+        }
       }
 
       const projects = await projectService.getAll();
@@ -75,6 +85,7 @@ export function HomePage(): JSX.Element {
       setLoading(false);
     },
     [
+      navigation,
       projectId,
       sessionId,
     ]
