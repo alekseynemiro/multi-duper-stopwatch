@@ -6,6 +6,7 @@
     "reports": "Reports",
     "createProject": "Create project",
     "applicationSettings": "Application settings",
+    "about": "About...",
     "exit": "Exit"
   },
   "home": {
@@ -72,6 +73,17 @@
     "save": "Save",
     "ok": "Ok",
     "language": "Language:"
+  },
+  "about": {
+    "build": "build",
+    "author": "Created with love by Aleksey Nemiro",
+    "youCanHelp": "If you like the program, you can help it in the following ways:",
+    "rateGooglePlay": "Rate on Google Play",
+    "giveStartOnGitHub": "Give a star on GitHub",
+    "tellYourFriends": "Tell your friends and family about the program.",
+    "ifYouHaveIdeas": "If you have any ideas or comments,",
+    "tellTheAuthor": "tell the author about it",
+    "thankYou": "Thank you!"
   },
   "dateTimeFormatter": {
     "at": "at"

@@ -5,6 +5,7 @@ import { AppHeader } from "@components/AppHeader";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner, SessionState } from "@data";
+import { AboutPage } from "@pages/About";
 import { ApplicationSettingsPage } from "@pages/ApplicationSettings";
 import { HomePage } from "@pages/Home";
 import { InitialScreenPage } from "@pages/InitialScreen";
@@ -161,6 +162,13 @@ export function App(): JSX.Element {
             component={ApplicationSettingsPage}
             options={{
               title: localizationService.get("menu.applicationSettings"),
+            }}
+          />
+          <Drawer.Screen
+            name={Routes.About}
+            component={AboutPage}
+            options={{
+              title: localizationService.get("menu.about"),
             }}
           />
         </Drawer.Navigator>

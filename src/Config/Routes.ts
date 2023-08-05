@@ -6,4 +6,5 @@ export enum Routes {
   Report = "Report",
   ReportList = "ReportList",
   ApplicationSettings = "ApplicationSettings",
+  About = "About",
 }

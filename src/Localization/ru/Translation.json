@@ -6,6 +6,7 @@
     "reports": "Отчёты",
     "createProject": "Создать проект",
     "applicationSettings": "Настройки",
+    "about": "О программе...",
     "exit": "Выход"
   },
   "home": {
@@ -72,6 +73,17 @@
     "save": "Сохранить",
     "ok": "Ok",
     "language": "Язык:"
+  },
+  "about": {
+    "build": "сборка",
+    "author": "Создано с любовью Алексеем Немиро",
+    "youCanHelp": "Если вам нравится это приложение, вы можете помочь проекту следующим образом:",
+    "rateGooglePlay": "Поставить оценку в Google Play",
+    "giveStartOnGitHub": "Дать звезду проекту в GitHub",
+    "tellYourFriends": "Рассказать о программе вашим друзьям и знакомым.",
+    "ifYouHaveIdeas": "Если у вас есть какие-либо идеи или предложения,",
+    "tellTheAuthor": "вы можете сообщить об этом",
+    "thankYou": "Спасибо!"
   },
   "dateTimeFormatter": {
     "at": "в"

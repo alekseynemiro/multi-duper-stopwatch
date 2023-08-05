@@ -28,6 +28,7 @@ export function AppNavigation(): JSX.Element {
   const projectListIcon = (): JSX.Element => iconWrapper(<Icon name="project-list" />);
   const reportsIcon = (): JSX.Element => iconWrapper(<Icon name="statistics" />);
   const applicationSettingsIcon = (): JSX.Element => iconWrapper(<Icon name="application-settings" />);
+  const aboutIcon = (): JSX.Element => iconWrapper(<Icon name="info" />);
   const exitIcon = (): JSX.Element => iconWrapper(<Icon name="exit" />);
 
   return (
@@ -67,6 +68,13 @@ export function AppNavigation(): JSX.Element {
           icon={applicationSettingsIcon}
           onPress={(): void => {
             navigation.navigate(Routes.ApplicationSettings);
+          }}
+        />
+        <DrawerItem
+          label={localizationService.get("menu.about")}
+          icon={aboutIcon}
+          onPress={(): void => {
+            navigation.navigate(Routes.About);
           }}
         />
         <HorizontalLine />
