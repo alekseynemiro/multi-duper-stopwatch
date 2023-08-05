@@ -22,7 +22,7 @@ export function AboutPage(): JSX.Element {
           source={AppIcon}
         />
         <Text>
-          {DeviceInfo.getApplicationName() ?? ""}
+          Multi-duper Stopwatch
         </Text>
         <Text>
           v{DeviceInfo.getVersion() ?? "0"}
