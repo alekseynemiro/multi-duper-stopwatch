@@ -1,4 +1,4 @@
-package com.multiduperstopwatch;
+package ru.nemiro.apps.multiduperstopwatch;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

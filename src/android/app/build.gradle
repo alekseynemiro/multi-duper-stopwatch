@@ -93,12 +93,12 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.multiduperstopwatch"
+    namespace "ru.nemiro.apps.multiduperstopwatch"
     defaultConfig {
-        applicationId "com.multiduperstopwatch"
+        applicationId "ru.nemiro.apps.multiduperstopwatch"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 20230805
         versionName "1.0"
     }
 
