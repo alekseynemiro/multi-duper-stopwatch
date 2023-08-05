@@ -1,23 +1,34 @@
 import React from "react";
-import { BackHandler, SafeAreaView, ScrollView } from "react-native";
+import { BackHandler, SafeAreaView, ScrollView, View } from "react-native";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Icon } from "@components/Icon";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { DrawerItem } from "@react-navigation/drawer";
 import { ILocalizationService } from "@services/Localization";
 import { useNavigation } from "@utils/NavigationUtils";
+import { appNavigationStyles } from "./AppNavigationStyles";
 
 const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
 
 export function AppNavigation(): JSX.Element {
   const navigation = useNavigation();
 
-  const homeIcon = (): JSX.Element => <Icon name="home" />;
-  const createProjectIcon = (): JSX.Element => <Icon name="create-project" />;
-  const projectListIcon = (): JSX.Element => <Icon name="project-list" />;
-  const reportsIcon = (): JSX.Element => <Icon name="statistics" />;
-  const applicationSettingsIcon = (): JSX.Element => <Icon name="application-settings" />;
-  const exitIcon = (): JSX.Element => <Icon name="exit" />;
+  const iconWrapper = (icon: JSX.Element): JSX.Element => {
+    return (
+      <View
+        style={appNavigationStyles.iconContainer}
+      >
+        {icon}
+      </View>
+    );
+  };
+
+  const homeIcon = (): JSX.Element => iconWrapper(<Icon name="home" />);
+  const createProjectIcon = (): JSX.Element => iconWrapper(<Icon name="create-project" />);
+  const projectListIcon = (): JSX.Element => iconWrapper(<Icon name="project-list" />);
+  const reportsIcon = (): JSX.Element => iconWrapper(<Icon name="statistics" />);
+  const applicationSettingsIcon = (): JSX.Element => iconWrapper(<Icon name="application-settings" />);
+  const exitIcon = (): JSX.Element => iconWrapper(<Icon name="exit" />);
 
   return (
     <SafeAreaView>
