@@ -36,7 +36,7 @@ export const reportListPageStyles = StyleSheet.create({
     alignItems: "center",
   },
   eventsCol: {
-    width: 50,
+    width: 75,
     alignItems: "center",
   },
   elapsedTimeCol: {
