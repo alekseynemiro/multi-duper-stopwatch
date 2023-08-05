@@ -689,11 +689,14 @@ export class ActiveProjectService implements IActiveProjectService {
         "date",
         result.getTime()
       ),
-      this._localStorageService.setItem<LocalStorageKeys>(
+      this._session
+        ? this._localStorageService.setItem<LocalStorageKeys>(
         "sessionId",
-        this._session?.id
-      ),
+          this._session.id
+        )
+        : this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
     ]);
+
   }
 
   private async setProjectId(projectId: string): Promise<void> {
