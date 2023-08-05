@@ -8,6 +8,7 @@ import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { SessionState, SettingKey } from "@data";
 import { GetAllResultItem } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
+import { IActiveProjectService } from "@services/ActiveProject";
 import { IProjectService } from "@services/Projects";
 import { ISessionService } from "@services/Sessions";
 import { ISettingsService } from "@services/Settings";
@@ -19,6 +20,7 @@ import { projectListPageStyles } from "./ProjectListPageStyles";
 const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
 const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
 const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.SettingsService);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
@@ -129,6 +131,8 @@ export function ProjectListPage(): JSX.Element {
                             null
                           );
                         }
+
+                        await activeProjectService.reset();
                         // --
 
                         navigation.navigate(

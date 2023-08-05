@@ -4,7 +4,6 @@ import Carousel from "react-native-reanimated-carousel";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
-import { SessionState } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { ILoggerService } from "@services/Logger";
@@ -41,19 +40,33 @@ export function HomePage(): JSX.Element {
         "projectId",
         projectId,
         "sessionId",
-        sessionId
+        sessionId,
+        "activeProjectId",
+        activeProjectService.project?.id,
+        "activeSessionId",
+        activeProjectService.session?.id,
       );
 
-      if (sessionId) {
-        await activeProjectService.useSessionId(sessionId);
+      if (activeProjectService.project) {
+        setProjectId(activeProjectService.project.id);
+
+        if (activeProjectService.session) {
+          setSessionId(activeProjectService.session.id);
+        }
       }
 
-      if (!sessionId && projectId) {
-        await activeProjectService.useProjectId(projectId);
-      }
+      if (!activeProjectService.project) {
+        if (sessionId) {
+          await activeProjectService.useSessionId(sessionId);
+        }
 
-      if (!sessionId && !projectId && !activeProjectService.session) {
-        await activeProjectService.useLastSessionId();
+        if (!sessionId && projectId) {
+          await activeProjectService.useProjectId(projectId);
+        }
+
+        if (!sessionId && !projectId) {
+          await activeProjectService.useLastSessionId();
+        }
       }
 
       const projects = await projectService.getAll();
@@ -102,15 +115,6 @@ export function HomePage(): JSX.Element {
         sessionStartedSubscription.remove();
         sessionFinishedSubscription.remove();
         projectLoadedSubscription.remove();
-
-        if (
-          activeProjectService.session
-          && activeProjectService.session.state === SessionState.Run
-        ) {
-          await activeProjectService.pause();
-        }
-
-        await activeProjectService.reset();
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

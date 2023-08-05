@@ -48,20 +48,43 @@ export function ActiveProjectView(): JSX.Element {
         throw new Error("Project is required.");
       }
 
-      setActivities(
-        activeProjectService.activities?.map(
+      const foundCurrentActivity = activeProjectService.currentActivityId
+        ? activeProjectService.activities
+          ?.find(
+            (x: ActivityModel): boolean => {
+              return x.id === activeProjectService.currentActivityId;
+            }
+          )
+        : undefined;
+
+      const loadedActivities = activeProjectService.activities
+        ?.map(
           (x: ActivityModel): ActivityModel => {
             return {
               color: x.color,
               id: x.id,
               name: x.name,
-              status: ActivityStatus.Idle,
+              status: x.id === foundCurrentActivity?.id
+                ? foundCurrentActivity.status
+                : ActivityStatus.Idle,
             };
           }
-        ) || [],
-      );
+        ) || [];
 
-      setCurrentActivity(undefined);
+      setActivities(loadedActivities);
+
+      if (foundCurrentActivity) {
+        const foundLoadedCurrentActivity = loadedActivities.find(
+          (x: ActivityModel): boolean => {
+            return x.id === foundCurrentActivity.id;
+          }
+        );
+
+        setCurrentActivity(foundLoadedCurrentActivity);
+      } else {
+        setCurrentActivity(undefined);
+      }
+
       setShowLoadingIndicator(false);
 
       currentProjectId.current = activeProjectService.project.id;

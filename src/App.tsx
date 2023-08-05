@@ -16,6 +16,7 @@ import { createDrawerNavigator,DrawerHeaderProps } from "@react-navigation/drawe
 import { NavigationContainer } from "@react-navigation/native";
 import { IActiveProjectService } from "@services/ActiveProject";
 import { ILocalizationService } from "@services/Localization";
+import { ILoggerService } from "@services/Logger";
 import { styles } from "@styles";
 import { AppNavigation } from "./AppNavigation";
 
@@ -24,6 +25,7 @@ const Drawer = createDrawerNavigator();
 const migrationRunner = serviceProvider.get<IMigrationRunner>(ServiceIdentifier.MigrationRunner);
 const localizationService = serviceProvider.get<ILocalizationService>(ServiceIdentifier.LocalizationService);
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
 
 export function App(): JSX.Element {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
@@ -40,6 +42,11 @@ export function App(): JSX.Element {
   useEffect(
     (): void => {
       const initApp = async(): Promise<void> => {
+        loggerService.debug(
+          App.name,
+          "initApp"
+        );
+
         await migrationRunner.run();
         await localizationService.init();
         setShowLoadingIndicator(false);
@@ -57,18 +64,33 @@ export function App(): JSX.Element {
       const subscription = AppState.addEventListener(
         "change",
         async(nextAppState: AppStateStatus): Promise<void> => {
-          if (nextAppState.match(/inactive/)) {
+          loggerService.debug(
+            App.name,
+            "nextAppState",
+            nextAppState
+          );
+
+          if (nextAppState === "inactive") {
             if (
               activeProjectService.session
               && activeProjectService.session.state === SessionState.Run
             ) {
               await activeProjectService.pause();
             }
+          } else {
+            if (nextAppState !== "active") {
+              await activeProjectService.keep();
+            }
           }
         }
       );
 
       return (): void => {
+        loggerService.debug(
+          App.name,
+          "unmount"
+        );
+
         subscription.remove();
       };
     },

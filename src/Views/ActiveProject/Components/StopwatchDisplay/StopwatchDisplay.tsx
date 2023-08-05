@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
@@ -20,6 +20,15 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const localization = useLocalization();
 
   const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>();
+
+  useEffect(
+    (): { (): void } => {
+      return (): void => {
+        stopwatchService.clearOffset();
+      };
+    },
+    []
+  );
 
   return (
     <TouchableOpacity
