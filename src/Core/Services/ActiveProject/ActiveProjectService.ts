@@ -588,6 +588,8 @@ export class ActiveProjectService implements IActiveProjectService {
               sessionId: this._session.id,
             }
           );
+
+          await this.reset();
         } finally {
           await Promise.all([
             this._localStorageService.removeItem<LocalStorageKeys>("shouldFinish"),
