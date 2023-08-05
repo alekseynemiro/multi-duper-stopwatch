@@ -111,7 +111,7 @@ export class ActiveProjectService implements IActiveProjectService {
       this._loggerService.debug(
         ActiveProjectService.name,
         this.checkForCrash.name,
-        `shouldFinish: Session #${sessionId} with date ${date}.`
+        `shouldFinish: Session #${sessionId} with date ${date} (${date?.getTime() ?? 0}).`
       );
 
       if (sessionId && date) {
@@ -131,7 +131,7 @@ export class ActiveProjectService implements IActiveProjectService {
       this._loggerService.debug(
         ActiveProjectService.name,
         this.checkForCrash.name,
-        `shouldPause: Session #${sessionId} with date ${date}.`
+        `shouldPause: Session #${sessionId} with date ${date} (${date?.getTime() ?? 0}).`
       );
 
       if (sessionId && date) {
@@ -183,7 +183,7 @@ export class ActiveProjectService implements IActiveProjectService {
           ActiveProjectService.name,
           this.checkForCrash.name,
           `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`,
-          `Should be paused with date ${session.id === sessionId && date || undefined}.`
+          `Should be paused with date ${session.id === sessionId && date || undefined} (${session.id === sessionId && date?.getTime() || 0}).`
         );
 
         await this._sessionService.pause({
