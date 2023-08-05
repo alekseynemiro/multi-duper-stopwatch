@@ -33,6 +33,8 @@ export interface IActiveProjectService {
 
   reset(): Promise<void>;
 
+  keep(): Promise<void>;
+
   addEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): NativeEventSubscription;
 
   removeEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): void;

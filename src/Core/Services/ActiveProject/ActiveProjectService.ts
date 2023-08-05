@@ -674,6 +674,26 @@ export class ActiveProjectService implements IActiveProjectService {
     eventType.splice(index, 1);
   }
 
+  public async keep(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.keep.name,
+    );
+
+    const result = this._dateTimeService.now;
+
+    await Promise.all([
+      this._localStorageService.setItem<LocalStorageKeys>(
+        "date",
+        result.getTime()
+      ),
+      this._localStorageService.setItem<LocalStorageKeys>(
+        "sessionId",
+        this._session?.id
+      ),
+    ]);
+  }
+
   private async setProjectId(projectId: string): Promise<void> {
     this._loggerService.debug(
       ActiveProjectService.name,
@@ -762,17 +782,6 @@ export class ActiveProjectService implements IActiveProjectService {
         status,
       }
     );
-  }
-
-  private async updateDate(): Promise<Date> {
-    const result = this._dateTimeService.now;
-
-    await this._localStorageService.setItem<LocalStorageKeys>(
-      "date",
-      result.getTime()
-    );
-
-    return result;
   }
 
   private async updateDateAndStop(): Promise<Date> {
