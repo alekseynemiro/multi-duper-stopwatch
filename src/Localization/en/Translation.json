@@ -37,7 +37,12 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "noProjects": "You don't have any projects yet.",
-    "createProject": "Create a new project"
+    "createProject": "Create a new project",
+    "accessibility": {
+      "run": "Run project \"{{projectName}}\".",
+      "edit": "Edit project \"{{projectName}}\".",
+      "delete": "Delete project \"{{projectName}}\"."
+    }
   },
   "projectEditor": {
     "createProject": "Create project",

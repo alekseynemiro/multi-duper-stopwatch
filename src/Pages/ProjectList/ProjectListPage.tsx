@@ -110,6 +110,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="primary"
                       style={projectListPageStyles.button}
+                      accessibilityLabel={localization.get("projectList.accessibility.run", { projectName: x.name })}
                       onPress={async(): Promise<void> => {
                         // TODO: Business logic service
                         const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
@@ -155,6 +156,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="secondary"
                       style={projectListPageStyles.button}
+                      accessibilityLabel={localization.get("projectList.accessibility.edit", { projectName: x.name })}
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Project,
@@ -175,6 +177,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="danger"
                       style={projectListPageStyles.button}
+                      accessibilityLabel={localization.get("projectList.accessibility.delete", { projectName: x.name })}
                       onPress={(): void => {
                         requestToDeleteProject(x);
                       }}

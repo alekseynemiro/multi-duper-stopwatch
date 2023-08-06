@@ -37,7 +37,12 @@
     "cancel": "Отмена",
     "delete": "Удалить",
     "noProjects": "У вас еще нет ни одного проекта.",
-    "createProject": "Создать проект"
+    "createProject": "Создать проект",
+    "accessibility": {
+      "run": "Запустить проект \"{{projectName}}\".",
+      "edit": "Редактировать проект \"{{projectName}}\".",
+      "delete": "Удалить проект \"{{projectName}}\"."
+    }
   },
   "projectEditor": {
     "createProject": "Новый проект",
