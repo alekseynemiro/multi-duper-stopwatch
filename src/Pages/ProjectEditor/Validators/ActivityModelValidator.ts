@@ -12,7 +12,10 @@ export class ActivityModelValidator extends Validator<ActivityModel> {
 
     this.ruleFor("name")
       .notEmpty()
-      .withMessage(localization.get("projectEditor.validation.activityNameIsRequired"));
+      .withMessage(localization.get("projectEditor.validation.activityNameIsRequired"))
+      .when((x: ActivityModel): boolean => {
+        return !x.isDeleted;
+      });
   }
 
 }
