@@ -15,6 +15,9 @@ export const stopwatchDisplayStyles = StyleSheet.create({
     fontWeight: "300",
     fontVariant: ["lining-nums", "tabular-nums"],
   },
+  landscapeElapsed: {
+    fontSize: 92,
+  },
   mode: {
     fontSize: 10,
     paddingHorizontal: 4,
