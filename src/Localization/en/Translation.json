@@ -1,5 +1,11 @@
 {
   "_comment": "Localization/en/Translation.json",
+  "header": {
+    "accessibility": {
+      "menu": "Menu",
+      "back": "Go back"
+    }
+  },
   "menu": {
     "home": "Home",
     "projectList": "Project list",

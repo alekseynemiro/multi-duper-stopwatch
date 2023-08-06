@@ -4,11 +4,13 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { Routes } from "@config";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { useRoute } from "@utils/NavigationUtils";
 import { appHeaderStyles } from "./AppHeaderStyles";
 
 export function AppHeader(props: DrawerHeaderProps): JSX.Element {
   const route = useRoute();
+  const localization = useLocalization();
 
   return (
     <View
@@ -17,6 +19,7 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
       <Button
         variant="transparent"
         style={appHeaderStyles.button}
+        accessibilityLabel={localization.get("header.accessibility.menu")}
         onPress={props.navigation.toggleDrawer}
       >
         <Icon
@@ -31,6 +34,7 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
           <Button
             variant="transparent"
             style={appHeaderStyles.button}
+            accessibilityLabel={localization.get("header.accessibility.back")}
             onPress={props.navigation.goBack}
           >
             <Icon

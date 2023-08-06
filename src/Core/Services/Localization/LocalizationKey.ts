@@ -1,4 +1,6 @@
 export type LocalizationKey =
+  | "header.accessibility.back"
+  | "header.accessibility.menu"
   | "menu.home"
   | "menu.createProject"
   | "menu.projectList"

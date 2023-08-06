@@ -1,5 +1,11 @@
 {
   "_comment": "Localization/ru/Translation.json",
+  "header": {
+    "accessibility": {
+      "menu": "Меню",
+      "back": "Перейти назад"
+    }
+  },
   "menu": {
     "home": "Текущий проект",
     "projectList": "Проекты",
