@@ -9,7 +9,7 @@ export const textInputFieldStyles =  StyleSheet.create({
     color: colors.text,
     backgroundColor: colors.white,
     borderColor: colors.border,
-    borderWidth: 0.75,
+    borderWidth: 1,
     borderRadius: 6,
     minHeight: 48,
   },
