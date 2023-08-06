@@ -12,8 +12,8 @@ export const stopwatchDisplayStyles = StyleSheet.create({
   },
   elapsed: {
     fontSize: 56,
-    fontFamily: "monospace",
-    fontVariant: ["tabular-nums"],
+    fontWeight: "300",
+    fontVariant: ["lining-nums", "tabular-nums"],
   },
   mode: {
     fontSize: 10,
