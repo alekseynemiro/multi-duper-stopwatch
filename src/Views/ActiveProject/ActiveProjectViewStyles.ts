@@ -2,20 +2,24 @@ import { StyleSheet } from "react-native";
 
 export const activeProjectViewStyles = StyleSheet.create({
   container: {
-    height: "100%",
+    justifyContent: "center",
+    flex: 1,
   },
   stopwatchContainer: {
-    height: "20%",
+    flex: 1,
+    paddingVertical: 16,
   },
   activitiesContainer: {
-    height: "65%",
+    flex: 3,
   },
   footer: {
     flex: 1,
     justifyContent: "space-around",
     flexDirection: "row",
     bottom: 0,
-    height: "15%",
+    minHeight: 64,
+    maxHeight: 64,
+    paddingVertical: 8,
   },
   footerButton: {
     flexDirection: "row",
