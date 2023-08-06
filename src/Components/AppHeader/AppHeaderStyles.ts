@@ -7,11 +7,11 @@ export const appHeaderStyles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     alignContent: "flex-start",
-    paddingTop: 12,
-    paddingBottom: 12,
     backgroundColor: colors.white,
     borderBottomColor: colors.border,
     borderBottomWidth: 0.5,
+    paddingVertical: 2,
+    minHeight: 48,
   },
   button: {
     margin: 0,
@@ -19,6 +19,8 @@ export const appHeaderStyles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "flex-start",
     alignItems: "center",
+    minWidth: 48,
+    minHeight: 48,
   },
   menuIcon: {
     fontSize: 30,
