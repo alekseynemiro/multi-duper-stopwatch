@@ -13,6 +13,7 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
     onChangeText,
     onFocus,
     onBlur,
+    onPressIn,
   } = props;
 
   return (
@@ -35,6 +36,7 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
         onChangeText={onChangeText}
         onFocus={onFocus}
         onBlur={onBlur}
+        onPressIn={onPressIn}
       />
       {
         error

@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import {
   NativeSyntheticEvent,
+  NativeTouchEvent,
   StyleProp,
   TextInputFocusEventData,
   ViewStyle,
@@ -21,5 +22,7 @@ export type TextInputFieldProps = {
   onFocus?(e: NativeSyntheticEvent<TextInputFocusEventData>): void;
 
   onBlur?(e: NativeSyntheticEvent<TextInputFocusEventData>): void;
+
+  onPressIn?(e: NativeSyntheticEvent<NativeTouchEvent>): void;
 
 };
