@@ -8,18 +8,21 @@ export const activeProjectViewStyles = StyleSheet.create({
     height: "20%",
   },
   activitiesContainer: {
-    height: "70%",
+    height: "65%",
   },
   footer: {
     flex: 1,
     justifyContent: "space-around",
     flexDirection: "row",
     bottom: 0,
-    height: "10%",
+    height: "15%",
   },
   footerButton: {
     flexDirection: "row",
-    columnGap: 10,
-    paddingHorizontal: 12,
+    columnGap: 8,
+    minHeight: 48,
+    minWidth: 144,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
