@@ -11,6 +11,7 @@ export const textInputFieldStyles =  StyleSheet.create({
     borderColor: colors.border,
     borderWidth: 0.75,
     borderRadius: 6,
+    minHeight: 48,
   },
   textInputError: {
     borderColor: colors.error,
