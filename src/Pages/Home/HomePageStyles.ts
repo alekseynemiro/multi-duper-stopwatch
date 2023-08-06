@@ -5,10 +5,12 @@ export const homePageStyles = StyleSheet.create({
     height: "100%",
   },
   openProject: {
-    marginTop: "50%",
     justifyContent: "center",
     alignContent: "center",
     marginHorizontal: "10%",
+    height: "100%",
+  },
+  openProjectButtons: {
   },
   openProjectButton: {
     marginVertical: 8,
