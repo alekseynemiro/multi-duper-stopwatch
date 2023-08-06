@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from "react";
-import { useWindowDimensions, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Keyboard, useWindowDimensions, View } from "react-native";
 import DraggableFlatList, { RenderItemParams } from "react-native-draggable-flatlist";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
@@ -48,6 +48,7 @@ export function ProjectEditorPage(): JSX.Element {
   const [showSelectColor, setShowSelectColor] = useState<boolean>(false);
   const [activeCode, setActiveCode] = useState<string | undefined>();
   const [showActivityNameModal, setShowActivityNameModal] = React.useState<{ activityCode: string, activityName: string } | undefined>(undefined);
+  const [keyboardIsOpen, setKeyboardIsOpen] = React.useState(false);
 
   const showSelectColorModal = (activityCode: string): void => {
     setShowSelectColor(true);
@@ -177,6 +178,31 @@ export function ProjectEditorPage(): JSX.Element {
     )
   );
 
+  useEffect(
+    (): { (): void } => {
+      const keyboardDidShowSubscription = Keyboard.addListener(
+        "keyboardDidShow",
+        (): void => {
+          setKeyboardIsOpen(true);
+        }
+      );
+
+      const keyboardDidHideSubscription = Keyboard.addListener(
+        "keyboardDidHide",
+        (): void => {
+          setKeyboardIsOpen(false);
+        }
+      );
+
+
+      return (): void => {
+        keyboardDidShowSubscription.remove();
+        keyboardDidHideSubscription.remove();
+      };
+    },
+    []
+  );
+
   if (showLoadingIndicator) {
     return (
       <ContentLoadIndicator />
@@ -291,44 +317,60 @@ export function ProjectEditorPage(): JSX.Element {
                       }}
                     />
                   </View>
-                  <View
-                    style={projectEditorPageStyles.addActivityButtonContainer}
-                  >
-                    <Button
-                      title={localization.get("projectEditor.addActivity")}
-                      onPress={(): void => {
-                        setFieldValue(
-                          "activities",
-                          [
-                            ...values?.activities || [],
-                            {
-                              code: guidService.newGuid(),
-                              name: "",
-                              color: "",
-                              position: values.activities?.length ?? 0,
-                              isDeleted: false,
-                            },
-                          ]
-                        );
-                      }}
-                    />
-                  </View>
+                  {
+                    (
+                      !isLandscape
+                      || (isLandscape && !keyboardIsOpen)
+                    )
+                    && (
+                      <View
+                        style={projectEditorPageStyles.addActivityButtonContainer}
+                      >
+                        <Button
+                          title={localization.get("projectEditor.addActivity")}
+                          onPress={(): void => {
+                            setFieldValue(
+                              "activities",
+                              [
+                                ...values?.activities || [],
+                                {
+                                  code: guidService.newGuid(),
+                                  name: "",
+                                  color: "",
+                                  position: values.activities?.length ?? 0,
+                                  isDeleted: false,
+                                },
+                              ]
+                            );
+                          }}
+                        />
+                      </View>
+                    )
+                  }
                 </FormRow>
-                <FormRow>
-                  <HorizontalLine />
-                  <View style={projectEditorPageStyles.buttons}>
-                    <Button
-                      variant="primary"
-                      title={localization.get("projectEditor.save")}
-                      onPress={handleSubmit}
-                    />
-                    <Button
-                      variant="secondary"
-                      title={localization.get("projectEditor.cancel")}
-                      onPress={navigation.goBack}
-                    />
-                  </View>
-                </FormRow>
+                {
+                  (
+                    !isLandscape
+                    || (isLandscape && !keyboardIsOpen)
+                  )
+                  && (
+                    <FormRow>
+                      <HorizontalLine />
+                      <View style={projectEditorPageStyles.buttons}>
+                        <Button
+                          variant="primary"
+                          title={localization.get("projectEditor.save")}
+                          onPress={handleSubmit}
+                        />
+                        <Button
+                          variant="secondary"
+                          title={localization.get("projectEditor.cancel")}
+                          onPress={navigation.goBack}
+                        />
+                      </View>
+                    </FormRow>
+                  )
+                }
                 {
                   showSelectColor
                   && (
