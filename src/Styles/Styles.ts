@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   border: {
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   contentView: {
