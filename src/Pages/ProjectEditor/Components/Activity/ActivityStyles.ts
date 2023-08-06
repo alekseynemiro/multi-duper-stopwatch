@@ -6,13 +6,17 @@ export const activityStyles = StyleSheet.create({
     ...styles.tableRow,
   },
   positionCol: {
-    width: 32,
+    width: 48,
     justifyContent: "center",
-    marginTop: 4,
+    marginTop: 6,
+  },
+  positionIcon: {
+    fontSize: 32,
   },
   nameCol: {
     ...styles.tableCell,
     flex: 1,
+    justifyContent: "center",
   },
   colorCol: {
     ...styles.tableCell,
@@ -26,6 +30,12 @@ export const activityStyles = StyleSheet.create({
     backgroundColor: colors.background,
     borderColor: colors.border,
     borderWidth: 0.5,
+    minWidth: 48,
+    minHeight: 48,
+  },
+  deleteButton: {
+    minWidth: 48,
+    minHeight: 48,
   },
   dragging: {
     zIndex: 1000,

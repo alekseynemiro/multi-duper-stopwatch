@@ -4,7 +4,6 @@ import { View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { TextInputField } from "@components/TextInputField";
-import { styles } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
 import { ActivityProps } from "./ActivityProps";
 import { activityStyles } from "./ActivityStyles";
@@ -32,7 +31,7 @@ export function Activity(props: ActivityProps): JSX.Element {
           <Icon
             variant="secondary"
             name="grip-lines"
-            size={24}
+            style={activityStyles.positionIcon}
           />
         </View>
       </TouchableOpacity>
@@ -83,7 +82,7 @@ export function Activity(props: ActivityProps): JSX.Element {
       >
         <Button
           variant="danger"
-          style={styles.w100}
+          style={activityStyles.deleteButton}
           onPress={(): void => {
             onDelete(activityCode);
           }}
