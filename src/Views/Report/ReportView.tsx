@@ -9,7 +9,7 @@ import { ServiceIdentifier, serviceProvider } from "@config";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { useFocusEffect } from "@react-navigation/native";
 import { ISessionLogService } from "@services/Sessions";
-import { colors, styles } from "@styles";
+import { colors } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
@@ -131,39 +131,25 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       ref={scrollViewRef}
     >
       <View
-        style={[
-          styles.table,
-          styles.w100,
-          reportViewStyles.container,
-        ]}
+        style={reportViewStyles.table}
       >
         <View
-          style={[
-            styles.tableRow,
-            styles.border,
-            styles.pb8,
-          ]}
+          style={reportViewStyles.tableRow}
         >
           <View
-            style={[
-              styles.tableCell,
-              reportViewStyles.nameCol,
-            ]}
+            style={reportViewStyles.nameCol}
           >
-            <Text style={styles.bold}>
+            <Text
+              style={reportViewStyles.tableHeaderText}
+            >
               {localization.get("report.activity")}
             </Text>
           </View>
           <View
-            style={[
-              styles.tableCell,
-              reportViewStyles.elapsedCol,
-            ]}
+            style={reportViewStyles.elapsedCol}
           >
             <Text
-              style={[
-                styles.bold,
-              ]}
+              style={reportViewStyles.tableHeaderText}
             >
               <Icon
                 name="elapsed-time"
@@ -196,10 +182,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                 }}
               >
                 <View
-                  style={[
-                    styles.tableCell,
-                    reportViewStyles.iconCol,
-                  ]}
+                  style={reportViewStyles.iconCol}
                 >
                   <TriangleMarker
                     color={
@@ -210,20 +193,14 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                   />
                 </View>
                 <View
-                  style={[
-                    styles.tableCell,
-                    reportViewStyles.nameCol,
-                  ]}
+                  style={reportViewStyles.nameCol}
                 >
                   <Text>
                     {x.name}
                   </Text>
                 </View>
                 <View
-                  style={[
-                    styles.tableCell,
-                    reportViewStyles.elapsedCol,
-                  ]}
+                  style={reportViewStyles.elapsedCol}
                 >
                   <DurationFormatter
                     value={getTimeSpan(x.elapsedTime)}
@@ -234,29 +211,19 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           })
         }
         <View
-          style={[
-            styles.tableRow,
-            styles.border,
-            styles.pb8,
-          ]}
+          style={reportViewStyles.tableRow}
         >
           <View
-            style={[
-              styles.tableCell,
-              reportViewStyles.nameCol,
-            ]}
+            style={reportViewStyles.nameCol}
           >
-            <Text style={styles.bold}>
+            <Text style={reportViewStyles.totalText}>
               {localization.get("report.total")}
             </Text>
           </View>
           <View
-            style={[
-              styles.tableCell,
-              reportViewStyles.elapsedCol,
-            ]}
+            style={reportViewStyles.elapsedCol}
           >
-            <Text style={styles.bold}>
+            <Text style={reportViewStyles.totalText}>
               <DurationFormatter
                 value={getTimeSpan(total)}
               />
