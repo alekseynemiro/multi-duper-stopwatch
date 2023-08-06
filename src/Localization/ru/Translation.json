@@ -79,7 +79,10 @@
     "finish": "Завершение",
     "events": "События",
     "time": "Время",
-    "noData": "У вас еще нет ни одного завершенного сеанса."
+    "noData": "У вас еще нет ни одного завершенного сеанса.",
+    "accessibility": {
+      "details": "Посмотреть отчёт {{sessionName}}"
+    }
   },
   "applicationSettings": {
     "warningTitle": "Подтверждение",

@@ -79,7 +79,10 @@
     "finish": "Finish",
     "events": "Events",
     "time": "Time",
-    "noData": "You have not finished any session yet."
+    "noData": "You have not finished any session yet.",
+    "accessibility": {
+      "details": "View report {{sessionName}}"
+    }
   },
   "applicationSettings": {
     "warningTitle": "Restart",

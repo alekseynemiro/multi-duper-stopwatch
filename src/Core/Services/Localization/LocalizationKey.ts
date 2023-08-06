@@ -48,6 +48,7 @@ export type LocalizationKey =
   | "reportList.events"
   | "reportList.time"
   | "reportList.noData"
+  | "reportList.accessibility.details"
   | "report.pageTitle"
   | "report.activity"
   | "report.time"

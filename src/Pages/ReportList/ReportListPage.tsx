@@ -130,6 +130,10 @@ export function ReportListPage(): JSX.Element {
           </View>
           {
             list.map((x: GetAllResultItem, index: number): JSX.Element => {
+              const name = x.sessionName || (
+                `${x.projectName} #${x.id.substring(0, 5)}`
+              );
+
               return (
                 <View
                   key={x.id}
@@ -150,12 +154,7 @@ export function ReportListPage(): JSX.Element {
                       ellipsizeMode="tail"
                       numberOfLines={3}
                     >
-                      {
-                        x.sessionName
-                        || (
-                          `${x.projectName} #${x.id.substring(0, 5)}`
-                        )
-                      }
+                      {name}
                     </Text>
                   </View>
                   {
@@ -214,6 +213,7 @@ export function ReportListPage(): JSX.Element {
                     <Button
                       variant="transparent"
                       style={reportListPageStyles.detailsButton}
+                      accessibilityLabel={localization.get("reportList.accessibility.details", { sessionName: name })}
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Report,
