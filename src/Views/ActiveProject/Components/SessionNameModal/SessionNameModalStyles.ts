@@ -5,7 +5,7 @@ export const sessionNameModalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "stretch",
+    alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     width: "100%",
     height: "100%",
@@ -13,11 +13,9 @@ export const sessionNameModalStyles = StyleSheet.create({
   },
   modalView: {
     margin: 24,
-    marginBottom: "75%",
     backgroundColor: colors.white,
     borderRadius: 16,
     padding: 24,
-    alignItems: "center",
     justifyContent: "center",
     shadowColor: colors.shadowColor,
     shadowOffset: {
@@ -27,7 +25,9 @@ export const sessionNameModalStyles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: "90%",
+    width: "75%",
+    maxWidth: 450,
+    minWidth: 250,
   },
   row: {
     width: "100%",

@@ -19,45 +19,43 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
   }
 
   return (
-    <View style={sessionNameModalStyles.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={show}
-      >
-        <View style={sessionNameModalStyles.centeredView}>
-          <View style={sessionNameModalStyles.modalView}>
-            <View style={sessionNameModalStyles.row}>
-              <TextInputField
-                label={localization.get("activeProject.sessionNameModal.sessionName")}
-                value={sessionName}
-                onChangeText={setSessionName}
-              />
-            </View>
-            <View style={sessionNameModalStyles.row}>
-              <HorizontalLine size="sm" />
-            </View>
-            <View style={sessionNameModalStyles.footer}>
-              <Button
-                variant="primary"
-                title={localization.get("activeProject.sessionNameModal.ok")}
-                style={sessionNameModalStyles.button}
-                onPress={(): void => {
-                  onConfirm({
-                    sessionName,
-                  });
-                }}
-              />
-              <Button
-                variant="secondary"
-                title={localization.get("activeProject.sessionNameModal.cancel")}
-                style={sessionNameModalStyles.button}
-                onPress={onCancel}
-              />
-            </View>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={show}
+    >
+      <View style={sessionNameModalStyles.centeredView}>
+        <View style={sessionNameModalStyles.modalView}>
+          <View style={sessionNameModalStyles.row}>
+            <TextInputField
+              label={localization.get("activeProject.sessionNameModal.sessionName")}
+              value={sessionName}
+              onChangeText={setSessionName}
+            />
+          </View>
+          <View style={sessionNameModalStyles.row}>
+            <HorizontalLine size="sm" />
+          </View>
+          <View style={sessionNameModalStyles.footer}>
+            <Button
+              variant="primary"
+              title={localization.get("activeProject.sessionNameModal.ok")}
+              style={sessionNameModalStyles.button}
+              onPress={(): void => {
+                onConfirm({
+                  sessionName,
+                });
+              }}
+            />
+            <Button
+              variant="secondary"
+              title={localization.get("activeProject.sessionNameModal.cancel")}
+              style={sessionNameModalStyles.button}
+              onPress={onCancel}
+            />
           </View>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
   );
 }
