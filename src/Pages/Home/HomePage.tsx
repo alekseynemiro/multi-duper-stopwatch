@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Text, useWindowDimensions,View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
