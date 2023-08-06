@@ -54,6 +54,10 @@ export function HomePage(): JSX.Element {
         if (activeProjectService.session) {
           setSessionId(activeProjectService.session.id);
         }
+
+        navigation.setOptions({
+          title: activeProjectService.project.name,
+        });
       }
 
       if (!activeProjectService.project) {
