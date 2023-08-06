@@ -12,7 +12,7 @@ export const reportListPageStyles = StyleSheet.create({
   },
   tableRow: {
     ...styles.tableRow,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingBottom: 8,
   },
@@ -51,7 +51,7 @@ export const reportListPageStyles = StyleSheet.create({
     minHeight: 48,
   },
   detailsButtonIcon: {
-    fontSize: 32,
+    fontSize: 24,
   },
   noData: {
     textAlign: "center",
