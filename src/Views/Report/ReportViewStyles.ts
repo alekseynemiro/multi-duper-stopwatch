@@ -5,6 +5,12 @@ export const reportViewStyles = StyleSheet.create({
   container: {
     ...styles.contentView,
   },
+  tableRow: {
+    ...styles.tableRow,
+    ...styles.border,
+    ...styles.pb8,
+    minHeight: 48,
+  },
   iconCol: {
     width: 56,
     alignItems: "flex-start",
@@ -19,5 +25,6 @@ export const reportViewStyles = StyleSheet.create({
   },
   elapsedCol: {
     paddingLeft: 8,
+    justifyContent: "center",
   },
 });

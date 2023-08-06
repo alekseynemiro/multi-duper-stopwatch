@@ -178,11 +178,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             return (
               <TouchableOpacity
                 key={x.id}
-                style={[
-                  styles.tableRow,
-                  styles.border,
-                  styles.pb8,
-                ]}
+                style={reportViewStyles.tableRow}
                 onPress={(): void => {
                   if (filterByActivity === x.activityId) {
                     setFilterByActivity(undefined);
