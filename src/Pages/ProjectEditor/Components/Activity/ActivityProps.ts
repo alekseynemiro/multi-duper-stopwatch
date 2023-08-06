@@ -19,6 +19,8 @@ export type ActivityProps = {
 
   onDelete(code: string): void;
 
+  onInputNamePressIn(code: string): void;
+
   onDrag(): void;
 
 };

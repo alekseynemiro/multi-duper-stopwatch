@@ -18,6 +18,7 @@ export function Activity(props: ActivityProps): JSX.Element {
     onChange,
     onDelete,
     onDrag,
+    onInputNamePressIn,
   } = props;
 
   return (
@@ -41,6 +42,9 @@ export function Activity(props: ActivityProps): JSX.Element {
         <TextInputField
           value={activityName}
           error={error}
+          onPressIn={(): void => {
+            onInputNamePressIn(activityCode);
+          }}
           onChangeText={(value: string): void => {
             onChange({
               code: activityCode,

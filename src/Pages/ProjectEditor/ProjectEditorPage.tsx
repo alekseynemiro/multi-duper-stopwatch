@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from "react";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import DraggableFlatList, { RenderItemParams } from "react-native-draggable-flatlist";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
@@ -22,7 +22,7 @@ import { IProjectService } from "@services/Projects";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
-import { Activity, ActivityChangeEventArgs, SelectColorModal } from "./Components";
+import { Activity, ActivityChangeEventArgs, ActivityNameModal, ActivityNameModalEventArgs, SelectColorModal } from "./Components";
 import { ActivityModel, ProjectModel } from "./Models";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
@@ -34,6 +34,9 @@ export function ProjectEditorPage(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute<Routes.Project>();
   const localization = useLocalization();
+  const { width, height } = useWindowDimensions();
+
+  const isLandscape = width > height;
 
   const initialModel = useRef<ProjectModel>({
     name: "",
@@ -44,6 +47,7 @@ export function ProjectEditorPage(): JSX.Element {
   const [model, setModel] = useState<ProjectModel>(initialModel.current);
   const [showSelectColor, setShowSelectColor] = useState<boolean>(false);
   const [activeCode, setActiveCode] = useState<string | undefined>();
+  const [showActivityNameModal, setShowActivityNameModal] = React.useState<{ activityCode: string, activityName: string } | undefined>(undefined);
 
   const showSelectColorModal = (activityCode: string): void => {
     setShowSelectColor(true);
@@ -219,6 +223,8 @@ export function ProjectEditorPage(): JSX.Element {
                   >
                     <DraggableFlatList
                       scrollEnabled={true}
+                      keyboardDismissMode="on-drag"
+                      bounces={false}
                       data={
                         values.activities
                           ?.filter((activity: ActivityModel): boolean => {
@@ -271,6 +277,14 @@ export function ProjectEditorPage(): JSX.Element {
                               const activityIndex = findActivityIndexByCode(values?.activities, activityCode);
                               setFieldValue(`activities[${activityIndex}].isDeleted`, true);
                             }}
+                            onInputNamePressIn={(): void => {
+                              if (isLandscape) {
+                                setShowActivityNameModal({
+                                  activityCode: activity.code,
+                                  activityName: activity.name,
+                                });
+                              }
+                            }}
                             onDrag={drag}
                           />
                         );
@@ -314,17 +328,40 @@ export function ProjectEditorPage(): JSX.Element {
                       onPress={navigation.goBack}
                     />
                   </View>
-                  <SelectColorModal
-                    activityCode={activeCode}
-                    show={showSelectColor}
-                    onClose={hideSelectColorModal}
-                    onSelect={(activityCode: string, color: ColorPalette): void => {
-                      const activityIndex = findActivityIndexByCode(values?.activities, activityCode);
-                      setFieldValue(`activities[${activityIndex}].color`, color);
-                      hideSelectColorModal();
-                    }}
-                  />
                 </FormRow>
+                {
+                  showSelectColor
+                  && (
+                    <SelectColorModal
+                      activityCode={activeCode}
+                      onClose={hideSelectColorModal}
+                      onSelect={(activityCode: string, color: ColorPalette): void => {
+                        const activityIndex = findActivityIndexByCode(values?.activities, activityCode);
+
+                        setFieldValue(`activities[${activityIndex}].color`, color);
+                        hideSelectColorModal();
+                      }}
+                    />
+                  )
+                }
+                {
+                  !!showActivityNameModal
+                  && (
+                    <ActivityNameModal
+                      activityCode={showActivityNameModal?.activityCode}
+                      activityName={showActivityNameModal?.activityName}
+                      onSet={(e: ActivityNameModalEventArgs): void => {
+                        const activityIndex = findActivityIndexByCode(values?.activities, e.activityCode);
+
+                        setFieldValue(`activities[${activityIndex}].name`, e.activityName);
+                        setShowActivityNameModal(undefined);
+                      }}
+                      onCancel={(): void => {
+                        setShowActivityNameModal(undefined);
+                      }}
+                    />
+                  )
+                }
               </View>
             );
           }
