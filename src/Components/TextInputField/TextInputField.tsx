@@ -11,6 +11,7 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
     style,
     error,
     onChangeText,
+    onFocus,
     onBlur,
   } = props;
 
@@ -32,6 +33,7 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
           style,
         ]}
         onChangeText={onChangeText}
+        onFocus={onFocus}
         onBlur={onBlur}
       />
       {

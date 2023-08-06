@@ -18,6 +18,8 @@ export type TextInputFieldProps = {
 
   onChangeText?(text: string): void;
 
+  onFocus?(e: NativeSyntheticEvent<TextInputFocusEventData>): void;
+
   onBlur?(e: NativeSyntheticEvent<TextInputFocusEventData>): void;
 
 };
