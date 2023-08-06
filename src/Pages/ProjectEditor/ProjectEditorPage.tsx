@@ -231,7 +231,7 @@ export function ProjectEditorPage(): JSX.Element {
           }): JSX.Element => {
             return (
               <View style={projectEditorPageStyles.form}>
-                <FormRow>
+                <FormRow style={projectEditorPageStyles.projectName}>
                   <TextInputField
                     label={localization.get("projectEditor.projectName")}
                     value={values.name}
@@ -354,9 +354,9 @@ export function ProjectEditorPage(): JSX.Element {
                     || (isLandscape && !keyboardIsOpen)
                   )
                   && (
-                    <FormRow>
+                    <FormRow style={projectEditorPageStyles.footer}>
                       <HorizontalLine />
-                      <View style={projectEditorPageStyles.buttons}>
+                      <View style={projectEditorPageStyles.footerButtons}>
                         <Button
                           variant="primary"
                           title={localization.get("projectEditor.save")}
