@@ -109,6 +109,7 @@ export function ProjectListPage(): JSX.Element {
                   <View style={styles.tableCell}>
                     <Button
                       variant="primary"
+                      style={projectListPageStyles.button}
                       onPress={async(): Promise<void> => {
                         // TODO: Business logic service
                         const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
@@ -146,12 +147,14 @@ export function ProjectListPage(): JSX.Element {
                       <Icon
                         name="play"
                         variant="primary-contrast"
+                        style={projectListPageStyles.buttonIcon}
                       />
                     </Button>
                   </View>
                   <View style={styles.tableCell}>
                     <Button
                       variant="secondary"
+                      style={projectListPageStyles.button}
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Project,
@@ -164,12 +167,14 @@ export function ProjectListPage(): JSX.Element {
                       <Icon
                         name="edit"
                         variant="secondary-contrast"
+                        style={projectListPageStyles.buttonIcon}
                       />
                     </Button>
                   </View>
                   <View style={styles.tableCell}>
                     <Button
                       variant="danger"
+                      style={projectListPageStyles.button}
                       onPress={(): void => {
                         requestToDeleteProject(x);
                       }}
@@ -177,6 +182,7 @@ export function ProjectListPage(): JSX.Element {
                       <Icon
                         name="delete"
                         variant="danger-contrast"
+                        style={projectListPageStyles.buttonIcon}
                       />
                     </Button>
                   </View>
