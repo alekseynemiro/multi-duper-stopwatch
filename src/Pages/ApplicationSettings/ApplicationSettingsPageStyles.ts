@@ -14,6 +14,5 @@ export const applicationSettingsPageStyles = StyleSheet.create({
     alignItems: "flex-start",
   },
   saveButton: {
-    minWidth: "30%",
   },
 });
