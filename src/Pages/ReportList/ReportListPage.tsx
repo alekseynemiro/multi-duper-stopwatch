@@ -213,6 +213,7 @@ export function ReportListPage(): JSX.Element {
                   >
                     <Button
                       variant="transparent"
+                      style={reportListPageStyles.detailsButton}
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Report,
@@ -224,6 +225,7 @@ export function ReportListPage(): JSX.Element {
                     >
                       <Icon
                         name="details"
+                        style={reportListPageStyles.detailsButtonIcon}
                       />
                     </Button>
                   </View>

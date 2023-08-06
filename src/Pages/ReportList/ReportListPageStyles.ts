@@ -46,6 +46,13 @@ export const reportListPageStyles = StyleSheet.create({
   detailsButtonCol: {
     width: 64,
   },
+  detailsButton: {
+    minWidth: 48,
+    minHeight: 48,
+  },
+  detailsButtonIcon: {
+    fontSize: 32,
+  },
   noData: {
     textAlign: "center",
   },
