@@ -55,6 +55,8 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                 showCurrentActivity
                 && (
                   <Text
+                    lineBreakMode="tail"
+                    numberOfLines={1}
                     style={[
                       stopwatchDisplayStyles.mode,
                       {

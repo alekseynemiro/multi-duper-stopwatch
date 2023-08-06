@@ -18,5 +18,6 @@ export const stopwatchDisplayStyles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 2,
     borderRadius: 4,
+    maxWidth: "50%",
   },
 });
