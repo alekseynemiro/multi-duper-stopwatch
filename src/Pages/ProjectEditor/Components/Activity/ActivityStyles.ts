@@ -29,7 +29,7 @@ export const activityStyles = StyleSheet.create({
   selectColorButton: {
     backgroundColor: colors.background,
     borderColor: colors.border,
-    borderWidth: 0.5,
+    borderWidth: 1,
     minWidth: 48,
     minHeight: 48,
   },
