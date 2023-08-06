@@ -29,7 +29,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
         <View style={activityNameModalStyles.modalView}>
           <FormRow>
             <TextInputField
-              label="Activity name:"
+              label={localization.get("projectEditor.activityNameModal.activityName")}
               value={newActivityName}
               onChangeText={setNewActivityName}
             />
@@ -40,7 +40,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
           >
             <Button
                 variant="primary"
-                title="Ok"
+                title={localization.get("projectEditor.activityNameModal.ok")}
                 onPress={(): void => {
                   onSet({
                     activityCode: activityCode as string,
@@ -50,7 +50,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
               />
               <Button
                 variant="secondary"
-                title={localization.get("projectEditor.selectColor.close")}
+                title={localization.get("projectEditor.activityNameModal.cancel")}
                 onPress={onCancel}
               />
           </View>

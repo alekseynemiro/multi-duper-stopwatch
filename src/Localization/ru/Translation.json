@@ -52,6 +52,11 @@
     "addActivity": "Добавить активность",
     "save": "Сохранить",
     "cancel": "Отмена",
+    "activityNameModal": {
+      "activityName": "Введите название активности:",
+      "ok": "Ok",
+      "cancel": "Отмена"
+    },
     "selectColor": {
       "title": "Нажмите на цвет, чтобы выбрать его:",
       "close": "Закрыть"

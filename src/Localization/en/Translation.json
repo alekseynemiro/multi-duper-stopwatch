@@ -52,6 +52,11 @@
     "addActivity": "Add activity",
     "save": "Save",
     "cancel": "Cancel",
+    "activityNameModal": {
+      "activityName": "Activity name:",
+      "ok": "Ok",
+      "cancel": "Cancel"
+    },
     "selectColor": {
       "title": "Tap to color for select:",
       "close": "Close"
