@@ -71,7 +71,7 @@ export function Activity(props: ActivityProps): JSX.Element {
       </View>
       <Text
         style={[
-          activityStyles.bold,
+          activityStyles.title,
           textColor,
         ]}
       >

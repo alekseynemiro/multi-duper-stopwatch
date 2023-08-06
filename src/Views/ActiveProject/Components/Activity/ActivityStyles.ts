@@ -7,9 +7,12 @@ export const activityStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     columnGap: 4,
+    minWidth: 48,
+    minHeight: 48,
   },
-  bold: {
+  title: {
     fontWeight: "600",
+    textAlign: "center",
   },
   iconContainer: {
     width: defaultFontSize,
