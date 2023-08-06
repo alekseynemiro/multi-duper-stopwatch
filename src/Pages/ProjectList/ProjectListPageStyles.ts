@@ -3,7 +3,7 @@ import { colors } from "@styles";
 
 export const projectListPageStyles = StyleSheet.create({
   tableRow: {
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingBottom: 8,
   },
