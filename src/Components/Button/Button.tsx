@@ -12,6 +12,12 @@ export function Button(props: ButtonProps): JSX.Element {
     titleStyle,
     childWrapperStyle,
     disabled,
+    accessible,
+    accessibilityHint,
+    accessibilityLabel,
+    accessibilityState,
+    accessibilityValue,
+    importantForAccessibility,
     onPress,
   } = props;
 
@@ -25,6 +31,12 @@ export function Button(props: ButtonProps): JSX.Element {
           disabled && buttonStyles.disabled,
           style,
         ]}
+        accessible={accessible}
+        accessibilityState={accessibilityState}
+        accessibilityValue={accessibilityValue}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        importantForAccessibility={importantForAccessibility}
         onPress={(): void => {
           if (!disabled) {
             onPress();
