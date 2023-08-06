@@ -8,7 +8,10 @@ export const buttonStyles = StyleSheet.create({
   },
   button: {
     alignItems: "center",
+    justifyContent: "center",
     padding: 10,
+    minWidth: 96,
+    minHeight: 48,
   },
   disabled: {
     opacity: 0.75,
