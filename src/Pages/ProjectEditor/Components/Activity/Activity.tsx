@@ -58,6 +58,7 @@ export function Activity(props: ActivityProps): JSX.Element {
         style={activityStyles.colorCol}
       >
         <Button
+          accessible={false}
           style={[
             activityStyles.selectColorButton,
             {
