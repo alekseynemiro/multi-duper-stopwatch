@@ -29,6 +29,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
                   return (
                     <TouchableOpacity
                       key={x.color}
+                      accessible={false}
                       style={{
                         ...selectColorModalStyles.color,
                         backgroundColor: x.color,
