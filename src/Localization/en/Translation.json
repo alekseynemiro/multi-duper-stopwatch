@@ -28,7 +28,10 @@
     "sessionNameModal": {
       "sessionName": "Session name:",
       "ok": "Ok",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "accessibility": {
+        "sessionName": "Enter session name"
+      }
     }
   },
   "report": {

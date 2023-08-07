@@ -28,7 +28,10 @@
     "sessionNameModal": {
       "sessionName": "Имя сеанса:",
       "ok": "Ok",
-      "cancel": "Отмена"
+      "cancel": "Отмена",
+      "accessibility": {
+        "sessionName": "Введите название сеанса"
+      }
     }
   },
   "report": {
