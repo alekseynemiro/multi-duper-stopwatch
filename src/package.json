@@ -10,7 +10,7 @@
     "start-without-cache": "react-native start --reset-cache",
     "test": "jest",
     "make-apk": "react-native run-android --mode=release",
-    "make-aab": "./android/gradlew bundleRelease"
+    "make-aab": "cd ./android && \"./gradlew\" bundleRelease"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.19.1",
