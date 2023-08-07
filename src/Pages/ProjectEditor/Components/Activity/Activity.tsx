@@ -44,7 +44,7 @@ export function Activity(props: ActivityProps): JSX.Element {
       >
         <TextInputField
           value={activityName}
-          accessibilityLabel={localization.get("projectEditor.accessibility.enterActivityName", { code: activityCode })}
+          accessibilityHint={localization.get("projectEditor.accessibility.enterActivityName", { code: activityCode })}
           error={error}
           onPressIn={(): void => {
             onInputNamePressIn(activityCode);

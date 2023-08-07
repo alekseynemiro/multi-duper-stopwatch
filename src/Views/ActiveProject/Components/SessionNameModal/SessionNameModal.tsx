@@ -29,7 +29,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
           <View style={sessionNameModalStyles.row}>
             <TextInputField
               label={localization.get("activeProject.sessionNameModal.sessionName")}
-              accessibilityLabel={localization.get("activeProject.sessionNameModal.accessibility.sessionName")}
+              accessibilityHint={localization.get("activeProject.sessionNameModal.accessibility.sessionName")}
               value={sessionName}
               onChangeText={setSessionName}
             />
