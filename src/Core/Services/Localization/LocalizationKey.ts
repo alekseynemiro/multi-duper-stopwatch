@@ -34,6 +34,8 @@ export type LocalizationKey =
   | "projectEditor.addActivity"
   | "projectEditor.save"
   | "projectEditor.cancel"
+  | "projectEditor.accessibility.enterProjectName"
+  | "projectEditor.accessibility.enterActivityName"
   | "projectEditor.activityNameModal.activityName"
   | "projectEditor.activityNameModal.ok"
   | "projectEditor.activityNameModal.cancel"

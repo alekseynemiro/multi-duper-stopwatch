@@ -234,6 +234,7 @@ export function ProjectEditorPage(): JSX.Element {
                 <FormRow style={projectEditorPageStyles.projectName}>
                   <TextInputField
                     label={localization.get("projectEditor.projectName")}
+                    accessibilityLabel={localization.get("projectEditor.accessibility.enterProjectName")}
                     value={values.name}
                     error={touched.name && errors.name}
                     onChangeText={handleChange("name")}

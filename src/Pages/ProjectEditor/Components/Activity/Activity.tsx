@@ -5,10 +5,13 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { TextInputField } from "@components/TextInputField";
 import { getColorCode } from "@utils/ColorPaletteUtils";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { ActivityProps } from "./ActivityProps";
 import { activityStyles } from "./ActivityStyles";
 
 export function Activity(props: ActivityProps): JSX.Element {
+  const localization = useLocalization();
+
   const {
     activityCode,
     activityName,
@@ -41,6 +44,7 @@ export function Activity(props: ActivityProps): JSX.Element {
       >
         <TextInputField
           value={activityName}
+          accessibilityLabel={localization.get("projectEditor.accessibility.enterActivityName")}
           error={error}
           onPressIn={(): void => {
             onInputNamePressIn(activityCode);

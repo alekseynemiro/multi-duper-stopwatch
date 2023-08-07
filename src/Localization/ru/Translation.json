@@ -58,6 +58,10 @@
     "addActivity": "Добавить активность",
     "save": "Сохранить",
     "cancel": "Отмена",
+    "accessibility": {
+      "enterProjectName": "Введите имя проекта",
+      "enterActivityName": "Введите название активности"
+    },
     "activityNameModal": {
       "activityName": "Введите название активности:",
       "ok": "Ok",

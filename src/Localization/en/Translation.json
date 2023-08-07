@@ -58,6 +58,10 @@
     "addActivity": "Add activity",
     "save": "Save",
     "cancel": "Cancel",
+    "accessibility": {
+      "enterProjectName": "Enter project name",
+      "enterActivityName": "Enter activity name"
+    },
     "activityNameModal": {
       "activityName": "Activity name:",
       "ok": "Ok",
