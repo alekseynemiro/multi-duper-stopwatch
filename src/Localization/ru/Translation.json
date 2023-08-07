@@ -63,7 +63,7 @@
     "cancel": "Отмена",
     "accessibility": {
       "enterProjectName": "Введите имя проекта",
-      "enterActivityName": "Введите название активности"
+      "enterActivityName": "Введите название для активности #{{code}}"
     },
     "activityNameModal": {
       "activityName": "Введите название активности:",

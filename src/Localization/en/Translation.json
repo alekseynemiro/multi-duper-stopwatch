@@ -63,7 +63,7 @@
     "cancel": "Cancel",
     "accessibility": {
       "enterProjectName": "Enter project name",
-      "enterActivityName": "Enter activity name"
+      "enterActivityName": "Enter name for activity #{{code}}"
     },
     "activityNameModal": {
       "activityName": "Activity name:",
