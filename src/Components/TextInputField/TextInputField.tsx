@@ -10,6 +10,11 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
     value,
     style,
     error,
+    accessible,
+    accessibilityHint,
+    accessibilityLabel,
+    accessibilityState,
+    accessibilityValue,
     onChangeText,
     onFocus,
     onBlur,
@@ -33,6 +38,11 @@ export function TextInputField(props: TextInputFieldProps): JSX.Element {
           !!error && textInputFieldStyles.textInputError,
           style,
         ]}
+        accessible={accessible}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={accessibilityState}
+        accessibilityValue={accessibilityValue}
         onChangeText={onChangeText}
         onFocus={onFocus}
         onBlur={onBlur}
