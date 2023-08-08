@@ -4,7 +4,7 @@ MVP (minimum viable product). First public release!
 
 ## Smartphone
 
-![Home](2023-08-08_Smartphone_1_Home)
+![Home](2023-08-08_Smartphone_1_Home.png)
 
 ![Report](2023-08-08_Smartphone_2_Report.png)
 
@@ -14,7 +14,7 @@ MVP (minimum viable product). First public release!
 
 ## Tablet 7''
 
-![Home](2023-08-08_Tablet7_1_Home)
+![Home](2023-08-08_Tablet7_1_Home.png)
 
 ![Report](2023-08-08_Tablet7_2_Report.png)
 
@@ -24,7 +24,7 @@ MVP (minimum viable product). First public release!
 
 ## Tablet 10''
 
-![Home](2023-08-08_Tablet10_1_Home)
+![Home](2023-08-08_Tablet10_1_Home.png)
 
 ![Report](2023-08-08_Tablet10_2_Report.png)
 
