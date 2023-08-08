@@ -9,6 +9,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { ILoggerService } from "@services/Logger";
 import { IProjectService } from "@services/Projects";
+import { styles } from "@styles";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
@@ -196,7 +197,17 @@ export function HomePage(): JSX.Element {
         autoScrollToBottom={true}
       />
     )
-    : <></>;
+    : (
+      <View
+        style={styles.contentView}
+      >
+        <Text
+          style={styles.textCenter}
+        >
+          {localization.get("home.noReport")}
+        </Text>
+      </View>
+    );
 
   return (
     <Carousel

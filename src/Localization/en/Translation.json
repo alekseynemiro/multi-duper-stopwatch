@@ -18,7 +18,8 @@
   "home": {
     "createProject": "Create project",
     "openProject": "Open project",
-    "or": "or"
+    "or": "or",
+    "noReport": "Start and stop any activity to make the report available."
   },
   "activeProject": {
     "pause": "Pause",

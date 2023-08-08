@@ -11,6 +11,7 @@ export type LocalizationKey =
   | "home.createProject"
   | "home.openProject"
   | "home.or"
+  | "home.noReport"
   | "activeProject.total"
   | "activeProject.pause"
   | "activeProject.resume"
