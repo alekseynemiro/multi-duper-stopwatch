@@ -780,6 +780,15 @@ export class ActiveProjectService implements IActiveProjectService {
   }
 
   private onActivityUpdate(activityId: string, status: ActivityStatus): void {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.onActivityUpdate.name,
+      "activityId",
+      activityId,
+      "status",
+      ActivityStatus[status]
+    );
+
     const activity = this._activities?.find((x: Activity): boolean => {
       return x.id === activityId;
     });
