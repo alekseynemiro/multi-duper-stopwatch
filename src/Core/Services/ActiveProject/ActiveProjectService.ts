@@ -532,6 +532,13 @@ export class ActiveProjectService implements IActiveProjectService {
 
           this._session.state = SessionState.Paused;
 
+          if (this._currentActivityId) {
+            this.onActivityUpdate(
+              this._currentActivityId,
+              ActivityStatus.Paused
+            );
+          }
+
           this.on(
             "session-paused",
             {
