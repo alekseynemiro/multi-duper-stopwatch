@@ -45,4 +45,7 @@ export const styles = StyleSheet.create({
   fullFlex: {
     flex: 1,
   },
+  textCenter: {
+    textAlign: "center",
+  },
 });
