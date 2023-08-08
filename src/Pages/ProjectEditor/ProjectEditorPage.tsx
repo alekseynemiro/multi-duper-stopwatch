@@ -245,6 +245,17 @@ export function ProjectEditorPage(): JSX.Element {
                   <Label>
                     {localization.get("projectEditor.activities")}
                   </Label>
+                  {
+                    typeof errors.activities === "string"
+                    && touched.activities
+                    && (
+                      <Label
+                        variant="danger"
+                      >
+                        {errors.activities}
+                      </Label>
+                    )
+                  }
                   <View
                     style={projectEditorPageStyles.activitiesTable}
                   >
