@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "@styles";
 
 export const stopwatchDisplayStyles = StyleSheet.create({
   container: {
@@ -14,6 +15,7 @@ export const stopwatchDisplayStyles = StyleSheet.create({
     fontSize: 56,
     fontWeight: "300",
     fontVariant: ["lining-nums", "tabular-nums"],
+    color: colors.text,
   },
   landscapeElapsed: {
     fontSize: 92,
@@ -24,5 +26,6 @@ export const stopwatchDisplayStyles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     maxWidth: "50%",
+    color: colors.text,
   },
 });

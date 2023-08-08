@@ -18,7 +18,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { IActiveProjectService } from "@services/ActiveProject";
 import { ILocalizationService } from "@services/Localization";
 import { ILoggerService } from "@services/Logger";
-import { styles } from "@styles";
+import { AppTheme, styles } from "@styles";
 import { AppNavigation } from "./AppNavigation";
 
 const Drawer = createDrawerNavigator();
@@ -108,7 +108,9 @@ export function App(): JSX.Element {
     <GestureHandlerRootView
       style={styles.fullFlex}
     >
-      <NavigationContainer>
+      <NavigationContainer
+        theme={AppTheme}
+      >
         <Drawer.Navigator
           initialRouteName={Routes.Init}
           drawerContent={AppNavigation}
