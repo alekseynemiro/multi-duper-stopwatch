@@ -33,6 +33,11 @@
       "accessibility": {
         "sessionName": "Enter session name"
       }
+    },
+    "horizontalListLayout": {
+      "accessibility": {
+        "listOfActivities": "List of activities"
+      }
     }
   },
   "report": {

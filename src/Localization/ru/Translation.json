@@ -34,6 +34,11 @@
       "accessibility": {
         "sessionName": "Введите название сеанса"
       }
+    },
+    "horizontalListLayout": {
+      "accessibility": {
+        "listOfActivities": "Список активностей"
+      }
     }
   },
   "report": {

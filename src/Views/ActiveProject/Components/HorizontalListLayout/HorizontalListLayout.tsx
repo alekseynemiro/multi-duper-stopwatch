@@ -1,11 +1,14 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
+import { useLocalization } from "@utils/LocalizationUtils";
 import { Activity } from "../Activity";
 import { HorizontalListLayoutProps } from "./HorizontalListLayoutProps";
 import { horizontalListLayoutStyles } from "./HorizontalListLayoutStyles";
 
 export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Element {
+  const localization = useLocalization();
+
   const {
     activities,
     onActivityPress,
@@ -14,6 +17,7 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
   return (
     <ScrollView
       horizontal={false}
+      accessibilityLabel={localization.get("activeProject.horizontalListLayout.accessibility.listOfActivities")}
     >
       <View
         style={horizontalListLayoutStyles.container}

@@ -20,6 +20,7 @@ export type LocalizationKey =
   | "activeProject.sessionNameModal.ok"
   | "activeProject.sessionNameModal.cancel"
   | "activeProject.sessionNameModal.accessibility.sessionName"
+  | "activeProject.horizontalListLayout.accessibility.listOfActivities"
   | "projectList.confirmationTitle"
   | "projectList.confirmationMessage"
   | "projectList.cancel"
