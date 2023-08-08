@@ -7,4 +7,6 @@ export type LabelProps = {
 
   style?: StyleProp<TextStyle>;
 
+  variant?: "default" | "primary" | "secondary" | "warning" | "danger" | "success" | "info" | "light";
+
 };
