@@ -25,11 +25,12 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
             </Text>
             <View style={selectColorModalStyles.colorListContainer}>
               {
-                colors.palette.map((x: typeof colors.palette[0]): JSX.Element => {
+                colors.palette.map((x: typeof colors.palette[0], index: number): JSX.Element => {
                   return (
                     <TouchableOpacity
                       key={x.color}
                       accessible={false}
+                      accessibilityLabel={localization.get(`projectEditor.selectColor.accessibility.color${index + 1}` as any)}
                       style={{
                         ...selectColorModalStyles.color,
                         backgroundColor: x.color,
