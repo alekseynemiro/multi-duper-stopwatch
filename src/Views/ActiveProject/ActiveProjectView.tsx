@@ -210,9 +210,32 @@ export function ActiveProjectView(): JSX.Element {
       setShowSessionNameModal(false);
 
       await finishActivityRef.current.cancel();
+
+      if (currentActivity) {
+        const isRunning = currentActivity.status !== ActivityStatus.Running;
+        const newActivities = activities.map((x: ActivityModel): ActivityModel => {
+          if (x.id === currentActivity.id) {
+            if (isRunning) {
+              x.status = ActivityStatus.Running;
+            } else {
+              x.status = ActivityStatus.Paused;
+            }
+          } else {
+            x.status = ActivityStatus.Idle;
+          }
+
+          return x;
+        });
+
+        setActivities(newActivities);
+        setCurrentActivity(newActivities.find(currentActivityPredicate));
+      }
     },
     [
+      activities,
+      currentActivity,
       finishActivityRef,
+      currentActivityPredicate,
     ]
   );
 
