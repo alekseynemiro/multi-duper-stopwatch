@@ -761,6 +761,15 @@ export class ActiveProjectService implements IActiveProjectService {
   }
 
   private on<TEventArgs extends Object>(type: ActiveProjectServiceEventType, args?: TEventArgs): void {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.on.name,
+      "type",
+      type,
+      "args",
+      args
+    );
+
     const listeners = this._listeners.get(type);
 
     if (listeners) {
