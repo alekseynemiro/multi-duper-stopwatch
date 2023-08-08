@@ -23,13 +23,13 @@ export function AppNavigation(): JSX.Element {
     );
   };
 
-  const homeIcon = (): JSX.Element => iconWrapper(<Icon name="home" />);
-  const createProjectIcon = (): JSX.Element => iconWrapper(<Icon name="create-project" />);
-  const projectListIcon = (): JSX.Element => iconWrapper(<Icon name="project-list" />);
-  const reportsIcon = (): JSX.Element => iconWrapper(<Icon name="statistics" />);
-  const applicationSettingsIcon = (): JSX.Element => iconWrapper(<Icon name="application-settings" />);
-  const aboutIcon = (): JSX.Element => iconWrapper(<Icon name="info" />);
-  const exitIcon = (): JSX.Element => iconWrapper(<Icon name="exit" />);
+  const homeIcon = (): JSX.Element => iconWrapper(<Icon name="home" size={32} />);
+  const createProjectIcon = (): JSX.Element => iconWrapper(<Icon name="create-project" size={32} />);
+  const projectListIcon = (): JSX.Element => iconWrapper(<Icon name="project-list" size={32} />);
+  const reportsIcon = (): JSX.Element => iconWrapper(<Icon name="statistics" size={32} />);
+  const applicationSettingsIcon = (): JSX.Element => iconWrapper(<Icon name="application-settings" size={32} />);
+  const aboutIcon = (): JSX.Element => iconWrapper(<Icon name="info" size={32} />);
+  const exitIcon = (): JSX.Element => iconWrapper(<Icon name="exit" size={32} />);
 
   return (
     <SafeAreaView>
