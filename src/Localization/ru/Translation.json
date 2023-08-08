@@ -55,9 +55,9 @@
     "noProjects": "У вас еще нет ни одного проекта.",
     "createProject": "Создать проект",
     "accessibility": {
-      "run": "Запустить проект \"{{projectName}}\".",
-      "edit": "Редактировать проект \"{{projectName}}\".",
-      "delete": "Удалить проект \"{{projectName}}\"."
+      "run": "Запустить проект \"{{projectName}}\" #{{projectCode}}.",
+      "edit": "Редактировать проект \"{{projectName}}\" #{{projectCode}}.",
+      "delete": "Удалить проект \"{{projectName}}\" #{{projectCode}}."
     }
   },
   "projectEditor": {

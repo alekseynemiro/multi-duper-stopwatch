@@ -54,9 +54,9 @@
     "noProjects": "You don't have any projects yet.",
     "createProject": "Create a new project",
     "accessibility": {
-      "run": "Run project \"{{projectName}}\".",
-      "edit": "Edit project \"{{projectName}}\".",
-      "delete": "Delete project \"{{projectName}}\"."
+      "run": "Run project \"{{projectName}}\" #{{projectCode}}.",
+      "edit": "Edit project \"{{projectName}}\" #{{projectCode}}.",
+      "delete": "Delete project \"{{projectName}}\" #{{projectCode}}."
     }
   },
   "projectEditor": {

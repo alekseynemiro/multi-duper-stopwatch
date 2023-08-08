@@ -86,6 +86,9 @@ export function ProjectListPage(): JSX.Element {
         <View style={styles.table}>
           {
             list.map((x: GetAllResultItem, index: number): JSX.Element => {
+              const projectName = x.name;
+              const projectCode = x.id.substring(0, 5);
+
               return (
                 <View
                   key={x.id}
@@ -110,7 +113,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="primary"
                       style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.run", { projectName: x.name })}
+                      accessibilityLabel={localization.get("projectList.accessibility.run", { projectName, projectCode })}
                       onPress={async(): Promise<void> => {
                         // TODO: Business logic service
                         const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
@@ -156,7 +159,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="secondary"
                       style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.edit", { projectName: x.name })}
+                      accessibilityLabel={localization.get("projectList.accessibility.edit", { projectName, projectCode })}
                       onPress={(): void => {
                         navigation.navigate(
                           Routes.Project,
@@ -177,7 +180,7 @@ export function ProjectListPage(): JSX.Element {
                     <Button
                       variant="danger"
                       style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.delete", { projectName: x.name })}
+                      accessibilityLabel={localization.get("projectList.accessibility.delete", { projectName, projectCode })}
                       onPress={(): void => {
                         requestToDeleteProject(x);
                       }}
