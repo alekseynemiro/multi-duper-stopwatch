@@ -15,6 +15,9 @@ Steps to reproduce the behavior:
 2. Click on '....'
 3. See error
 
+## Actual behavior
+A clear and concise description of what is happening.
+
 ## Expected behavior
 A clear and concise description of what you expected to happen.
 
@@ -23,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 
 ## Affected versions
 Please indicate affected versions of the program (see Menu => About...)
-- e.g. v1.0 (build: 20230805)
+- e.g. v1.0 (build: 20230808)
 
 ## Device (please complete the following information):
  - Manufacturer: [e.g. Xiaomi]
