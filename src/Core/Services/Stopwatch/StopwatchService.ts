@@ -92,6 +92,8 @@ export class StopwatchService implements IStopwatchService {
     }
 
     this._id = undefined;
+
+    this.tick();
   }
 
   public reset(): void {
