@@ -27,6 +27,8 @@ export class StopwatchService implements IStopwatchService {
 
   private _offset: number | undefined = undefined;
 
+  private _timerHandlerIsRunning: number = 0;
+
   public get elapsed(): number {
     return this._elapsed;
   }
@@ -162,12 +164,37 @@ export class StopwatchService implements IStopwatchService {
     this._tickListeners.splice(index, 1);
   }
 
-  private timerHandler(): void {
-    const now = this._dateTimeService.now;
-    this._elapsed = this._elapsed + (now.getTime() - this._start);
-    this._start = now.getTime();
+  public tick(): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.tick.name,
+      "id",
+      this._id,
+      "elapsed",
+      this._elapsed,
+      "acceptable",
+      this._timerHandlerIsRunning === 0
+    );
 
-    this.onTick();
+    this.timerHandler();
+  }
+
+  private timerHandler(): void {
+    if (this._timerHandlerIsRunning === 1) {
+      return;
+    }
+
+    this._timerHandlerIsRunning = 1;
+
+    try {
+      const now = this._dateTimeService.now.getTime();
+      this._elapsed = this._elapsed + (now - this._start);
+      this._start = now;
+
+      this.onTick();
+    } finally {
+      this._timerHandlerIsRunning = 0;
+    }
   }
 
   private onTick(): void {

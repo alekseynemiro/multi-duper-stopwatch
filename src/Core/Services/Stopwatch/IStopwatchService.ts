@@ -22,6 +22,11 @@ export interface IStopwatchService {
 
   clearOffset(): void;
 
+  /**
+   * Forces a tick and invokes attached handlers.
+   */
+  tick(): void;
+
   addTickListener(callback: StopwatchTickEvent): void;
 
   removeTickListener(callback: StopwatchTickEvent): void;
