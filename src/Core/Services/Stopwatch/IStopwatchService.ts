@@ -25,7 +25,7 @@ export interface IStopwatchService {
   /**
    * Forces a tick and invokes attached handlers.
    */
-  tick(): Promise<void>;
+  tick(): void;
 
   addTickListener(callback: StopwatchTickEvent): void;
 
