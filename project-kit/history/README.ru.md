@@ -6,6 +6,10 @@
 
 Записи, которые были сделаны в процессе работы над проектом:
 
+* https://vk.com/aleksey.developer?w=wall-96983816_248 - Анонс Multi-duper Stopwatch
+* https://vk.com/aleksey.developer?w=wall-96983816_247 - Приходится проверять сочетания цветов :)
+* https://vk.com/aleksey.developer?w=wall-96983816_244 - Проблема чтения значений приватных свойств в Gradle
+* https://vk.com/aleksey.developer?w=wall-96983816_243 - Сканер доступности для приложений Android
 * https://vk.com/aleksey.developer?w=wall-96983816_240 - Первые признаки завершения работы над MVP (minimum viable product)
 * https://vk.com/aleksey.developer?w=wall-96983816_239 - Ответ на вопрос, почему в приложении столько багов :)
 * https://vk.com/aleksey.developer?w=wall-96983816_238 - Проблема обработки завершения работы приложения
