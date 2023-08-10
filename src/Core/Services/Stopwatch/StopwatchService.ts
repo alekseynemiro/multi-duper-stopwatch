@@ -1,6 +1,7 @@
 import { ServiceIdentifier } from "@config";
 import { IDateTimeService } from "@services/DateTime";
 import { ILoggerService } from "@services/Logger";
+import { when } from "@utils/AsyncOperationUtils";
 import { inject, injectable } from "inversify";
 import { IStopwatchService } from "./IStopwatchService";
 import { StopwatchTickEvent } from "./StopwatchTickEvent";
@@ -164,7 +165,7 @@ export class StopwatchService implements IStopwatchService {
     this._tickListeners.splice(index, 1);
   }
 
-  public tick(): void {
+  public async tick(): Promise<void> {
     this._loggerService.debug(
       StopwatchService.name,
       this.tick.name,
@@ -174,6 +175,13 @@ export class StopwatchService implements IStopwatchService {
       this._elapsed,
       "acceptable",
       this._timerHandlerIsRunning === 0
+    );
+
+    await when(
+      (): boolean => {
+        return this._timerHandlerIsRunning === 0;
+      },
+      10
     );
 
     this.timerHandler();
