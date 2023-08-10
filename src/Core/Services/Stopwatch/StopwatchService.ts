@@ -107,6 +107,8 @@ export class StopwatchService implements IStopwatchService {
     this._elapsed = 0;
     this._snapped = 0;
     this._start = this._dateTimeService.now.getTime();
+
+    this.tick();
   }
 
   public snap(): void {
