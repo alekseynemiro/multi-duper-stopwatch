@@ -50,7 +50,9 @@ export class SessionService implements ISessionService {
       "projectId",
       request.projectId,
       "activityId",
-      request.activityId
+      request.activityId,
+      "time",
+      request.date.getTime()
     );
 
     return this._databaseService.execute(
