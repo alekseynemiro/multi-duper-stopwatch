@@ -5,6 +5,7 @@ import {
   GetAllResult,
   GetResult,
   PauseRequest,
+  PauseResult,
   RenameRequest,
   ToggleRequest,
   ToggleResult,
@@ -16,7 +17,7 @@ export interface ISessionService {
 
   toggle(request: ToggleRequest): Promise<ToggleResult>;
 
-  pause(request: PauseRequest): Promise<void>;
+  pause(request: PauseRequest): Promise<PauseResult | undefined>;
 
   finish(request: FinishRequest): Promise<void>;
 

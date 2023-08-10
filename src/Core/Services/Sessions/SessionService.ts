@@ -8,6 +8,7 @@ import {
   GetAllResultItem,
   GetResult,
   PauseRequest,
+  PauseResult,
   RenameRequest,
   ToggleDetailsResult,
   ToggleRequest,
@@ -257,7 +258,7 @@ export class SessionService implements ISessionService {
     );
   }
 
-  public pause(request: PauseRequest): Promise<void> {
+  public pause(request: PauseRequest): Promise<PauseResult | undefined> {
     this._loggerService.debug(
       SessionService.name,
       this.pause.name,
@@ -268,7 +269,9 @@ export class SessionService implements ISessionService {
     );
 
     return this._databaseService.execute(
-      async(): Promise<void> => {
+      async(): Promise<PauseResult | undefined> => {
+        let result: PauseResult | undefined;
+
         const session = await this._databaseService.sessions()
           .findOneOrFail({
             where: {
@@ -287,7 +290,8 @@ export class SessionService implements ISessionService {
             request.sessionId,
             "Unable to pause the session because the session is already paused.",
           );
-          return;
+
+          return result;
         }
 
         if (session.state === SessionState.Finished) {
@@ -343,6 +347,19 @@ export class SessionService implements ISessionService {
             };
 
             await this._databaseService.sessionLogs().insert(log);
+
+            result = {
+              id: log.id,
+              activityId: log.activity.id,
+              activityColor: log.activity.color,
+              activityName: log.activity.name,
+              avgSpeed: log.avgSpeed,
+              distance: log.distance,
+              elapsedTime: log.elapsedTime,
+              finishDate: log.finishDate,
+              maxSpeed: log.maxSpeed,
+              startDate: log.startDate,
+            };
           }
 
           if (log) {
@@ -357,6 +374,8 @@ export class SessionService implements ISessionService {
         session.state = SessionState.Paused;
 
         await this._databaseService.sessions().save(session);
+
+        return result;
       }
     );
   }
