@@ -6,6 +6,7 @@ import { Icon } from "@components/Icon";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult, IActiveProjectService } from "@services/ActiveProject";
+import { ILoggerService } from "@services/Logger";
 import { useLocalization } from "@utils/LocalizationUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
@@ -17,6 +18,7 @@ import {
 } from "./Components";
 
 const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
 
 export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
@@ -42,6 +44,8 @@ export function ActiveProjectView(): JSX.Element {
 
   const load = useCallback(
     async(): Promise<void> => {
+      loggerService.debug(ActiveProjectView.name, "load");
+
       loaded.current = true;
 
       if (!activeProjectService.project) {
@@ -93,47 +97,62 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const toggle = useCallback(
-    async({ activityId }: HorizontalListLayoutActivityPressEventArgs): Promise<void> => {
-      const activity = activities.find(
-        (x: ActivityModel): boolean => {
-          return x.id === activityId;
+    async({ activityId, activityStatus }: HorizontalListLayoutActivityPressEventArgs): Promise<void> => {
+      loggerService.debug(
+        ActiveProjectView.name,
+        "toggle",
+        "activityId",
+        activityId
+      );
+
+      const currentActivityId = currentActivity?.id;
+
+      const updateState = async(): Promise<void> => {
+        const activity = activities.find(
+          (x: ActivityModel): boolean => {
+            return x.id === activityId;
+          }
+        );
+
+        if (!activity) {
+          throw new Error(`Activity #${activityId} not found in the current component state.`);
         }
-      );
 
-      const isRunning = activity?.status !== ActivityStatus.Running;
-      const isPaused = activity?.status === ActivityStatus.Running && currentActivity?.id === activity.id;
+        const shouldBeRunning = activityStatus !== ActivityStatus.Running;
+        const shouldBePaused = activityStatus === ActivityStatus.Running && currentActivityId === activityId;
 
-      activeProjectService.setCurrentActivity(
-        activityId,
-        isRunning
-      );
-
-      const newActivities = activities.map(
-        (x: ActivityModel): ActivityModel => {
-          if (x.id === activityId) {
-            if (isRunning) {
-              x.status = ActivityStatus.Running;
-            } else if (isPaused) {
-              x.status = ActivityStatus.Paused;
+        const newActivities = activities.map(
+          (x: ActivityModel): ActivityModel => {
+            if (x.id === activityId) {
+              if (shouldBeRunning) {
+                x.status = ActivityStatus.Running;
+              } else if (shouldBePaused) {
+                x.status = ActivityStatus.Paused;
+              } else {
+                x.status = ActivityStatus.Idle;
+              }
             } else {
               x.status = ActivityStatus.Idle;
             }
-          } else {
-            x.status = ActivityStatus.Idle;
+
+            return x;
           }
+        );
 
-          return x;
-        }
-      );
+        const newCurrentActivity = newActivities.find(
+          (x: ActivityModel): boolean => {
+            return x.id === activityId;
+          }
+        );
 
-      const newCurrentActivity = newActivities.find(
-        (x: ActivityModel): boolean => {
-          return x.id === activityId;
-        }
-      );
+        setActivities(newActivities);
+        setCurrentActivity(newCurrentActivity);
+      };
 
-      setActivities(newActivities);
-      setCurrentActivity(newCurrentActivity);
+      await Promise.all([
+        activeProjectService.toggleActivity(activityId),
+        updateState(),
+      ]);
     },
     [
       activities,
@@ -141,32 +160,44 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
-  const toggleActive = useCallback(
+  const toggleCurrent = useCallback(
     async(): Promise<void> => {
+      loggerService.debug(
+        ActiveProjectView.name,
+        "toggleCurrent",
+        currentActivity
+      );
+
       if (!currentActivity) {
-        throw new Error("Active activity is required.");
+        throw new Error("Current activity is required.");
       }
 
-      const isRunning = currentActivity.status !== ActivityStatus.Running;
+      const shouldBePaused = currentActivity.status === ActivityStatus.Running;
+      const currentActivityId = currentActivity.id;
 
-      await activeProjectService.toggleCurrentActivity();
-
-      const newActivities = activities.map((x: ActivityModel): ActivityModel => {
-        if (x.id === currentActivity.id) {
-          if (isRunning) {
-            x.status = ActivityStatus.Running;
+      const updateState = async(): Promise<void> => {
+        const newActivities = activities.map((x: ActivityModel): ActivityModel => {
+          if (x.id === currentActivityId) {
+            if (shouldBePaused) {
+              x.status = ActivityStatus.Paused;
+            } else {
+              x.status = ActivityStatus.Running;
+            }
           } else {
-            x.status = ActivityStatus.Paused;
+            x.status = ActivityStatus.Idle;
           }
-        } else {
-          x.status = ActivityStatus.Idle;
-        }
 
-        return x;
-      });
+          return x;
+        });
 
-      setActivities(newActivities);
-      setCurrentActivity(newActivities.find(currentActivityPredicate));
+        setActivities(newActivities);
+        setCurrentActivity(newActivities.find(currentActivityPredicate));
+      };
+
+      await Promise.all([
+        activeProjectService.toggleCurrentActivity(),
+        updateState(),
+      ]);
     },
     [
       currentActivity,
@@ -177,6 +208,8 @@ export function ActiveProjectView(): JSX.Element {
 
   const finishRequest = useCallback(
     async(): Promise<void> => {
+      loggerService.debug(ActiveProjectView.name, "finishRequest");
+
       finishActivityRef.current = await activeProjectService.finish();
 
       setShowSessionNameModal(true);
@@ -188,6 +221,8 @@ export function ActiveProjectView(): JSX.Element {
 
   const finishConfirm = useCallback(
     async(e: SessionNameModalEventArgs): Promise<void> => {
+      loggerService.debug(ActiveProjectView.name, "finishConfirm");
+
       if (!finishActivityRef.current) {
         throw new Error("Finish activity is not initiated.");
       }
@@ -284,7 +319,7 @@ export function ActiveProjectView(): JSX.Element {
           variant="light"
           childWrapperStyle={activeProjectViewStyles.footerButton}
           disabled={!currentActivity}
-          onPress={toggleActive}
+          onPress={toggleCurrent}
         >
           <Icon
             name="stopwatch"

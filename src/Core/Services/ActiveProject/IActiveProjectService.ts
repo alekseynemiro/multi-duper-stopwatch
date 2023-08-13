@@ -4,6 +4,7 @@ import { GetResult as Session } from "@dto/Sessions";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
 import { ActiveProjectServiceEventType } from "./ActiveProjectServiceEventType";
+import { ActiveProjectStopwatchTickEvent } from "./ActiveProjectStopwatchTickEvent";
 
 export interface IActiveProjectService {
 
@@ -23,7 +24,7 @@ export interface IActiveProjectService {
 
   useProjectId(projectId: string): Promise<void>;
 
-  setCurrentActivity(activityId: string, isRunning: boolean): Promise<void>;
+  toggleActivity(activityId: string): Promise<void>;
 
   toggleCurrentActivity(): Promise<void>;
 
@@ -35,8 +36,10 @@ export interface IActiveProjectService {
 
   keep(): Promise<void>;
 
-  addEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): NativeEventSubscription;
+  tick(): void;
 
-  removeEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): void;
+  addEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): NativeEventSubscription;
+
+  removeEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): void;
 
 }
