@@ -243,6 +243,7 @@ export class SessionService implements ISessionService {
           details: log
             ? {
               id: log.id,
+              activityId: log.activity.id,
               activityName: log.activity.name,
               activityColor: log.activity.color,
               avgSpeed: log.avgSpeed,
@@ -251,6 +252,7 @@ export class SessionService implements ISessionService {
               elapsedTime: log.elapsedTime,
               finishDate: log.finishDate,
               startDate: log.startDate,
+              sessionElapsedTime: session.elapsedTime,
             } as ToggleDetailsResult
             : undefined,
         };

@@ -4,6 +4,8 @@ export type ToggleDetailsResult = {
 
   id: string;
 
+  activityId: string;
+
   activityName: string;
 
   activityColor: ColorPalette;
@@ -19,5 +21,7 @@ export type ToggleDetailsResult = {
   startDate: Date;
 
   finishDate: Date;
+
+  sessionElapsedTime: number;
 
 };
