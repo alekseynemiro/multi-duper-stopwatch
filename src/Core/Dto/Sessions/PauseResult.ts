@@ -22,4 +22,6 @@ export type PauseResult = {
 
   finishDate: Date;
 
+  sessionElapsedTime: number;
+
 };

@@ -363,6 +363,7 @@ export class SessionService implements ISessionService {
               finishDate: log.finishDate,
               maxSpeed: log.maxSpeed,
               startDate: log.startDate,
+              sessionElapsedTime: session.elapsedTime,
             };
           }
 
