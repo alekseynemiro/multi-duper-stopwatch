@@ -8,6 +8,10 @@ export type GetResult = {
 
   activityId: string;
 
+  startDate: Date;
+
+  finishDate: Date | null | undefined;
+
   elapsedTime: number;
 
   steps: number;
