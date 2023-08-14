@@ -7,7 +7,12 @@ import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Label } from "@components/Label";
 import { TextInputField } from "@components/TextInputField";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import {
+  Routes,
+  useGuidService,
+  useLocalizationService,
+  useProjectService,
+} from "@config";
 import { ColorPalette } from "@data";
 import {
   CreateProjectRequest,
@@ -17,9 +22,6 @@ import {
   UpdateProjectRequestActivity,
 } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
-import { IGuidService } from "@services/Guid";
-import { IProjectService } from "@services/Projects";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
 import { Activity, ActivityChangeEventArgs, ActivityNameModal, ActivityNameModalEventArgs, SelectColorModal } from "./Components";
@@ -27,13 +29,13 @@ import { ActivityModel, ProjectModel } from "./Models";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
 
-const guidService = serviceProvider.get<IGuidService>(ServiceIdentifier.GuidService);
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-
 export function ProjectEditorPage(): JSX.Element {
   const navigation = useNavigation();
   const route = useRoute<Routes.Project>();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const guidService = useGuidService();
+  const projectService = useProjectService();
+
   const { width, height } = useWindowDimensions();
 
   const isLandscape = width > height;
@@ -104,6 +106,7 @@ export function ProjectEditorPage(): JSX.Element {
       initialModel,
       localization,
       navigation,
+      projectService,
     ]
   );
 

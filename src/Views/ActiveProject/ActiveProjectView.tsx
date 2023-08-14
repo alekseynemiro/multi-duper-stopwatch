@@ -3,11 +3,9 @@ import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import { useActiveProjectService, useLocalizationService, useLoggerService } from "@config";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
-import { ActiveProjectFinishResult, IActiveProjectService } from "@services/ActiveProject";
-import { ILoggerService } from "@services/Logger";
-import { useLocalization } from "@utils/LocalizationUtils";
+import { ActiveProjectFinishResult } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
@@ -17,14 +15,13 @@ import {
   StopwatchDisplay,
 } from "./Components";
 
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
-
 export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
   const loaded = useRef(false);
 
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const activeProjectService = useActiveProjectService();
+  const loggerService = useLoggerService();
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -93,7 +90,10 @@ export function ActiveProjectView(): JSX.Element {
 
       currentProjectId.current = activeProjectService.project.id;
     },
-    []
+    [
+      activeProjectService,
+      loggerService,
+    ]
   );
 
   const toggle = useCallback(
@@ -157,6 +157,8 @@ export function ActiveProjectView(): JSX.Element {
     [
       activities,
       currentActivity,
+      activeProjectService,
+      loggerService,
     ]
   );
 
@@ -202,6 +204,8 @@ export function ActiveProjectView(): JSX.Element {
     [
       currentActivity,
       activities,
+      activeProjectService,
+      loggerService,
       currentActivityPredicate,
     ]
   );
@@ -216,6 +220,8 @@ export function ActiveProjectView(): JSX.Element {
     },
     [
       finishActivityRef,
+      loggerService,
+      activeProjectService,
     ]
   );
 
@@ -233,6 +239,7 @@ export function ActiveProjectView(): JSX.Element {
     },
     [
       finishActivityRef,
+      loggerService,
     ]
   );
 

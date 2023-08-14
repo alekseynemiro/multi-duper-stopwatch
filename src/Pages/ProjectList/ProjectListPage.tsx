@@ -4,40 +4,46 @@ import { Alert } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import {
+  Routes,
+  useActiveProjectService,
+  useLocalizationService,
+  useProjectService,
+  useSessionService,
+  useSettingsService,
+} from "@config";
 import { SessionState, SettingKey } from "@data";
 import { GetAllResultItem } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
-import { IActiveProjectService } from "@services/ActiveProject";
-import { IProjectService } from "@services/Projects";
-import { ISessionService } from "@services/Sessions";
-import { ISettingsService } from "@services/Settings";
 import { styles } from "@styles";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation } from "@utils/NavigationUtils";
 import { projectListPageStyles } from "./ProjectListPageStyles";
 
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
-const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.SettingsService);
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const projectService = useProjectService();
+  const sessionService = useSessionService();
+  const settingsService = useSettingsService();
+  const activeProjectService = useActiveProjectService();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
-  const load = async(): Promise<void> => {
-    setShowLoadingIndicator(true);
+  const load = useCallback(
+    async(): Promise<void> => {
+      setShowLoadingIndicator(true);
 
-    const data = await projectService.getAll();
+      const data = await projectService.getAll();
 
-    setList(data.items);
-    setShowLoadingIndicator(false);
-  };
+      setList(data.items);
+      setShowLoadingIndicator(false);
+    },
+    [
+      projectService,
+    ]
+  );
 
   const requestToDeleteProject = (project: GetAllResultItem): void => {
     Alert.alert(
@@ -70,7 +76,9 @@ export function ProjectListPage(): JSX.Element {
       (): void => {
         load();
       },
-      []
+      [
+        load,
+      ]
     )
   );
 

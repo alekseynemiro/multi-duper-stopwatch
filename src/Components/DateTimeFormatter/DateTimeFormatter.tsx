@@ -1,10 +1,10 @@
 import React from "react";
 import { Text } from "react-native";
-import { useLocalization } from "@utils/LocalizationUtils";
+import { useLocalizationService } from "@config";
 import { DateTimeFormatterProps } from "./DateTimeFormatterProps";
 
 export function DateTimeFormatter(props: DateTimeFormatterProps): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   const {
     value,

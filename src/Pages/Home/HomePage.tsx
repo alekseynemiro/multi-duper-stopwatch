@@ -4,30 +4,33 @@ import Carousel from "react-native-reanimated-carousel";
 import { CarouselRenderItemInfo } from "react-native-reanimated-carousel/lib/typescript/types";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import {
+  Routes,
+  useActiveProjectService,
+  useLocalizationService,
+  useLoggerService,
+  useProjectService,
+} from "@config";
 import { SessionState } from "@data";
 import { ActivityLoggedResult } from "@dto/ActiveProject";
 import { useFocusEffect } from "@react-navigation/native";
-import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
-import { ILoggerService } from "@services/Logger";
-import { IProjectService } from "@services/Projects";
+import { ActiveProjectServiceEventArgs } from "@services/ActiveProject";
 import { styles } from "@styles";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
 import { ReportView, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
 
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
 
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
 
   const navigation = useNavigation();
   const route = useRoute<Routes.Home>();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const projectService = useProjectService();
+  const activeProjectService = useActiveProjectService();
+  const loggerService = useLoggerService();
 
   const reportViewRef = useRef<ReportViewProps>();
 
@@ -97,6 +100,9 @@ export function HomePage(): JSX.Element {
       navigation,
       projectId,
       sessionId,
+      activeProjectService,
+      loggerService,
+      projectService,
     ]
   );
 

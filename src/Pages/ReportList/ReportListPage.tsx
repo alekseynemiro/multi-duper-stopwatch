@@ -6,34 +6,36 @@ import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { DateTimeFormatter } from "@components/DateTimeFormatter";
 import { DurationFormatter } from "@components/DurationFormatter";
 import { Icon } from "@components/Icon";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { Routes, useLocalizationService, useSessionService } from "@config";
 import { GetAllResultItem } from "@dto/Sessions";
 import { useFocusEffect } from "@react-navigation/native";
-import { ISessionService } from "@services/Sessions";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { reportListPageStyles } from "./ReportListPageStyles";
 
-const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
-
 export function ReportListPage(): JSX.Element {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const sessionService = useSessionService();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
-  const load = async(): Promise<void> => {
-    setShowLoadingIndicator(true);
+  const load = useCallback(
+    async(): Promise<void> => {
+      setShowLoadingIndicator(true);
 
-    const data = await sessionService.getAll();
+      const data = await sessionService.getAll();
 
-    setList(data.items);
-    setShowLoadingIndicator(false);
-  };
+      setList(data.items);
+      setShowLoadingIndicator(false);
+    },
+    [
+      sessionService,
+    ]
+  );
 
   const canShowAdditionalColumns = useCallback(
     (): boolean => {
@@ -49,7 +51,9 @@ export function ReportListPage(): JSX.Element {
       (): void => {
         load();
       },
-      []
+      [
+        load,
+      ]
     )
   );
 

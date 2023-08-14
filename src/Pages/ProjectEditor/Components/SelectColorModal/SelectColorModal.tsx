@@ -2,14 +2,14 @@ import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { useLocalizationService } from "@config";
 import { colors } from "@styles";
 import { getColorByCode } from "@utils/ColorPaletteUtils";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { SelectColorModalProps } from "./SelectColorModalProps";
 import { selectColorModalStyles } from "./SelectColorModalStyles";
 
 export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   return (
     <Modal

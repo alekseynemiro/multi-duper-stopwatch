@@ -5,33 +5,38 @@ import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Label } from "@components/Label";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import {
+  useLocalizationService,
+  useSettingsService,
+} from "@config";
 import { SettingKey } from "@data";
 import { Picker } from "@react-native-picker/picker";
 import { useFocusEffect } from "@react-navigation/native";
-import { ISettingsService } from "@services/Settings";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { applicationSettingsPageStyles } from "./ApplicationSettingsPageStyles";
 
-const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.SettingsService);
-
 export function ApplicationSettingsPage(): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const settings = useSettingsService();
 
   const [language, setLanguage] = useState<string>("en");
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
-  const load = async(): Promise<void> => {
-    const lang = await settingsService.get(SettingKey.Language)
-      ?? NativeModules.I18nManager.localeIdentifier.substring(0, 2);
+  const load = useCallback(
+    async(): Promise<void> => {
+      const lang = await settings.get(SettingKey.Language)
+        ?? NativeModules.I18nManager.localeIdentifier.substring(0, 2);
 
-    setLanguage(lang ?? "en");
-    setShowLoadingIndicator(false);
-  };
+      setLanguage(lang ?? "en");
+      setShowLoadingIndicator(false);
+    },
+    [
+      settings,
+    ]
+  );
 
   const save = useCallback(
     async(): Promise<void> => {
-      await settingsService.set(
+      await settings.set(
         SettingKey.Language,
         language
       );
@@ -50,6 +55,7 @@ export function ApplicationSettingsPage(): JSX.Element {
     [
       language,
       localization,
+      settings,
     ]
   );
 
@@ -58,7 +64,9 @@ export function ApplicationSettingsPage(): JSX.Element {
       (): void => {
         load();
       },
-      []
+      [
+        load,
+      ]
     )
   );
 
