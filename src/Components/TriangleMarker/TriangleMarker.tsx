@@ -5,6 +5,7 @@ import { triangleMarkerStyles } from "./TriangleMarkerStyles";
 
 export function TriangleMarker(props: TriangleMarkerProps): JSX.Element {
   const {
+    active,
     color,
     size,
     style,
@@ -22,6 +23,7 @@ export function TriangleMarker(props: TriangleMarkerProps): JSX.Element {
             backgroundColor: color,
             width: size ?? 32,
           },
+          active && triangleMarkerStyles.bodyWithChevron,
         ]}
       />
       <View
@@ -30,8 +32,28 @@ export function TriangleMarker(props: TriangleMarkerProps): JSX.Element {
           {
             borderLeftColor: color,
           },
+          active && triangleMarkerStyles.arrowWithChevron,
         ]}
       />
+      {
+        active
+          && (
+            <>
+              <View
+                style={triangleMarkerStyles.chevronOverlay}
+              />
+              <View
+                style={[
+                  triangleMarkerStyles.chevron,
+                  {
+                    borderLeftColor: color,
+                  },
+                ]}
+              />
+            </>
+          )
+      }
+
     </View>
   );
 }
