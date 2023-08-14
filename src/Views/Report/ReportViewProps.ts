@@ -1,4 +1,5 @@
 import { MutableRefObject } from "react";
+import { ReportItemModel } from "./Models/ReportItemModel";
 
 export type ReportViewProps = {
 
@@ -9,5 +10,7 @@ export type ReportViewProps = {
   autoScrollToBottom?: boolean;
 
   load?(): Promise<void>;
+
+  addItem?(item: ReportItemModel): void;
 
 };

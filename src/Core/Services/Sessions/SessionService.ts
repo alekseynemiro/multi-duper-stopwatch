@@ -8,6 +8,7 @@ import {
   GetAllResultItem,
   GetResult,
   PauseRequest,
+  PauseResult,
   RenameRequest,
   ToggleDetailsResult,
   ToggleRequest,
@@ -49,7 +50,9 @@ export class SessionService implements ISessionService {
       "projectId",
       request.projectId,
       "activityId",
-      request.activityId
+      request.activityId,
+      "time",
+      request.date.getTime()
     );
 
     return this._databaseService.execute(
@@ -240,6 +243,7 @@ export class SessionService implements ISessionService {
           details: log
             ? {
               id: log.id,
+              activityId: log.activity.id,
               activityName: log.activity.name,
               activityColor: log.activity.color,
               avgSpeed: log.avgSpeed,
@@ -248,6 +252,7 @@ export class SessionService implements ISessionService {
               elapsedTime: log.elapsedTime,
               finishDate: log.finishDate,
               startDate: log.startDate,
+              sessionElapsedTime: session.elapsedTime,
             } as ToggleDetailsResult
             : undefined,
         };
@@ -257,7 +262,7 @@ export class SessionService implements ISessionService {
     );
   }
 
-  public pause(request: PauseRequest): Promise<void> {
+  public pause(request: PauseRequest): Promise<PauseResult | undefined> {
     this._loggerService.debug(
       SessionService.name,
       this.pause.name,
@@ -268,7 +273,9 @@ export class SessionService implements ISessionService {
     );
 
     return this._databaseService.execute(
-      async(): Promise<void> => {
+      async(): Promise<PauseResult | undefined> => {
+        let result: PauseResult | undefined;
+
         const session = await this._databaseService.sessions()
           .findOneOrFail({
             where: {
@@ -287,7 +294,8 @@ export class SessionService implements ISessionService {
             request.sessionId,
             "Unable to pause the session because the session is already paused.",
           );
-          return;
+
+          return result;
         }
 
         if (session.state === SessionState.Finished) {
@@ -343,6 +351,20 @@ export class SessionService implements ISessionService {
             };
 
             await this._databaseService.sessionLogs().insert(log);
+
+            result = {
+              id: log.id,
+              activityId: log.activity.id,
+              activityColor: log.activity.color,
+              activityName: log.activity.name,
+              avgSpeed: log.avgSpeed,
+              distance: log.distance,
+              elapsedTime: log.elapsedTime,
+              finishDate: log.finishDate,
+              maxSpeed: log.maxSpeed,
+              startDate: log.startDate,
+              sessionElapsedTime: session.elapsedTime,
+            };
           }
 
           if (log) {
@@ -357,6 +379,8 @@ export class SessionService implements ISessionService {
         session.state = SessionState.Paused;
 
         await this._databaseService.sessions().save(session);
+
+        return result;
       }
     );
   }
@@ -599,6 +623,8 @@ export class SessionService implements ISessionService {
           id: session.id,
           projectId: session.project.id,
           activityId: session.activity?.id,
+          startDate: session.startDate,
+          finishDate: session.finishDate,
           avgSpeed: session.avgSpeed,
           distance: session.distance,
           elapsedTime: session.elapsedTime,

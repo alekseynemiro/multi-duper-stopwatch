@@ -88,12 +88,63 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     ]
   );
 
+  const addItem = useCallback(
+    (item: ReportItemModel): void => {
+      const newLogs: Array<ReportItemModel> = [
+        ...logs,
+        {
+          id: item.id,
+          activityId: item.activityId,
+          avgSpeed: item.avgSpeed,
+          color: item.color,
+          distance: item.distance,
+          elapsedTime: item.elapsedTime,
+          finishDate: item.finishDate,
+          maxSpeed: item.maxSpeed,
+          name: item.name,
+          startDate: item.startDate,
+        },
+      ];
+
+      const totalElapsedTime = newLogs.reduce(
+        (current: number, x: ReportItemModel): number => {
+          return current + x.elapsedTime;
+        },
+        0
+      );
+
+      setLogs(newLogs);
+      setTotalTime(totalElapsedTime);
+
+      if (filterByActivity) {
+        setFilteredLogs(
+          newLogs.filter(
+            (x: ReportItemModel): boolean => {
+              return x.activityId === filterByActivity;
+            }
+          )
+        );
+      }
+
+      if (autoScrollToBottom) {
+        scrollToBottom();
+      }
+    },
+    [
+      logs,
+      autoScrollToBottom,
+      filterByActivity,
+      scrollToBottom,
+    ]
+  );
+
   useImperativeHandle(
     ref,
     (): ReportViewProps => {
       return {
         sessionId,
         load,
+        addItem,
       };
     }
   );

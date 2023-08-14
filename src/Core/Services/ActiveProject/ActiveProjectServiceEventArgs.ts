@@ -1,1 +1,1 @@
-export type ActiveProjectServiceEventArgs = Record<string, any>;
+export type ActiveProjectServiceEventArgs<T extends Object = Record<string, any>> = T;

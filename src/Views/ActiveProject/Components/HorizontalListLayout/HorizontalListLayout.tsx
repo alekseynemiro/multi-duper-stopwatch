@@ -35,6 +35,7 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
                   onPress={(): Promise<void> => {
                     return onActivityPress({
                       activityId: activity.id,
+                      activityStatus: activity.status,
                     });
                   }}
                 />

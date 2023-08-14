@@ -1,6 +1,6 @@
 import { ColorPalette } from "@data";
 
-export type ToggleDetailsResult = {
+export type PauseResult = {
 
   id: string;
 

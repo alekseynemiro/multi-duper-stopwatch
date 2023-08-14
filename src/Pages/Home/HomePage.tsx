@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { CarouselRenderItemInfo } from "react-native-reanimated-carousel/lib/typescript/types";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { SessionState } from "@data";
+import { ActivityLoggedResult } from "@dto/ActiveProject";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
 import { ILoggerService } from "@services/Logger";
@@ -84,6 +86,8 @@ export function HomePage(): JSX.Element {
         }
       }
 
+      await reportViewRef.current?.load?.apply(reportViewRef.current);
+
       const projects = await projectService.getAll();
 
       setCanOpenProject(projects.items.length > 0);
@@ -127,10 +131,32 @@ export function HomePage(): JSX.Element {
         }
       );
 
+      const activityLoggedSubscription = activeProjectService.addEventListener<ActivityLoggedResult>(
+        "activity-logged",
+        (e: ActivityLoggedResult): void => {
+          reportViewRef.current?.addItem?.apply(
+            reportViewRef.current,
+            [{
+              id: e.id,
+              activityId: e.activityId,
+              name: e.activityName,
+              color: e.activityColor,
+              maxSpeed: e.maxSpeed,
+              avgSpeed: e.avgSpeed,
+              distance: e.distance,
+              elapsedTime: e.elapsedTime,
+              startDate: e.startDate,
+              finishDate: e.finishDate,
+            }]
+          );
+        }
+      );
+
       return async(): Promise<void> => {
         sessionStartedSubscription.remove();
         sessionFinishedSubscription.remove();
         projectLoadedSubscription.remove();
+        activityLoggedSubscription.remove();
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,12 +250,7 @@ export function HomePage(): JSX.Element {
         activeProjectView,
         reportView,
       ]}
-      onSnapToItem={(index) => {
-        if (index === 1 && reportViewRef.current) {
-          reportViewRef.current?.load?.apply(reportViewRef.current);
-        }
-      }}
-      renderItem={({ item }) => {
+      renderItem={({ item }: CarouselRenderItemInfo<JSX.Element>) => {
         return item;
       }}
     />

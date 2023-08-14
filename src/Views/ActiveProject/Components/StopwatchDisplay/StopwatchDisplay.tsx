@@ -3,7 +3,7 @@ import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
 import { ServiceIdentifier, serviceProvider } from "@config";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
-import { IStopwatchService } from "@services/Stopwatch";
+import { IActiveProjectService } from "@services/ActiveProject";
 import { colors } from "@styles";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { useLocalization } from "@utils/LocalizationUtils";
@@ -11,7 +11,7 @@ import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
 
-const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
+const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
 
 export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
@@ -20,27 +20,23 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
 
   const localization = useLocalization();
 
-  const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>();
+  const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>(false);
 
   useEffect(
-    (): { (): void } => {
-      return (): void => {
-        stopwatchService.clearOffset();
-      };
+    (): void => {
+      activeProjectService.tick();
     },
-    []
+    [
+      showCurrentActivity,
+    ]
   );
 
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
-        if (showCurrentActivity) {
-          stopwatchService.clearOffset();
-          setShowCurrentActivity(false);
-        } else {
-          stopwatchService.setOffset();
-          setShowCurrentActivity(true);
+        if (currentActivity) {
+          setShowCurrentActivity(!showCurrentActivity);
         }
       }}
     >
@@ -94,7 +90,10 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
             </Text>
           )
         }
-        <ElapsedTime />
+        <ElapsedTime
+          currentActivity={currentActivity}
+          showCurrentActivity={showCurrentActivity}
+        />
       </View>
     </TouchableOpacity>
   );

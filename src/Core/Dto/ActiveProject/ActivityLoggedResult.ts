@@ -1,6 +1,6 @@
 import { ColorPalette } from "@data";
 
-export type ToggleDetailsResult = {
+export type ActivityLoggedResult = {
 
   id: string;
 
@@ -21,7 +21,5 @@ export type ToggleDetailsResult = {
   startDate: Date;
 
   finishDate: Date;
-
-  sessionElapsedTime: number;
 
 };

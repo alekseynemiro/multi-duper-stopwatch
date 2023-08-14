@@ -1,4 +1,4 @@
-export const when = (predicate: () => boolean): Promise<void> => {
+export const when = (predicate: () => boolean, timeout: number = 250): Promise<void> => {
   const promise = new Promise<void>((resolve): void => {
     const interval = setInterval(
       (): void => {
@@ -7,7 +7,7 @@ export const when = (predicate: () => boolean): Promise<void> => {
           clearInterval(interval);
         }
       },
-      250
+      timeout
     );
   });
 
