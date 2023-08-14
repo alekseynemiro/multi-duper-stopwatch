@@ -4,7 +4,7 @@ import { Button } from "@components/Button";
 import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { TextInputField } from "@components/TextInputField";
-import { useLocalization } from "@utils/LocalizationUtils";
+import { useLocalizationService } from "@config";
 import { ActivityNameModalProps } from "./ActivityNameModalProps";
 import { activityNameModalStyles } from "./ActivityNameModalStyles";
 
@@ -16,7 +16,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
     onCancel,
   } = props;
 
-  const localization = useLocalization();
+  const localization = useLocalizationService();
   const [newActivityName, setNewActivityName] = useState<string | undefined>(activityName);
 
   return (

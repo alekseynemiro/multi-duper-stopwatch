@@ -1,4 +1,4 @@
-import { RouteParamList, Routes } from "@config";
+import { RouteParamList } from "@config";
 import {
   RouteProp,
   useNavigation as reactNativeUseNavigation,
@@ -8,6 +8,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export const useNavigation = reactNativeUseNavigation<NativeStackNavigationProp<RouteParamList>>;
 
-export const useRoute = <TName extends Routes>(): RouteProp<RouteParamList, TName> => {
+export const useRoute = <TName extends keyof RouteParamList>(): RouteProp<RouteParamList, TName> => {
   return reactNativeUseRoute<RouteProp<RouteParamList, TName>>();
 };

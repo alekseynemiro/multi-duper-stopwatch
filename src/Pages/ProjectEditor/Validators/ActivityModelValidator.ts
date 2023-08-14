@@ -1,4 +1,4 @@
-import { useLocalization } from "@utils/LocalizationUtils";
+import { useLocalizationService } from "@config";
 import { Validator } from "fluentvalidation-ts";
 import { ActivityModel } from "../Models";
 
@@ -8,7 +8,7 @@ export class ActivityModelValidator extends Validator<ActivityModel> {
     super();
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const localization = useLocalization();
+    const localization = useLocalizationService();
 
     this.ruleFor("name")
       .notEmpty()

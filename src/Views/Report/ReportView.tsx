@@ -5,19 +5,15 @@ import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { DurationFormatter } from "@components/DurationFormatter";
 import { Icon } from "@components/Icon";
 import { TriangleMarker } from "@components/TriangleMarker";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import { useLocalizationService, useSessionLogService } from "@config";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { useFocusEffect } from "@react-navigation/native";
-import { ISessionLogService } from "@services/Sessions";
 import { colors } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { ReportItemModel } from "./Models/ReportItemModel";
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
-
-const sessionLogService = serviceProvider.get<ISessionLogService>(ServiceIdentifier.SessionLogService);
 
 export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element => {
   const {
@@ -25,7 +21,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     autoScrollToBottom,
   } = props;
 
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const sessionLogService = useSessionLogService();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
 
@@ -56,22 +53,24 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       let totalElapsedTime = 0;
 
       setLogs(
-        data.items.map((x: GetAllResultItem): ReportItemModel => {
-          totalElapsedTime += x.elapsedTime;
+        data.items.map(
+          (x: GetAllResultItem): ReportItemModel => {
+            totalElapsedTime += x.elapsedTime;
 
-          return {
-            id: x.id,
-            activityId: x.activityId,
-            name: x.activityName,
-            color: x.activityColor,
-            avgSpeed: x.avgSpeed,
-            elapsedTime: x.elapsedTime,
-            maxSpeed: x.maxSpeed,
-            distance: x.distance,
-            startDate: x.startDate,
-            finishDate: x.finishDate,
-          };
-        })
+            return {
+              id: x.id,
+              activityId: x.activityId,
+              name: x.activityName,
+              color: x.activityColor,
+              avgSpeed: x.avgSpeed,
+              elapsedTime: x.elapsedTime,
+              maxSpeed: x.maxSpeed,
+              distance: x.distance,
+              startDate: x.startDate,
+              finishDate: x.finishDate,
+            };
+          }
+        )
       );
 
       setTotalTime(totalElapsedTime);
@@ -84,6 +83,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     [
       sessionId,
       autoScrollToBottom,
+      sessionLogService,
       scrollToBottom,
     ]
   );

@@ -2,15 +2,14 @@ import React from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
-import { Routes } from "@config";
+import { Routes, useLocalizationService } from "@config";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useRoute } from "@utils/NavigationUtils";
 import { appHeaderStyles } from "./AppHeaderStyles";
 
 export function AppHeader(props: DrawerHeaderProps): JSX.Element {
   const route = useRoute();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   return (
     <View

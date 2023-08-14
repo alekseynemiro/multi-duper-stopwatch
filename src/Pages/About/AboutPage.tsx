@@ -4,12 +4,12 @@ import DeviceInfo from "react-native-device-info";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Icon } from "@components/Icon";
 import { Link } from "@components/Link";
+import { useLocalizationService } from "@config";
 import AppIcon from "@images/AppIcon.png";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { aboutPageStyles } from "./AboutPageStyles";
 
 export function AboutPage(): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   return (
     <ScrollView
