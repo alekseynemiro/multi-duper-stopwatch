@@ -50,5 +50,11 @@ module.exports = {
       },
     ],
     ["react-native-reanimated/plugin"],
+    [
+      "transform-remove-console",
+      {
+        "exclude": ["error", "warn"],
+      },
+    ],
   ],
 };
