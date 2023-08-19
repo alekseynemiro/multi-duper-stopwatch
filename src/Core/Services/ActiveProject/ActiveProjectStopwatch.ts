@@ -8,7 +8,7 @@ import { ActiveProjectStopwatchTickEventArgs } from "./ActiveProjectStopwatchTic
 
 export class ActiveProjectStopwatch {
 
-  private readonly _interval = 25;
+  private readonly _interval = 50;
 
   private readonly _dateTimeService: IDateTimeService;
 

@@ -20,6 +20,6 @@ export type ReportItemModel = {
 
   startDate: Date;
 
-  finishDate: Date;
+  finishDate: Date | undefined;
 
 };

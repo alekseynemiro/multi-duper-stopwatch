@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Text, useWindowDimensions } from "react-native";
-import { ServiceIdentifier, serviceProvider } from "@config";
-import { ActiveProjectStopwatchTickEventArgs, IActiveProjectService } from "@services/ActiveProject";
+import { useActiveProjectService } from "@config";
+import { ActiveProjectStopwatchTickEventArgs } from "@services/ActiveProject";
 import { TimeSpan } from "@types";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { ElapsedTimeProps } from "./ElapsedTimeProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
 
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-
 export function ElapsedTime(props: ElapsedTimeProps): JSX.Element {
   const { width, height } = useWindowDimensions();
+  const activeProjectService = useActiveProjectService();
 
   const {
     currentActivity,
@@ -45,6 +44,7 @@ export function ElapsedTime(props: ElapsedTimeProps): JSX.Element {
     [
       currentActivity,
       showCurrentActivity,
+      activeProjectService,
     ]
   );
 

@@ -1,23 +1,38 @@
 import { StyleSheet } from "react-native";
-import { styles } from "@styles";
+import { colors, styles } from "@styles";
 
 export const reportViewStyles = StyleSheet.create({
-  table: {
-    ...styles.contentView,
-    ...styles.table,
-    ...styles.w100,
+  container: {
+    margin: 8,
+    flex: 1,
   },
-  tableRow: {
+  footer: {
+  },
+  table: {
+    flex: 1,
+  },
+  tableRowHeader: {
     ...styles.tableRow,
     ...styles.border,
-    ...styles.pb8,
-    minHeight: 48,
+    height: 48,
+    backgroundColor: colors.background,
+  },
+  tableRow: {
+    alignSelf: "stretch",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 0,
+    height: 48,
+  },
+  separator: {
+    ...styles.border,
+    marginVertical: 8,
   },
   tableHeaderText: {
     ...styles.bold,
   },
   iconCol: {
-    width: 56,
+    width: 32,
     alignItems: "flex-start",
     justifyContent: "center",
     paddingLeft: 8,
@@ -34,7 +49,23 @@ export const reportViewStyles = StyleSheet.create({
     paddingLeft: 8,
     justifyContent: "center",
   },
+  totalRow: {
+    alignSelf: "stretch",
+    flexDirection: "row",
+    justifyContent: "center",
+    minHeight: 48,
+  },
   totalText: {
     ...styles.bold,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+  currentActivityRow: {
+    alignSelf: "stretch",
+    flexDirection: "row",
+    minHeight: 48,
   },
 });

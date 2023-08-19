@@ -12,7 +12,7 @@ import {
   useProjectService,
 } from "@config";
 import { SessionState } from "@data";
-import { ActivityLoggedResult } from "@dto/ActiveProject";
+import { Activity, ActivityLoggedResult, ActivityStatus } from "@dto/ActiveProject";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs } from "@services/ActiveProject";
 import { styles } from "@styles";
@@ -20,7 +20,6 @@ import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
 import { ReportView, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
-
 
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
@@ -38,6 +37,11 @@ export function HomePage(): JSX.Element {
   const [sessionId, setSessionId] = useState<string | undefined>(route.params?.sessionId);
   const [loading, setLoading] = useState<boolean>(true);
   const [canOpenProject, setCanOpenProject] = useState<boolean>(false);
+
+  loggerService.debug(
+    HomePage.name,
+    "render"
+  );
 
   const load = useCallback(
     async(): Promise<void> => {
@@ -106,6 +110,37 @@ export function HomePage(): JSX.Element {
     ]
   );
 
+  const reportViewLoadHandler = useCallback(
+    (): void => {
+      if (!activeProjectService.currentActivityId) {
+        return;
+      }
+
+      const currentActivity = activeProjectService.activities?.find(
+        (x: Activity): boolean => {
+          return x.id === activeProjectService.currentActivityId;
+        }
+      );
+
+      if (!currentActivity) {
+        return;
+      }
+
+      reportViewRef.current?.addCurrentActivity?.apply(
+        reportViewRef.current,
+        [{
+          id: currentActivity.id,
+          color: currentActivity.color,
+          name: currentActivity.name,
+        }]
+      );
+    },
+    [
+      activeProjectService,
+      reportViewRef,
+    ]
+  );
+
   useEffect(
     (): { (): void } => {
       const sessionStartedSubscription = activeProjectService.addEventListener(
@@ -113,6 +148,13 @@ export function HomePage(): JSX.Element {
         (): void => {
           activeProjectService.session && setSessionId(activeProjectService.session.id);
           activeProjectService.project && setProjectId(activeProjectService.project.id);
+        }
+      );
+
+      const sessionPausedSubscription = activeProjectService.addEventListener(
+        "session-paused",
+        (): void => {
+          reportViewRef.current?.clearCurrentActivity?.apply(reportViewRef.current);
         }
       );
 
@@ -134,6 +176,34 @@ export function HomePage(): JSX.Element {
           navigation.setOptions({
             title: activeProjectService.project?.name,
           });
+        }
+      );
+
+      const activityUpdatedSubscription = activeProjectService.addEventListener<{ activityId: string, status: ActivityStatus }>(
+        "activity-updated",
+        async({ activityId, status }: { activityId: string, status: ActivityStatus }): Promise<void> => {
+          if (status !== ActivityStatus.Running) {
+            return;
+          }
+
+          const activity = activeProjectService.activities?.find(
+            (x: Activity): boolean => {
+              return x.id === activityId;
+            }
+          );
+
+          if (!activity) {
+            throw new Error(`Activity #${activityId} not found.`);
+          }
+
+          reportViewRef.current?.addCurrentActivity?.apply(
+            reportViewRef.current,
+            [{
+              id: activityId,
+              color: activity.color,
+              name: activity.name,
+            }]
+          );
         }
       );
 
@@ -160,8 +230,10 @@ export function HomePage(): JSX.Element {
 
       return async(): Promise<void> => {
         sessionStartedSubscription.remove();
+        sessionPausedSubscription.remove();
         sessionFinishedSubscription.remove();
         projectLoadedSubscription.remove();
+        activityUpdatedSubscription.remove();
         activityLoggedSubscription.remove();
       };
     },
@@ -227,6 +299,7 @@ export function HomePage(): JSX.Element {
         ref={reportViewRef}
         sessionId={sessionId}
         autoScrollToBottom={true}
+        onLoad={reportViewLoadHandler}
       />
     )
     : (
