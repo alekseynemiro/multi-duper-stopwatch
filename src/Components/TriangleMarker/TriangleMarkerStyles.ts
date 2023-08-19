@@ -4,6 +4,7 @@ import { colors } from "@styles";
 export const triangleMarkerStyles = StyleSheet.create({
   container: {
     flexDirection: "row",
+    alignItems: "center",
   },
   body: {
     width: 32,
@@ -11,7 +12,7 @@ export const triangleMarkerStyles = StyleSheet.create({
     zIndex: 0,
   },
   bodyWithChevron: {
-    width: 18,
+    width: 22,
   },
   arrow: {
     borderTopWidth: 12,
@@ -28,7 +29,8 @@ export const triangleMarkerStyles = StyleSheet.create({
     borderTopWidth: 12,
     borderRightWidth: 0,
     borderBottomWidth: 12,
-    borderLeftWidth: 12,
+    borderLeftWidth: 8,
+    height: 24,
   },
   offset: {
     position: "absolute",
@@ -40,7 +42,7 @@ export const triangleMarkerStyles = StyleSheet.create({
     borderTopWidth: 12,
     borderRightWidth: 0,
     borderBottomWidth: 12,
-    borderLeftWidth: 18,
+    borderLeftWidth: 10,
     borderTopColor: "transparent",
     borderRightColor: "transparent",
     borderBottomColor: "transparent",
@@ -48,11 +50,11 @@ export const triangleMarkerStyles = StyleSheet.create({
     zIndex: 1,
   },
   chevron: {
-    marginLeft: -6,
+    marginLeft: -2,
     borderTopWidth: 12,
     borderRightWidth: 0,
     borderBottomWidth: 12,
-    borderLeftWidth: 18,
+    borderLeftWidth: 12,
     borderTopColor: "transparent",
     borderRightColor: "transparent",
     borderBottomColor: "transparent",
