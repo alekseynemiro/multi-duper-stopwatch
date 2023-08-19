@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { ReportItemModel } from "./Models/ReportItemModel";
+import { CurrentActivityModel, ReportItemModel } from "./Models";
 
 export type ReportViewProps = {
 
@@ -12,5 +12,11 @@ export type ReportViewProps = {
   load?(): Promise<void>;
 
   addItem?(item: ReportItemModel): void;
+
+  addCurrentActivity?(item: CurrentActivityModel): void;
+
+  clearCurrentActivity?(): void;
+
+  onLoad?(): void;
 
 };
