@@ -8,6 +8,7 @@ export function Link(props: LinkProps): JSX.Element {
     style,
     url,
     text,
+    onPress,
   } = props;
 
   return (
@@ -17,7 +18,13 @@ export function Link(props: LinkProps): JSX.Element {
         style,
       ]}
       onPress={(): void => {
-        Linking.openURL(url);
+        if (url) {
+          Linking.openURL(url);
+        }
+
+        if (onPress) {
+          onPress();
+        }
       }}
     >
       {text}
