@@ -32,7 +32,7 @@ export const reportViewStyles = StyleSheet.create({
     ...styles.bold,
   },
   iconCol: {
-    width: 32,
+    width: 48,
     alignItems: "flex-start",
     justifyContent: "center",
     paddingLeft: 8,
@@ -63,9 +63,41 @@ export const reportViewStyles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
   },
+  multipleIcons: {
+    position: "absolute",
+  },
+  multipleIconsStep: {
+    left: 6,
+  },
   currentActivityRow: {
     alignSelf: "stretch",
     flexDirection: "row",
     minHeight: 48,
+  },
+  filter: {
+    alignSelf: "stretch",
+  },
+  filterTextContainer: {
+    marginBottom: 4,
+    paddingHorizontal: 8,
+  },
+  filterText: {
+  },
+  filterButtonsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+  },
+  filterButton: {
+    width: "50%",
+  },
+  noData: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  noDataText: {
+    textAlign: "center",
   },
 });

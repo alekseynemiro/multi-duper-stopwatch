@@ -1,9 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 import { Text, View } from "react-native";
 import { DurationFormatter } from "@components/DurationFormatter";
 import { useLocalizationService } from "@config";
+import { ColorPalette } from "@data";
 import { colors } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
+import { FilteredActivityModel } from "@views/Report/Models";
 import { reportViewStyles } from "@views/Report/ReportViewStyles";
 import { TotalProps } from "./TotalProps";
 import { TotalRealTimeValue } from "./TotalRealTimeValue";
@@ -12,23 +14,20 @@ export function Total(props: TotalProps): JSX.Element {
   const localization = useLocalizationService();
 
   const {
-    activityId,
-    activityColor,
+    activities,
     elapsed,
     realTimeUpdate,
   } = props;
 
-  const color = useMemo(
-    (): string => {
-      if (activityColor) {
-        return getColorCode(activityColor);
+  const getColor = useCallback(
+    (color: ColorPalette | undefined): string => {
+      if (color) {
+        return getColorCode(color);
       }
 
       return colors.white;
     },
-    [
-      activityColor,
-    ]
+    []
   );
 
   return (
@@ -36,19 +35,33 @@ export function Total(props: TotalProps): JSX.Element {
       style={reportViewStyles.totalRow}
     >
       {
-        activityId
+        activities?.length > 0
         && (
           <View
             style={reportViewStyles.iconCol}
           >
-            <View
-              style={[
-                reportViewStyles.icon,
-                {
-                  backgroundColor: color,
-                },
-              ]}
-            />
+            {
+              activities?.slice(0, 3).map(
+                (x: FilteredActivityModel, index: number): JSX.Element => {
+                  return (
+                      <View
+                        key={x.id}
+                        style={[
+                          reportViewStyles.icon,
+                          {
+                            backgroundColor: getColor(x.color),
+                          },
+                          activities.length > 1
+                          && {
+                            ...reportViewStyles.multipleIcons,
+                            left: (index * reportViewStyles.multipleIconsStep.left) + reportViewStyles.iconCol.paddingLeft,
+                          },
+                        ]}
+                      />
+                  );
+                }
+              )
+            }
           </View>
         )
       }

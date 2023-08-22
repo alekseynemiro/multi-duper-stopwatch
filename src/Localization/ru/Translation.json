@@ -45,7 +45,21 @@
     "pageTitle": "Отчёт",
     "activity": "Активность",
     "time": "Время",
-    "total": "Всего:"
+    "total": "Всего:",
+    "filteredByOneActivity": "Показана {{count}} активность",
+    "filteredByFewActivity": "Показано {{count}} активности",
+    "filteredByOtherActivities": "Показано {{count}} активностей",
+    "setFilter": "Добавить фильтры",
+    "changeFilter": "Изменить",
+    "clearFilter": "Очистить",
+    "noData": "Здесь пока нет записей.",
+    "finishAnyActivity": "Завершите любую активность, чтобы информация о ней появилась в этом отчёте.",
+    "tryToResetFilter": "Попробуйте сбросить параметры фильтрации записей.",
+    "resetFilter": "Сбросить фильтр",
+    "filterModal": {
+      "ok": "Применить",
+      "cancel": "Отмена"
+    }
   },
   "projectList": {
     "confirmationTitle": "Подтверждение",

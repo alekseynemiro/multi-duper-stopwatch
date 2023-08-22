@@ -18,6 +18,7 @@ export const projectListPageStyles = StyleSheet.create({
     minWidth: 48,
     minHeight: 48,
     justifyContent: "center",
+    marginLeft: 10,
   },
   buttonIcon: {
   },

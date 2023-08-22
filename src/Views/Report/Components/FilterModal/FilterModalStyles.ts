@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
-import { colors } from "@styles";
+import { colors, styles } from "@styles";
 
-export const sessionNameModalStyles = StyleSheet.create({
+export const filterModalStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -29,6 +29,8 @@ export const sessionNameModalStyles = StyleSheet.create({
     maxWidth: 450,
     minWidth: 250,
   },
+  activities: {
+  },
   row: {
     width: "100%",
     marginBottom: 8,
@@ -41,5 +43,40 @@ export const sessionNameModalStyles = StyleSheet.create({
   button: {
     minWidth: 75,
     marginRight: 10,
+  },
+  tableRow: {
+    alignSelf: "stretch",
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 0,
+    height: 48,
+  },
+  separator: {
+    ...styles.border,
+    marginVertical: 8,
+  },
+  checkBoxCol: {
+    width: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: 8,
+  },
+  iconCol: {
+    width: 32,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingLeft: 8,
+  },
+  nameCol: {
+    ...styles.tableCell,
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingLeft: 8,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
   },
 });
