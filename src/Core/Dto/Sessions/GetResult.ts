@@ -8,6 +8,8 @@ export type GetResult = {
 
   activityId: string;
 
+  activityStartDate: Date;
+
   startDate: Date;
 
   finishDate: Date | null | undefined;

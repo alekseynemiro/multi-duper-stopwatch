@@ -623,6 +623,7 @@ export class SessionService implements ISessionService {
           id: session.id,
           projectId: session.project.id,
           activityId: session.activity?.id,
+          activityStartDate: session.activityStartDate,
           startDate: session.startDate,
           finishDate: session.finishDate,
           avgSpeed: session.avgSpeed,
