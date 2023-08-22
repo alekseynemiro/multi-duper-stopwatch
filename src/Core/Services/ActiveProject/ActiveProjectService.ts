@@ -16,7 +16,8 @@ import { IProjectService } from "@services/Projects";
 import { IQueueService } from "@services/Queue";
 import { ISessionService } from "@services/Sessions";
 import { ISettingsService } from "@services/Settings";
-import { ILocalStorageService } from "@services/Storage";
+import { ILocalStorageService, ISessionStorageService } from "@services/Storage";
+import { SessionStorageKeys } from "@types";
 import { inject, injectable } from "inversify";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
@@ -49,6 +50,8 @@ export class ActiveProjectService implements IActiveProjectService {
   private readonly _queueService: IQueueService;
 
   private readonly _localStorageService: ILocalStorageService;
+
+  private readonly _sessionStorageService: ISessionStorageService;
 
   private readonly _loggerService: ILoggerService;
 
@@ -87,6 +90,7 @@ export class ActiveProjectService implements IActiveProjectService {
     @inject(ServiceIdentifier.DateTimeService) dateTimeService: IDateTimeService,
     @inject(ServiceIdentifier.QueueService) queueService: IQueueService,
     @inject(ServiceIdentifier.LocalStorageService) localStorageService: ILocalStorageService,
+    @inject(ServiceIdentifier.SessionStorageService) sessionStorageService: ISessionStorageService,
     @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
   ) {
     this._settingsService = settingsService;
@@ -95,6 +99,7 @@ export class ActiveProjectService implements IActiveProjectService {
     this._dateTimeService = dateTimeService;
     this._queueService = queueService;
     this._localStorageService = localStorageService;
+    this._sessionStorageService = sessionStorageService;
     this._loggerService = loggerService;
 
     this._stopwatch = new ActiveProjectStopwatch(
@@ -932,6 +937,8 @@ export class ActiveProjectService implements IActiveProjectService {
         this._localStorageService.removeItem<LocalStorageKeys>("shouldPause"),
         this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
       ]);
+
+      this._sessionStorageService.removeItem<SessionStorageKeys>("stopwatch-mode");
 
       this._stopwatch.reset();
     } finally {

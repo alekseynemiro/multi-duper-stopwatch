@@ -25,8 +25,9 @@ import { ISettingsService } from "@services/Settings";
 import { SettingsService } from "@services/Settings/SettingsService";
 import { IStopwatchService } from "@services/Stopwatch";
 import { StopwatchService } from "@services/Stopwatch/StopwatchService";
-import { ILocalStorageService } from "@services/Storage";
+import { ILocalStorageService, ISessionStorageService } from "@services/Storage";
 import { LocalStorageService } from "@services/Storage/LocalStorageService";
+import { SessionStorageService } from "@services/Storage/SessionStorageService";
 import { Container } from "inversify";
 import { ServiceIdentifier } from "./ServiceIdentifier";
 
@@ -46,6 +47,7 @@ serviceProvider.bind<IActiveProjectService>(ServiceIdentifier.ActiveProjectServi
 serviceProvider.bind<IQueueService>(ServiceIdentifier.QueueService).to(QueueService).inSingletonScope();
 serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService).inSingletonScope();
 serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
+serviceProvider.bind<ISessionStorageService>(ServiceIdentifier.SessionStorageService).to(SessionStorageService).inSingletonScope();
 serviceProvider.bind<ILocalizationService>(ServiceIdentifier.LocalizationService).to(LocalizationService).inSingletonScope();
 
 export { serviceProvider };

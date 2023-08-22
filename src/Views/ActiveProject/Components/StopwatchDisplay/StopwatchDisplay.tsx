@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
-import { useActiveProjectService, useLocalizationService } from "@config";
+import {
+  useActiveProjectService,
+  useLocalizationService,
+  useSessionStorageService,
+} from "@config";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { colors } from "@styles";
+import { SessionStorageKeys } from "@types";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
@@ -16,6 +21,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
 
   const localization = useLocalizationService();
   const activeProjectService = useActiveProjectService();
+  const sessionStorageService = useSessionStorageService();
 
   const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>(false);
 
@@ -26,6 +32,22 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     [
       showCurrentActivity,
       activeProjectService,
+      sessionStorageService,
+    ]
+  );
+
+  useEffect(
+    (): void => {
+      const mode: number = sessionStorageService.getItem<SessionStorageKeys, number>("stopwatch-mode");
+
+      if (mode === 1) {
+        setShowCurrentActivity(true);
+      } else {
+        setShowCurrentActivity(false);
+      }
+    },
+    [
+      sessionStorageService,
     ]
   );
 
@@ -33,8 +55,16 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
+
         if (currentActivity) {
-          setShowCurrentActivity(!showCurrentActivity);
+          const value = !showCurrentActivity;
+
+          setShowCurrentActivity(value);
+
+          sessionStorageService.setItem<SessionStorageKeys>(
+            "stopwatch-mode",
+            value ? 1 : 0
+          );
         }
       }}
     >
