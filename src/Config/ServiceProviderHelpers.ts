@@ -7,7 +7,7 @@ import { IProjectService } from "@services/Projects";
 import { IQueueService } from "@services/Queue";
 import { ISessionLogService, ISessionService } from "@services/Sessions";
 import { ISettingsService } from "@services/Settings";
-import { ILocalStorageService } from "@services/Storage";
+import { ILocalStorageService, ISessionStorageService } from "@services/Storage";
 import { ServiceIdentifier } from "./ServiceIdentifier";
 import { serviceProvider } from "./ServiceProvider";
 
@@ -25,6 +25,10 @@ export const useGuidService = (): IGuidService => {
 
 export const useLocalStorageService = (): ILocalStorageService => {
   return serviceProvider.get<ILocalStorageService>(ServiceIdentifier.LocalStorageService);
+};
+
+export const useSessionStorageService = (): ISessionStorageService => {
+  return serviceProvider.get<ISessionStorageService>(ServiceIdentifier.SessionStorageService);
 };
 
 export const useLocalizationService = (): ILocalizationService => {
