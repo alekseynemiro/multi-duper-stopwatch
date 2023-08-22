@@ -1,4 +1,10 @@
 export type LocalizationKey =
+  | "initialScreen.activityRecoveryModal.introduction"
+  | "initialScreen.activityRecoveryModal.timePassed"
+  | "initialScreen.activityRecoveryModal.lastActivity"
+  | "initialScreen.activityRecoveryModal.wouldYouLikeToAdd"
+  | "initialScreen.activityRecoveryModal.yes"
+  | "initialScreen.activityRecoveryModal.no"
   | "header.accessibility.back"
   | "header.accessibility.menu"
   | "menu.home"

@@ -1,5 +1,15 @@
 {
   "_comment": "Localization/en/Translation.json",
+  "initialScreen": {
+    "activityRecoveryModal": {
+      "introduction": "It looks like the previous run of the program was terminated abnormally.",
+      "timePassed": "Since the closing of the program has passed:",
+      "lastActivity": "Last activity:",
+      "wouldYouLikeToAdd": "Would you like to add this time to this activity?",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
   "header": {
     "accessibility": {
       "menu": "Menu",
