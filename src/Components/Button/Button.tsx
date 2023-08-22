@@ -22,51 +22,49 @@ export function Button(props: ButtonProps): JSX.Element {
   } = props;
 
   return (
-    <View style={buttonStyles.container}>
-      <TouchableOpacity
-        disabled={disabled}
-        style={[
-          buttonStyles.button,
-          buttonStyles[variant ?? "primary"],
-          disabled && buttonStyles.disabled,
-          style,
-        ]}
-        accessible={accessible}
-        accessibilityState={accessibilityState}
-        accessibilityValue={accessibilityValue}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint={accessibilityHint}
-        importantForAccessibility={importantForAccessibility}
-        onPress={(): void => {
-          if (!disabled) {
-            onPress();
-          }
-        }}
-      >
-        {
-          title
-          && (
-            <Text
-              style={[
-                buttonStyles[`${variant ?? "primary"}Title`],
-                titleStyle,
-              ]}
-            >
-              {title}
-            </Text>
-          )
+    <TouchableOpacity
+      disabled={disabled}
+      style={[
+        buttonStyles.button,
+        buttonStyles[variant ?? "primary"],
+        disabled && buttonStyles.disabled,
+        style,
+      ]}
+      accessible={accessible}
+      accessibilityState={accessibilityState}
+      accessibilityValue={accessibilityValue}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      importantForAccessibility={importantForAccessibility}
+      onPress={(): void => {
+        if (!disabled) {
+          onPress();
         }
-        {
-          children
-          && (
-            <View
-              style={childWrapperStyle}
-            >
-              {children}
-            </View>
-          )
-        }
-      </TouchableOpacity>
-    </View>
+      }}
+    >
+      {
+        title
+        && (
+          <Text
+            style={[
+              buttonStyles[`${variant ?? "primary"}Title`],
+              titleStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        )
+      }
+      {
+        children
+        && (
+          <View
+            style={childWrapperStyle}
+          >
+            {children}
+          </View>
+        )
+      }
+    </TouchableOpacity>
   );
 }

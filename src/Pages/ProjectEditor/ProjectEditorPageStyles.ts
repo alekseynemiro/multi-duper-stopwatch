@@ -35,4 +35,7 @@ export const projectEditorPageStyles = StyleSheet.create({
     justifyContent: "flex-start",
     marginHorizontal: 0,
   },
+  footerButton: {
+    marginRight: 10,
+  },
 });

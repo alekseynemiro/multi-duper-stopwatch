@@ -2,6 +2,9 @@ import { StyleSheet } from "react-native";
 import { defaultFontSize } from "@styles";
 
 export const activityStyles = StyleSheet.create({
+  buttonContainer: {
+    marginRight: 10,
+  },
   button: {
     paddingHorizontal: 8,
     flexDirection: "row",

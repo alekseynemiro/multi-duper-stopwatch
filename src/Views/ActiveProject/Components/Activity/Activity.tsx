@@ -26,6 +26,7 @@ export function Activity(props: ActivityProps): JSX.Element {
   return (
     <Button
       style={[
+        activityStyles.buttonContainer,
         {
           backgroundColor: color
             ? getColorCode(color)

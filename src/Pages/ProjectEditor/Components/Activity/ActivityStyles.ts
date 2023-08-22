@@ -32,10 +32,12 @@ export const activityStyles = StyleSheet.create({
     borderWidth: 1,
     minWidth: 48,
     minHeight: 48,
+    marginLeft: 10,
   },
   deleteButton: {
     minWidth: 48,
     minHeight: 48,
+    marginLeft: 10,
   },
   dragging: {
     zIndex: 1000,

@@ -40,5 +40,6 @@ export const sessionNameModalStyles = StyleSheet.create({
   },
   button: {
     minWidth: 75,
+    marginRight: 10,
   },
 });
