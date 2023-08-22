@@ -5,6 +5,7 @@ import {
   Activity,
   ActivityLoggedResult,
   ActivityStatus,
+  CanRecoveryResult,
   Project,
 } from "@dto/ActiveProject";
 import { GetResultActivity } from "@dto/Projects";
@@ -100,6 +101,158 @@ export class ActiveProjectService implements IActiveProjectService {
       dateTimeService,
       loggerService
     );
+  }
+
+  public async canRecovery(): Promise<CanRecoveryResult | undefined> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.canRecovery.name
+    );
+
+    const shouldReset = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldReset");
+    const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
+    const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
+    const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
+
+    if ([
+      shouldReset,
+      shouldPause,
+      shouldFinish,
+      shouldToggleCurrentActivity,
+    ].includes(1)) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.canRecovery.name,
+        "Unable to recover because there is an unfinished activity."
+      );
+
+      return undefined;
+    }
+
+    const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
+
+    if (lastSessionId) {
+      const session = await this._sessionService.get(lastSessionId);
+
+      if (session.state === SessionState.Run) {
+        this._loggerService.debug(
+          ActiveProjectService.name,
+          this.canRecovery.name,
+          `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`
+        );
+
+        const project = await this._projectService.get(session.projectId);
+        const activity = project.activities?.find(
+          (x: GetResultActivity): boolean => {
+            return x.id === session.activityId;
+          }
+        );
+
+        if (!activity) {
+          this._loggerService.debug(
+            ActiveProjectService.name,
+            this.canRecovery.name,
+            `Unable to recover because activity #${session.activityId} was not found in project #${session.projectId}.`
+          );
+
+          return undefined;
+        }
+
+        return {
+          activityColor: activity.color,
+          activityName: activity.name,
+          activityStartDate: session.activityStartDate,
+          now: this._dateTimeService.now,
+        };
+      }
+    }
+
+    return undefined;
+  }
+
+  public async recovery(date: Date): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.recovery.name,
+      "time",
+      date.getTime()
+    );
+
+    const shouldReset = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldReset");
+    const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
+    const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
+    const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
+
+    if ([
+      shouldReset,
+      shouldPause,
+      shouldFinish,
+      shouldToggleCurrentActivity,
+    ].includes(1)) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        "Unable to recover because there is an unfinished activity."
+      );
+
+      return;
+    }
+
+    const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
+
+    if (!lastSessionId) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        "Unable to recover because the last session ID is missing."
+      );
+
+      return;
+    }
+
+    const session = await this._sessionService.get(lastSessionId);
+
+    if (session.state !== SessionState.Run) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        `Unable to recover because the last session #${lastSessionId} is in the status ${SessionState[session.state]}.`
+      );
+
+      return;
+    }
+
+    const project = await this._projectService.get(session.projectId);
+    const activity = project.activities?.find(
+      (x: GetResultActivity): boolean => {
+        return x.id === session.activityId;
+      }
+    );
+
+    if (!activity) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        `Unable to recover because activity #${session.activityId} was not found in project #${session.projectId}.`
+      );
+
+      return;
+    }
+
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.recovery.name,
+      `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`,
+      `Should be paused with time ${date.getTime()}).`
+    );
+
+    await this._sessionService.pause({
+      sessionId: session.id,
+      date,
+      avgSpeed: 0,
+      distance: 0,
+      maxSpeed: 0,
+    });
   }
 
   public async checkForCrash(): Promise<void> {

@@ -1,5 +1,5 @@
 import { NativeEventSubscription } from "react-native";
-import { Activity, Project } from "@dto/ActiveProject";
+import { Activity, CanRecoveryResult, Project } from "@dto/ActiveProject";
 import { GetResult as Session } from "@dto/Sessions";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
@@ -15,6 +15,10 @@ export interface IActiveProjectService {
   readonly session: Session | undefined;
 
   readonly currentActivityId: string | undefined;
+
+  canRecovery(): Promise<CanRecoveryResult | undefined>;
+
+  recovery(date: Date): Promise<void>;
 
   checkForCrash(): Promise<void>;
 

@@ -1,5 +1,15 @@
 {
   "_comment": "Localization/ru/Translation.json",
+  "initialScreen": {
+    "activityRecoveryModal": {
+      "introduction": "Похоже работа программы была завершена аварийно.",
+      "timePassed": "С момент закрытия программы прошло:",
+      "lastActivity": "Последняя активность:",
+      "wouldYouLikeToAdd": "Хотите добавить это время к этой активности?",
+      "yes": "Да, добавить",
+      "no": "Нет"
+    }
+  },
   "header": {
     "accessibility": {
       "menu": "Меню",
