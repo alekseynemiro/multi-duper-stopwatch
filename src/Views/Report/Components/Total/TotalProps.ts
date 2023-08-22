@@ -1,11 +1,9 @@
-import { ColorPalette } from "@data";
 import { TimeSpan } from "@types";
+import { FilteredActivityModel } from "@views/Report/Models";
 
 export type TotalProps = {
 
-  activityId: string | undefined;
-
-  activityColor: ColorPalette | undefined;
+  activities: Array<FilteredActivityModel>;
 
   elapsed: TimeSpan;
 

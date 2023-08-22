@@ -1,3 +1,4 @@
+import { ActivityModel } from "./ActivityModel";
 import { CurrentActivityModel } from "./CurrentActivityModel";
 import { FilteredActivityModel } from "./FilteredActivityModel";
 import { ReportItemModel } from "./ReportItemModel";
@@ -6,9 +7,11 @@ export type ReportViewStateModel = {
 
   logs: Array<ReportItemModel>;
 
+  groupedActivities: Map<string, ActivityModel>;
+
   outputLogs: Array<ReportItemModel>;
 
-  filterByActivity: FilteredActivityModel | undefined;
+  filterByActivities: Array<FilteredActivityModel>;
 
   totalTime: number;
 
@@ -17,5 +20,7 @@ export type ReportViewStateModel = {
   currentActivity: CurrentActivityModel | undefined;
 
   showLoadingIndicator: boolean;
+
+  showFilterModal: boolean;
 
 };

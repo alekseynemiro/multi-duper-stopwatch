@@ -44,7 +44,21 @@
     "pageTitle": "Report",
     "activity": "Activity",
     "time": "Time",
-    "total": "Total:"
+    "total": "Total:",
+    "filteredByOneActivity": "Filtered by {{count}} activity",
+    "filteredByFewActivity": "Filtered by {{count}} activities",
+    "filteredByOtherActivities": "Filtered by {{count}} activities",
+    "setFilter": "Set filters",
+    "changeFilter": "Change",
+    "clearFilter": "Reset",
+    "noData": "There are no entries yet.",
+    "finishAnyActivity": "Finish any activity for the information to appear in the report.",
+    "tryToResetFilter": "Try resetting filters.",
+    "resetFilter": "Reset filters",
+    "filterModal": {
+      "ok": "Ok",
+      "cancel": "Cancel"
+    }
   },
   "projectList": {
     "confirmationTitle": "Confirmation",
