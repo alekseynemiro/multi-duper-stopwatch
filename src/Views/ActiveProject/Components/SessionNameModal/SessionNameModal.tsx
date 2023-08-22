@@ -20,7 +20,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={show}
     >

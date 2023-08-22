@@ -21,7 +21,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={true}
     >

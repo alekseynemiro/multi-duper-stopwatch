@@ -13,7 +13,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={true}
     >
