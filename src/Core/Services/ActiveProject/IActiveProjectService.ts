@@ -24,6 +24,8 @@ export interface IActiveProjectService {
 
   useLastSessionId(): Promise<void>;
 
+  useLastProjectId(): Promise<void>;
+
   useSessionId(sessionId: string): Promise<void>;
 
   useProjectId(projectId: string): Promise<void>;

@@ -83,6 +83,10 @@ export function HomePage(): JSX.Element {
           await activeProjectService.useLastSessionId();
         }
 
+        if (!activeProjectService.project) {
+          await activeProjectService.useLastProjectId();
+        }
+
         if (activeProjectService.session?.state === SessionState.Finished) {
           navigation.navigate(
             Routes.Home,
@@ -173,6 +177,13 @@ export function HomePage(): JSX.Element {
       const projectLoadedSubscription = activeProjectService.addEventListener(
         "project-loaded",
         (): void => {
+          if (
+            activeProjectService.project
+            && projectId !== activeProjectService.project.id
+          ) {
+            setProjectId(activeProjectService.project.id);
+          }
+
           navigation.setOptions({
             title: activeProjectService.project?.name,
           });

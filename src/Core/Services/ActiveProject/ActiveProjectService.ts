@@ -384,10 +384,33 @@ export class ActiveProjectService implements IActiveProjectService {
       this.useLastSessionId.name
     );
 
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
     const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
 
     if (lastSessionId) {
       await this.setSessionId(lastSessionId);
+    }
+  }
+
+  public async useLastProjectId(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.useLastProjectId.name
+    );
+
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
+    const lastProjectId = await this._settingsService.get(SettingKey.LastProjectId);
+
+    if (lastProjectId) {
+      await this.setProjectId(lastProjectId);
     }
   }
 
@@ -397,6 +420,11 @@ export class ActiveProjectService implements IActiveProjectService {
       this.useSessionId.name
     );
 
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
     return this.setSessionId(sessionId);
   }
 
@@ -405,6 +433,10 @@ export class ActiveProjectService implements IActiveProjectService {
       ActiveProjectService.name,
       this.useProjectId.name
     );
+
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
 
     return this.setProjectId(projectId);
   }
@@ -1055,6 +1087,11 @@ export class ActiveProjectService implements IActiveProjectService {
         };
       }
     ) ?? [];
+
+    await this._settingsService.set(
+      SettingKey.LastProjectId,
+      project.id
+    );
 
     this.on("project-loaded");
   }
