@@ -48,6 +48,10 @@
       "accessibility": {
         "listOfActivities": "List of activities"
       }
+    },
+    "addActivity": {
+      "add": "Add",
+      "hold": "Please hold\nto add"
     }
   },
   "report": {
