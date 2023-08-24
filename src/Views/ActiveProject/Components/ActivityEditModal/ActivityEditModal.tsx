@@ -54,12 +54,19 @@ export function ActivityEditModal(props: ActivityEditModalProps): JSX.Element {
             initialValues={activity}
             enableReinitialize={true}
             validate={validate}
-            onSubmit={onSave}
+            onSubmit={(values: ActivityEditModel): void => {
+              onSave({
+                id: values.id,
+                color: values.color,
+                name: values.name,
+              });
+            }}
           >
             {
               ({
                 handleChange,
                 handleBlur,
+                handleSubmit,
                 setFieldValue,
                 errors,
                 touched,
@@ -120,13 +127,7 @@ export function ActivityEditModal(props: ActivityEditModalProps): JSX.Element {
                         variant="primary"
                         title={localization.get("activeProject.activityEditModal.save")}
                         style={activityEditModalStyles.button}
-                        onPress={(): void => {
-                          onSave({
-                            id: values.id,
-                            color: values.color,
-                            name: values.name,
-                          });
-                        }}
+                        onPress={handleSubmit}
                       />
                       <Button
                         variant="secondary"
