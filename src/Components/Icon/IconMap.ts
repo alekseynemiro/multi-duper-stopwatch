@@ -17,4 +17,5 @@ export const iconMap = new Map<IconName, string>()
   .set("menu", "bars")
   .set("info", "info-circle")
   .set("home-page", "house-user")
-  .set("add", "plus");
+  .set("add", "plus")
+  .set("cancel", "window-close");
