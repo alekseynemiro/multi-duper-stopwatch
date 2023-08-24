@@ -56,6 +56,8 @@ export const activityEditModalStyles = StyleSheet.create({
     width: 48,
     height: 48,
     backgroundColor: colors.white,
+    borderColor: colors.border,
+    borderWidth: 1,
   },
   selectColorButtonError: {
     marginBottom: defaultFontSize + 6,
