@@ -3,7 +3,7 @@ import { defaultFontSize } from "@styles";
 
 export const activityStyles = StyleSheet.create({
   buttonContainer: {
-    marginRight: 10,
+    marginHorizontal: 5,
   },
   button: {
     paddingHorizontal: 8,
