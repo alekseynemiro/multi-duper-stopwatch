@@ -7,7 +7,7 @@ export type ActivityProps = {
 
   name: string;
 
-  color: ColorPalette | undefined;
+  color: ColorPalette | null;
 
   status: ActivityStatus;
 

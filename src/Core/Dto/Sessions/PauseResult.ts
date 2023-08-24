@@ -8,7 +8,7 @@ export type PauseResult = {
 
   activityName: string;
 
-  activityColor: ColorPalette;
+  activityColor: ColorPalette | null;
 
   elapsedTime: number;
 

@@ -1,8 +1,9 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { QueryRunner, Table } from "typeorm";
+import { IMigration } from "./IMigration";
 
-export class InitialMigration implements MigrationInterface {
+export class InitialMigration implements IMigration {
 
-  private readonly _version: number = 20230614_1550;
+  public readonly version: number = 20230614_1550;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
@@ -305,7 +306,7 @@ export class InitialMigration implements MigrationInterface {
     await queryRunner.query(
       "INSERT INTO Migrations (Version, MigrationDate) VALUES (?, ?);",
       [
-        this._version,
+        this.version,
         new Date().getTime(),
       ]
     );

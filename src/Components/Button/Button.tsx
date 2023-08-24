@@ -19,6 +19,7 @@ export function Button(props: ButtonProps): JSX.Element {
     accessibilityValue,
     importantForAccessibility,
     onPress,
+    onLongPress,
   } = props;
 
   return (
@@ -38,7 +39,12 @@ export function Button(props: ButtonProps): JSX.Element {
       importantForAccessibility={importantForAccessibility}
       onPress={(): void => {
         if (!disabled) {
-          onPress();
+          onPress && onPress();
+        }
+      }}
+      onLongPress={(): void => {
+        if (!disabled) {
+          onLongPress && onLongPress();
         }
       }}
     >

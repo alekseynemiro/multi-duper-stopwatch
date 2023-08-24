@@ -6,6 +6,6 @@ export type CurrentActivityModel = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
 };

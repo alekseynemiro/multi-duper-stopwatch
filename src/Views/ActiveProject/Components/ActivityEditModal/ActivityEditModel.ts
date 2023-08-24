@@ -1,14 +1,11 @@
 import { ColorPalette } from "@data";
-import { ActivityStatus } from "./ActivityStatus";
 
-export type Activity = {
+export type ActivityEditModel = {
 
   id: string;
 
   name: string;
 
   color: ColorPalette | null;
-
-  status: ActivityStatus;
 
 };
