@@ -1,15 +1,20 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
-import { useActiveProjectService, useLocalizationService, useLoggerService } from "@config";
+import {
+  useActiveProjectService,
+  useLocalizationService,
+  useLoggerService,
+} from "@config";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
   HorizontalListLayoutActivityPressEventArgs,
+  HorizontalListLayoutActivityUpdateEventArgs,
   SessionNameModal,
   SessionNameModalEventArgs,
   StopwatchDisplay,
@@ -281,6 +286,46 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
+  const activityUpdate = useCallback(
+    async(e: HorizontalListLayoutActivityUpdateEventArgs): Promise<void> => {
+      return activeProjectService.updateActivity({
+        color: e.activityColor,
+        id: e.activityId,
+        name: e.activityName,
+        status: ActivityStatus.Idle,
+      });
+    },
+    [
+      activeProjectService,
+    ]
+  );
+
+  const activityListUpdated = useCallback(
+    (): void => {
+      setActivities(activeProjectService.activities ?? []);
+    },
+    [
+      activeProjectService,
+    ]
+  );
+
+  useEffect(
+    (): { (): void } => {
+      const activityListUpdatedSubscription = activeProjectService.addEventListener(
+        "activity-list-updated",
+        activityListUpdated
+      );
+
+      return async(): Promise<void> => {
+        activityListUpdatedSubscription.remove();
+      };
+    },
+    [
+      activeProjectService,
+      activityListUpdated,
+    ]
+  );
+
   if (
     !mounted.current
     && !loaded.current
@@ -317,6 +362,7 @@ export function ActiveProjectView(): JSX.Element {
         <HorizontalListLayout
           activities={activities}
           onActivityPress={toggle}
+          onActivityUpdate={activityUpdate}
         />
       </View>
       <View

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { useLocalizationService } from "@config";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { Activity } from "../Activity";
+import { ActivityEditModal, ActivityEditModel } from "../ActivityEditModal";
+import { AddActivity } from "../AddActivity";
 import { HorizontalListLayoutProps } from "./HorizontalListLayoutProps";
 import { horizontalListLayoutStyles } from "./HorizontalListLayoutStyles";
 
@@ -12,7 +14,10 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
   const {
     activities,
     onActivityPress,
+    onActivityUpdate,
   } = props;
+
+  const [showActivityEditor, setShowActivityEditor] = useState<boolean>(false);
 
   return (
     <ScrollView
@@ -41,6 +46,34 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
                 />
               );
             }
+          )
+        }
+        <AddActivity
+          onAddActivity={(): void => {
+            setShowActivityEditor(true);
+          }}
+        />
+        {
+          showActivityEditor
+          && (
+            <ActivityEditModal
+              activity={{
+                color: null,
+                id: "",
+                name: "",
+              }}
+              onSave={(e: ActivityEditModel): void => {
+                setShowActivityEditor(false);
+                onActivityUpdate({
+                  activityId: e.id,
+                  activityColor: e.color,
+                  activityName: e.name,
+                });
+              }}
+              onCancel={(): void => {
+                setShowActivityEditor(false);
+              }}
+            />
           )
         }
       </View>
