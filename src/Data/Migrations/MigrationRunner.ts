@@ -3,8 +3,8 @@ import { DataSource } from "typeorm";
 import { ServiceIdentifier } from "../../Config";
 import { ILoggerService } from "../../Core/Services/Logger";
 import { IDatabaseService } from "../IDatabaseService";
-import { InitialMigration } from "./20230614_1550_InitialMigration";
 import { IMigrationRunner } from "./IMigrationRunner";
+import { migrationDictionary } from "./MigrationDictionary";
 
 @injectable()
 export class MigrationRunner implements IMigrationRunner {
@@ -45,6 +45,8 @@ export class MigrationRunner implements IMigrationRunner {
         "SELECT name FROM sqlite_master WHERE type='table' AND name='Migrations';"
       );
 
+      let migrations: Array<{ Version: number, MigrationDate: number }> = [];
+
       if (hasMigrationsTable.length) {
         this._loggerService.debug(
           MigrationRunner.name,
@@ -52,42 +54,69 @@ export class MigrationRunner implements IMigrationRunner {
           "Migrations table found."
         );
 
-        const migrations = await queryRunner.query(
+        migrations = await queryRunner.query(
           "SELECT * FROM Migrations ORDER BY MigrationDate DESC;"
         );
+      }
 
-        this._loggerService.debug(
-          MigrationRunner.name,
-          this.run.name,
-          migrations
-        );
+      await queryRunner.connect();
 
-        // TODO: Migrations
-        this._loggerService.debug(
-          MigrationRunner.name,
-          this.run.name,
-          "No other action is required."
-        );
-      } else {
-        this._loggerService.debug(
-          MigrationRunner.name,
-          this.run.name,
-          "Migrations table not found."
-        );
+      const migrationList = Array.from(migrationDictionary);
 
-        this._loggerService.debug(
-          MigrationRunner.name,
-          this.run.name,
-          "InitialMigration"
-        );
+      for (const migrationType of migrationList) {
+        // eslint-disable-next-line no-undef-init
+        let version: number | undefined = undefined;
 
-        const initialMigration = new InitialMigration();
+        try {
+          const migrationInstance = new migrationType();
+          version =  Number(migrationInstance.version);
 
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
-        await initialMigration.up(queryRunner);
-        await queryRunner.commitTransaction();
-        await queryRunner.release();
+          if (migrations.find((x): boolean => Number(x.Version) === Number(migrationInstance.version))) {
+            this._loggerService.debug(
+              MigrationRunner.name,
+              this.run.name,
+              "Found migration for version",
+              `${migrationInstance.version}.`,
+              "No additional action is required."
+            );
+            continue;
+          }
+
+          this._loggerService.debug(
+            MigrationRunner.name,
+            this.run.name,
+            "Migrate to version",
+            migrationInstance.version,
+            "- START"
+          );
+
+          await queryRunner.startTransaction();
+          await migrationInstance.up(queryRunner);
+          await queryRunner.commitTransaction();
+
+          this._loggerService.debug(
+            MigrationRunner.name,
+            this.run.name,
+            "Migrate to version",
+            migrationInstance.version,
+            "- SUCCESS"
+          );
+        } catch (error) {
+          await queryRunner.rollbackTransaction();
+
+          this._loggerService.error(
+            MigrationRunner.name,
+            this.run.name,
+            "Migrate to version",
+            version,
+            "- FAIL:",
+            error
+          );
+
+          throw error;
+        } finally {
+          await queryRunner.release();
+        }
       }
 
       this._loggerService.debug(
