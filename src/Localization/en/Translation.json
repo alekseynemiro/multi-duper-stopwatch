@@ -100,67 +100,6 @@
       "ok": "Ok",
       "cancel": "Cancel"
     },
-    "selectColor": {
-      "title": "Tap to color for select:",
-      "close": "Close",
-      "accessibility": {
-        "color1": "Light red",
-        "color2": "Light coral",
-        "color3": "Soft red",
-        "color4": "Red",
-        "color5": "Dark red",
-        "color6": "Very dark red",
-
-        "color7": "Pale orange",
-        "color8": "Soft orange",
-        "color9": "Orange",
-        "color10": "Strong orange",
-        "color11": "Dark orange",
-        "color12": "Very dark orange",
-
-        "color13": "Pale yellow",
-        "color14": "Soft yellow",
-        "color15": "Yellow",
-        "color16": "Strong yellow",
-        "color17": "Dark yellow",
-        "color18": "Very dark yellow",
-
-        "color19": "Lime green",
-        "color20": "Pure green",
-        "color21": "Strong green",
-        "color22": "Green",
-        "color23": "Dark green",
-        "color24": "Very dark green",
-
-        "color25": "Soft cyan",
-        "color26": "Cyan",
-        "color27": "Vivid cyan",
-        "color28": "Strong cyan",
-        "color29": "Dark cyan",
-        "color30": "Very dark cyan",
-
-        "color31": "Pale blue",
-        "color32": "Light blue",
-        "color33": "Blue",
-        "color34": "Strong blue",
-        "color35": "Dark blue",
-        "color36": "Very dark blue",
-
-        "color37": "Pale magenta",
-        "color38": "Soft magenta",
-        "color39": "Magenta",
-        "color40": "Strong magenta",
-        "color41": "Dark magenta",
-        "color42": "Very dark magenta",
-
-        "color43": "White",
-        "color44": "Light gray",
-        "color45": "Gray",
-        "color46": "Dark gray",
-        "color47": "Very dark gray",
-        "color48": "Black"
-      }
-    },
     "validation": {
       "activityNameIsRequired": "Activity name is required.",
       "projectNameIsRequired": "Project name is required.",
@@ -200,5 +139,66 @@
   },
   "dateTimeFormatter": {
     "at": "at"
+  },
+  "selectColor": {
+    "title": "Tap to color for select:",
+    "close": "Close",
+    "accessibility": {
+      "color1": "Light red",
+      "color2": "Light coral",
+      "color3": "Soft red",
+      "color4": "Red",
+      "color5": "Dark red",
+      "color6": "Very dark red",
+
+      "color7": "Pale orange",
+      "color8": "Soft orange",
+      "color9": "Orange",
+      "color10": "Strong orange",
+      "color11": "Dark orange",
+      "color12": "Very dark orange",
+
+      "color13": "Pale yellow",
+      "color14": "Soft yellow",
+      "color15": "Yellow",
+      "color16": "Strong yellow",
+      "color17": "Dark yellow",
+      "color18": "Very dark yellow",
+
+      "color19": "Lime green",
+      "color20": "Pure green",
+      "color21": "Strong green",
+      "color22": "Green",
+      "color23": "Dark green",
+      "color24": "Very dark green",
+
+      "color25": "Soft cyan",
+      "color26": "Cyan",
+      "color27": "Vivid cyan",
+      "color28": "Strong cyan",
+      "color29": "Dark cyan",
+      "color30": "Very dark cyan",
+
+      "color31": "Pale blue",
+      "color32": "Light blue",
+      "color33": "Blue",
+      "color34": "Strong blue",
+      "color35": "Dark blue",
+      "color36": "Very dark blue",
+
+      "color37": "Pale magenta",
+      "color38": "Soft magenta",
+      "color39": "Magenta",
+      "color40": "Strong magenta",
+      "color41": "Dark magenta",
+      "color42": "Very dark magenta",
+
+      "color43": "White",
+      "color44": "Light gray",
+      "color45": "Gray",
+      "color46": "Dark gray",
+      "color47": "Very dark gray",
+      "color48": "Black"
+    }
   }
 }

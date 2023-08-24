@@ -6,6 +6,7 @@ import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Label } from "@components/Label";
+import { SelectColorModal } from "@components/SelectColorModal";
 import { TextInputField } from "@components/TextInputField";
 import {
   Routes,
@@ -24,7 +25,12 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { Formik } from "formik";
-import { Activity, ActivityChangeEventArgs, ActivityNameModal, ActivityNameModalEventArgs, SelectColorModal } from "./Components";
+import {
+  Activity,
+  ActivityChangeEventArgs,
+  ActivityNameModal,
+  ActivityNameModalEventArgs,
+} from "./Components";
 import { ActivityModel, ProjectModel } from "./Models";
 import { projectEditorPageStyles } from "./ProjectEditorPageStyles";
 import { ProjectModelValidator } from "./Validators";
