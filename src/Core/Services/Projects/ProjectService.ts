@@ -1,11 +1,18 @@
 import { ServiceIdentifier } from "@config";
-import { Activity, ActivityInProject, IDatabaseService, Project } from "@data";
 import {
+  Activity,
+  ActivityInProject,
+  IDatabaseService,
+  Project,
+} from "@data";
+import {
+  AddActivityRequest,
   CreateProjectRequest,
   GetAllResult,
   GetAllResultItem,
   GetResult,
   GetResultActivity,
+  UpdateActivityRequest,
   UpdateProjectRequest,
 } from "@dto/Projects";
 import { IDateTimeService } from "@services/DateTime";
@@ -371,6 +378,81 @@ export class ProjectService implements IProjectService {
         }
       },
       `${ProjectService.name}.${this.update.name}`
+    );
+  }
+
+  public addActivity(request: AddActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.addActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId,
+      "activityName",
+      request.activityName,
+      "activityColor",
+      request.activityColor,
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activitiesInProject = await this._databaseService.activitiesInProjects()
+          .find({
+            where: {
+              projectId: request.projectId,
+            },
+          });
+
+        const activity = new Activity();
+
+        activity.id = request.activityId;
+        activity.color = request.activityColor ?? null;
+        activity.name = request.activityName;
+        activity.isDeleted = false;
+        activity.isGlobal = false;
+        activity.createdDate = this._dateTimeService.now;
+
+        const activityInProject = new ActivityInProject();
+
+        activityInProject.id = this._guidService.newGuid();
+        activityInProject.activityId = request.activityId;
+        activityInProject.projectId = request.projectId;
+        activityInProject.position = activitiesInProject.length;
+
+        await this._databaseService.activities().insert(activity);
+        await this._databaseService.activitiesInProjects().insert(activityInProject);
+      }
+    );
+  }
+
+  public updateActivity(request: UpdateActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.updateActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId,
+      "activityName",
+      request.activityName,
+      "activityColor",
+      request.activityColor,
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activity = await this._databaseService.activities().findOneOrFail({
+          where: {
+            id: request.activityId,
+          },
+        });
+
+        activity.color = request.activityColor ?? null;
+        activity.name = request.activityName;
+
+        await this._databaseService.activities().save(activity);
+      }
     );
   }
 
