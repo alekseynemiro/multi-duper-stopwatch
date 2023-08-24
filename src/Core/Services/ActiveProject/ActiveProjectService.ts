@@ -11,6 +11,7 @@ import {
 import { GetResultActivity } from "@dto/Projects";
 import { GetResult as Session } from "@dto/Sessions";
 import { IDateTimeService } from "@services/DateTime";
+import { IGuidService } from "@services/Guid";
 import { ILoggerService } from "@services/Logger";
 import { IProjectService } from "@services/Projects";
 import { IQueueService } from "@services/Queue";
@@ -57,6 +58,8 @@ export class ActiveProjectService implements IActiveProjectService {
 
   private readonly _stopwatch: ActiveProjectStopwatch;
 
+  private readonly _guidService: IGuidService;
+
   private _project: Project | undefined;
 
   private _activities: Array<Activity> | undefined;
@@ -91,6 +94,7 @@ export class ActiveProjectService implements IActiveProjectService {
     @inject(ServiceIdentifier.QueueService) queueService: IQueueService,
     @inject(ServiceIdentifier.LocalStorageService) localStorageService: ILocalStorageService,
     @inject(ServiceIdentifier.SessionStorageService) sessionStorageService: ISessionStorageService,
+    @inject(ServiceIdentifier.GuidService) guidService: IGuidService,
     @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
   ) {
     this._settingsService = settingsService;
@@ -100,6 +104,7 @@ export class ActiveProjectService implements IActiveProjectService {
     this._queueService = queueService;
     this._localStorageService = localStorageService;
     this._sessionStorageService = sessionStorageService;
+    this._guidService = guidService;
     this._loggerService = loggerService;
 
     this._stopwatch = new ActiveProjectStopwatch(
@@ -1005,6 +1010,53 @@ export class ActiveProjectService implements IActiveProjectService {
 
   public tick(): void {
     this._stopwatch.tick();
+  }
+
+  public async updateActivity(activity: Activity): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.updateActivity.name,
+      activity
+    );
+
+    if (!activity) {
+      throw new Error("`activity` is required.");
+    }
+
+    if (!this._project) {
+      throw new Error("Project is required.");
+    }
+
+    if (!this._activities) {
+      throw new Error("Activities is required.");
+    }
+
+    const activityId = activity.id || this._guidService.newGuid();
+
+    if (activity.id) {
+      await this._projectService.updateActivity({
+        activityId,
+        activityColor: activity.color,
+        activityName: activity.name,
+        projectId: this._project.id,
+      });
+    } else {
+      await this._projectService.addActivity({
+        activityId,
+        activityColor: activity.color,
+        activityName: activity.name,
+        projectId: this._project.id,
+      });
+    }
+
+    this._activities.push({
+      color: activity.color,
+      id: activityId,
+      name: activity.name,
+      status: ActivityStatus.Idle,
+    });
+
+    this.on("activity-list-updated");
   }
 
   public addEventListener<TEventArgs extends Object = Record<string, any>>(

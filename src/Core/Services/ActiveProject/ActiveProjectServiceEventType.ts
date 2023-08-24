@@ -6,4 +6,5 @@ export type ActiveProjectServiceEventType =
 | "project-loaded"
 | "activity-updated"
 | "activity-logged"
+| "activity-list-updated"
 | "stopwatch-tick";
