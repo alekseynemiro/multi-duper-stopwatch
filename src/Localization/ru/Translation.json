@@ -65,6 +65,12 @@
       "validation": {
         "activityNameIsRequired": "Требуется имя активности."
       }
+    },
+    "activityPopupMenu": {
+      "add": "Добавить",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "cancel": "Отмена"
     }
   },
   "report": {

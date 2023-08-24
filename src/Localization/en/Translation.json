@@ -64,6 +64,12 @@
       "validation": {
         "activityNameIsRequired": "Activity name is required."
       }
+    },
+    "activityPopupMenu": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel"
     }
   },
   "report": {
