@@ -1040,6 +1040,19 @@ export class ActiveProjectService implements IActiveProjectService {
         activityName: activity.name,
         projectId: this._project.id,
       });
+
+      const existingActivity = this._activities.find(
+        (x: Activity): boolean => {
+          return x.id === activity.id;
+        }
+      );
+
+      if (!existingActivity) {
+        throw new Error(`Activity #${activity.id} not found.`);
+      }
+
+      existingActivity.color = activity.color;
+      existingActivity.name = activity.name;
     } else {
       await this._projectService.addActivity({
         activityId,
@@ -1047,14 +1060,14 @@ export class ActiveProjectService implements IActiveProjectService {
         activityName: activity.name,
         projectId: this._project.id,
       });
-    }
 
-    this._activities.push({
-      color: activity.color,
-      id: activityId,
-      name: activity.name,
-      status: ActivityStatus.Idle,
-    });
+      this._activities.push({
+        color: activity.color,
+        id: activityId,
+        name: activity.name,
+        status: ActivityStatus.Idle,
+      });
+    }
 
     this.on("activity-list-updated");
   }
