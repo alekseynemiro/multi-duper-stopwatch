@@ -60,7 +60,7 @@ export class ProjectService implements IProjectService {
             (x: ActivityInProject): GetResultActivity => {
               return {
                 id: x.activity.id,
-                color: x.activity.color,
+                color: x.activity.color ?? null,
                 name: x.activity.name,
                 position: x.position,
               };
@@ -153,7 +153,7 @@ export class ProjectService implements IProjectService {
               const newActivity = new Activity();
 
               newActivity.id = this._guidService.newGuid();
-              newActivity.color = activity.color;
+              newActivity.color = activity.color ?? null;
               newActivity.name = activity.name;
               newActivity.isGlobal = false;
               newActivity.isDeleted = false;
@@ -338,7 +338,7 @@ export class ProjectService implements IProjectService {
             } else {
               if (linked) {
                 // update an existing reference
-                activityInProject.activity.color = activity.color;
+                activityInProject.activity.color = activity.color ?? null;
                 activityInProject.activity.name = activity.name;
                 activityInProject.position = activity.position;
 
@@ -349,7 +349,7 @@ export class ProjectService implements IProjectService {
                 const newActivity = new Activity();
 
                 newActivity.id = this._guidService.newGuid();
-                newActivity.color = activity.color;
+                newActivity.color = activity.color ?? null;
                 newActivity.name = activity.name;
                 newActivity.isGlobal = false;
                 newActivity.isDeleted = false;

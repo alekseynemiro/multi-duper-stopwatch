@@ -245,7 +245,7 @@ export class SessionService implements ISessionService {
               id: log.id,
               activityId: log.activity.id,
               activityName: log.activity.name,
-              activityColor: log.activity.color,
+              activityColor: log.activity.color ?? null,
               avgSpeed: log.avgSpeed,
               maxSpeed: log.maxSpeed,
               distance: log.distance,
@@ -355,7 +355,7 @@ export class SessionService implements ISessionService {
             result = {
               id: log.id,
               activityId: log.activity.id,
-              activityColor: log.activity.color,
+              activityColor: log.activity.color ?? null,
               activityName: log.activity.name,
               avgSpeed: log.avgSpeed,
               distance: log.distance,

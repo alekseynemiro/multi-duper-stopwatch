@@ -97,7 +97,7 @@ export function ProjectEditorPage(): JSX.Element {
           return {
             id: x.id,
             code: x.id,
-            color: x.color,
+            color: x.color ?? null,
             name: x.name,
             position: x.position,
             isDeleted: false,

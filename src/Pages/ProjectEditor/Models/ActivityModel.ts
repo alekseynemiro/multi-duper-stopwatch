@@ -8,7 +8,7 @@ export type ActivityModel = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   position: number;
 

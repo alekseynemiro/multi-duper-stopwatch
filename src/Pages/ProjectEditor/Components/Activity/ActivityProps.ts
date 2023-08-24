@@ -9,7 +9,7 @@ export type ActivityProps = {
 
   activityName: string;
 
-  activityColor: ColorPalette | undefined;
+  activityColor: ColorPalette | null;
 
   error?: string | boolean | undefined;
 

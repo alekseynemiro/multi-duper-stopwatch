@@ -8,7 +8,7 @@ export type ReportItemModel = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   elapsedTime: number;
 

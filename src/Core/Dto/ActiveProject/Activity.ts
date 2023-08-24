@@ -7,7 +7,7 @@ export type Activity = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   status: ActivityStatus;
 

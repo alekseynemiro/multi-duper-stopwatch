@@ -6,7 +6,7 @@ export type CreateProjectRequestActivity = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   position: number;
 

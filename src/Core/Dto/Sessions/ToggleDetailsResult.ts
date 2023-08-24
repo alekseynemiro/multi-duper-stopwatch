@@ -8,7 +8,7 @@ export type ToggleDetailsResult = {
 
   activityName: string;
 
-  activityColor: ColorPalette;
+  activityColor: ColorPalette | null;
 
   elapsedTime: number;
 

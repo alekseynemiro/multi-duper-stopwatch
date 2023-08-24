@@ -4,7 +4,7 @@ export type CanRecoveryResult = {
 
   activityName: string;
 
-  activityColor: ColorPalette | undefined;
+  activityColor: ColorPalette | null;
 
   activityStartDate: Date;
 

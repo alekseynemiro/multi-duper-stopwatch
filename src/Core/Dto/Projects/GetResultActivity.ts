@@ -6,7 +6,7 @@ export type GetResultActivity = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   position: number;
 
