@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors } from "@styles";
+import { colors, defaultFontSize } from "@styles";
 
 export const activityEditModalStyles = StyleSheet.create({
   centeredView: {
@@ -56,5 +56,8 @@ export const activityEditModalStyles = StyleSheet.create({
     width: 48,
     height: 48,
     backgroundColor: colors.white,
+  },
+  selectColorButtonError: {
+    marginBottom: defaultFontSize + 6,
   },
 });

@@ -104,6 +104,7 @@ export function ActivityEditModal(props: ActivityEditModalProps): JSX.Element {
                                 ? getColorCode(values.color)
                                 : activityEditModalStyles.selectColorButton.backgroundColor,
                             },
+                            touched.name && errors.name ? activityEditModalStyles.selectColorButtonError : undefined,
                           ]}
                           onPress={showSelectColorModal}
                         >
