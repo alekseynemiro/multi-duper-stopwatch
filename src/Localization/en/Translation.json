@@ -52,6 +52,18 @@
     "addActivity": {
       "add": "Add",
       "hold": "Please hold\nto add"
+    },
+    "activityEditModal": {
+      "activityName": "Activity name:",
+      "save": "Save",
+      "cancel": "Cancel",
+      "accessibility": {
+        "enterActivityName": "Enter name for the activity.",
+        "pressToSelectColor": "Press to select color."
+      },
+      "validation": {
+        "activityNameIsRequired": "Activity name is required."
+      }
     }
   },
   "report": {

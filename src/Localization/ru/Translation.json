@@ -53,6 +53,18 @@
     "addActivity": {
       "add": "Добавить",
       "hold": "Удерживайте\nчтобы добавить"
+    },
+    "activityEditModal": {
+      "activityName": "Имя активности:",
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "accessibility": {
+        "enterActivityName": "Введите имя для активности.",
+        "pressToSelectColor": "Нажмите, чтобы выбрать цвет для активности."
+      },
+      "validation": {
+        "activityNameIsRequired": "Требуется имя активности."
+      }
     }
   },
   "report": {
