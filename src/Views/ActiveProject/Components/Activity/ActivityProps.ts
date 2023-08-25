@@ -13,4 +13,6 @@ export type ActivityProps = {
 
   onPress(activityId: string): void;
 
+  onLongPress(activityId: string): void;
+
 };
