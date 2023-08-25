@@ -1,6 +1,7 @@
 import {
   AddActivityRequest,
   CreateProjectRequest,
+  DeleteActivityRequest,
   GetAllResult,
   GetResult,
   UpdateActivityRequest,
@@ -23,5 +24,7 @@ export interface IProjectService {
   addActivity(request: AddActivityRequest): Promise<void>;
 
   updateActivity(request: UpdateActivityRequest): Promise<void>;
+
+  deleteActivity(request: DeleteActivityRequest): Promise<void>;
 
 }

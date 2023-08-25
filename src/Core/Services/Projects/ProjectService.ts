@@ -8,6 +8,7 @@ import {
 import {
   AddActivityRequest,
   CreateProjectRequest,
+  DeleteActivityRequest,
   GetAllResult,
   GetAllResultItem,
   GetResult,
@@ -455,5 +456,68 @@ export class ProjectService implements IProjectService {
       }
     );
   }
+
+  public deleteActivity(request: DeleteActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.deleteActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activity = await this._databaseService.activities().findOneOrFail({
+          where: {
+            id: request.activityId,
+          },
+        });
+
+        const sessions = await this._databaseService.sessions().find({
+          where: {
+            activity,
+          },
+        });
+
+        if (sessions.length > 0) {
+          this._loggerService.warn(
+            ProjectService.name,
+            this.deleteActivity.name,
+            "projectId",
+            request.projectId,
+            "activityId",
+            request.activityId,
+            `The activity #${activity.id} is used as the active activity in ${sessions.length} sessions.`
+          );
+        }
+
+        const activityInProject = await this._databaseService.activitiesInProjects().findOneOrFail({
+          where: {
+            projectId: request.projectId,
+            activityId: request.activityId,
+          },
+        });
+
+        await this._databaseService.activitiesInProjects().delete(activityInProject.id);
+
+        // mark as deleted private activities
+        const privateActivity = await this._databaseService.activities().findOne({
+          where: {
+            id: activityInProject.id,
+            isGlobal: false,
+          },
+        });
+
+        if (privateActivity) {
+          privateActivity.isDeleted = true;
+
+          await this._databaseService.activities().save(privateActivity);
+        }
+      }
+    );
+  }
+
 
 }
