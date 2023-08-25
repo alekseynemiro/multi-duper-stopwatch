@@ -530,6 +530,7 @@ export class ActiveProjectService implements IActiveProjectService {
         );
 
         this._session.state = SessionState.Run;
+        this._session.activityId = activityId;
 
         this.on("session-started");
 
@@ -544,6 +545,7 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       this._session.state = SessionState.Run;
+      this._session.activityId = activityId;
 
       this.on("session-started");
 
@@ -628,6 +630,7 @@ export class ActiveProjectService implements IActiveProjectService {
         );
 
         this._session.state = SessionState.Paused;
+        this._session.activityId = this._currentActivityId;
 
         this.on("session-paused");
       } else {
@@ -639,6 +642,7 @@ export class ActiveProjectService implements IActiveProjectService {
         );
 
         this._session.state = SessionState.Run;
+        this._session.activityId = this._currentActivityId;
 
         this.on("session-started");
 
@@ -775,6 +779,8 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       if (pauseResult) {
+        this._session.activityId = pauseResult.activityId;
+
         this.on<ActivityLoggedResult>(
           "activity-logged",
           {
