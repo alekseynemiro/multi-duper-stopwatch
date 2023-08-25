@@ -4,6 +4,7 @@ import {
   ActivityInProject,
   IDatabaseService,
   Project,
+  SessionState,
 } from "@data";
 import {
   AddActivityRequest,
@@ -20,7 +21,7 @@ import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
 import { ILoggerService } from "@services/Logger";
 import { inject, injectable } from "inversify";
-import { In } from "typeorm";
+import { In, Not } from "typeorm";
 import { IProjectService } from "./IProjectService";
 import { ProjectId } from "./Types";
 
@@ -478,6 +479,7 @@ export class ProjectService implements IProjectService {
         const sessions = await this._databaseService.sessions().find({
           where: {
             activity,
+            state: Not(SessionState.Finished),
           },
         });
 
