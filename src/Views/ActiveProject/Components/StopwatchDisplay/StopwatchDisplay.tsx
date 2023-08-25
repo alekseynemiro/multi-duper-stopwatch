@@ -51,6 +51,18 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): void => {
+      if (!currentActivity && showCurrentActivity) {
+        setShowCurrentActivity(false);
+      }
+    },
+    [
+      currentActivity,
+      showCurrentActivity,
+    ]
+  );
+
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
