@@ -1190,7 +1190,12 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       if (!activity) {
-        throw new Error(`Activity #${session.activityId} not found.`);
+        // to prevent the application from being unable to run
+        this._loggerService.warn(
+          ActiveProjectService.name,
+          this.setSessionId.name,
+          `Activity #${session.activityId} not found.`
+        );
       }
     }
 
