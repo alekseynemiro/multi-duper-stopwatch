@@ -1078,6 +1078,116 @@ export class ActiveProjectService implements IActiveProjectService {
     this.on("activity-list-updated");
   }
 
+  public async deleteActivity(activityId: string): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.deleteActivity.name,
+      activityId
+    );
+
+    if (!activityId) {
+      throw new Error("`activityId` is required.");
+    }
+
+    if (!this._project) {
+      throw new Error("Project is required.");
+    }
+
+    if (!this._activities) {
+      throw new Error("Activities is required.");
+    }
+
+    if (this._activities.length === 1) {
+      throw new Error("Unable to delete last activity. The project must have at least one activity.");
+    }
+
+    if (this._session && this._session.activityId === activityId) {
+      const sessionActivity = this._activities.find(
+        (x: Activity): boolean => {
+          return x.id === activityId;
+        }
+      );
+
+      if (!sessionActivity) {
+        throw new Error(`Activity #${activityId} not found.`);
+      }
+
+      const newActivity = this._activities.filter(
+        (x: Activity): boolean => {
+          return x.id !== activityId;
+        }
+      )[0];
+
+      const time = this._stopwatch.stop();
+      const pauseResult = await this._sessionService.pauseAndSetActivity({
+        sessionId: this._session.id,
+        newActivityId: newActivity.id,
+        date: new Date(time),
+        avgSpeed: 0,
+        distance: 0,
+        maxSpeed: 0,
+      });
+
+      this._session.state = SessionState.Paused;
+
+      this.onActivityUpdate(
+        sessionActivity.id,
+        ActivityStatus.Idle
+      );
+
+      this.onActivityUpdate(
+        newActivity.id,
+        ActivityStatus.Idle
+      );
+
+      this.on(
+        "session-paused",
+        {
+          sessionId: this._session.id,
+          activityId: sessionActivity.id,
+        }
+      );
+
+      if (pauseResult) {
+        this._session.activityId = pauseResult.activityId;
+
+        this.on<ActivityLoggedResult>(
+          "activity-logged",
+          {
+            id: pauseResult.id,
+            activityId: pauseResult.activityId,
+            activityColor: pauseResult.activityColor,
+            activityName: pauseResult.activityName,
+            avgSpeed: pauseResult.avgSpeed,
+            distance: pauseResult.distance,
+            elapsedTime: pauseResult.elapsedTime,
+            finishDate: pauseResult.finishDate,
+            maxSpeed: pauseResult.maxSpeed,
+            startDate: pauseResult.startDate,
+          },
+        );
+
+        this._stopwatch.setTotalElapsed(pauseResult.sessionElapsedTime);
+      }
+    }
+
+    await this._projectService.deleteActivity({
+      activityId,
+      projectId: this._project.id,
+    });
+
+    const index = this._activities.findIndex(
+      (x: Activity): boolean => {
+        return x.id === activityId;
+      }
+    );
+
+    if (index !== -1) {
+      this._activities.splice(index, 1);
+      this.on("activity-list-updated");
+    }
+  }
+
   public addEventListener<TEventArgs extends Object = Record<string, any>>(
     type: ActiveProjectServiceEventType,
     callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent
