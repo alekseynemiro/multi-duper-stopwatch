@@ -27,4 +27,5 @@ export type IconName =
   | "vk"
   | "home-page"
   | "star"
-  | "add";
+  | "add"
+  | "cancel";

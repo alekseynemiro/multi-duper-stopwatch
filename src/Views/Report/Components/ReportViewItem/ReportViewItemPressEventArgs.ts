@@ -4,6 +4,6 @@ export type ReportViewItemPressEventArgs = {
 
   activityId: string;
 
-  activityColor: ColorPalette | undefined;
+  activityColor: ColorPalette | null;
 
 };

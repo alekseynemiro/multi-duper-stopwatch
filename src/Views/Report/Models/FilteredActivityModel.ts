@@ -4,6 +4,6 @@ export type FilteredActivityModel = {
 
   id: string;
 
-  color: ColorPalette | undefined;
+  color: ColorPalette | null;
 
 };

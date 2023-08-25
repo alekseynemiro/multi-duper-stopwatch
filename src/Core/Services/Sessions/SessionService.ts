@@ -1,5 +1,5 @@
 import { ServiceIdentifier } from "@config";
-import { IDatabaseService, Session, SessionLog, SessionState } from "@data";
+import { ActivityInProject, IDatabaseService, Session, SessionLog, SessionState } from "@data";
 import {
   CreateSessionRequest,
   CreateSessionResult,
@@ -7,6 +7,7 @@ import {
   GetAllResult,
   GetAllResultItem,
   GetResult,
+  PauseAndSetActivityRequest,
   PauseRequest,
   PauseResult,
   RenameRequest,
@@ -377,6 +378,155 @@ export class SessionService implements ISessionService {
         }
 
         session.state = SessionState.Paused;
+
+        await this._databaseService.sessions().save(session);
+
+        return result;
+      }
+    );
+  }
+
+  public pauseAndSetActivity(request: PauseAndSetActivityRequest): Promise<PauseResult | undefined> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.pauseAndSetActivity.name,
+      "sessionId",
+      request.sessionId,
+      "newActivityId",
+      request.newActivityId,
+      "date",
+      request.date
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<PauseResult | undefined> => {
+        let result: PauseResult | undefined;
+
+        const newActivity = await this._databaseService.activities()
+          .findOneOrFail({
+            where: {
+              id: request.newActivityId,
+            },
+            relations: {
+              activitiesInProjects: true,
+            },
+          });
+
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: request.sessionId,
+            },
+            relations: {
+              activity: true,
+              project: true,
+            } as any, // to fix: Type '{ activity: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+          });
+
+        const newActivityInProject = newActivity.activitiesInProjects?.find(
+          (x: ActivityInProject): boolean => {
+            return x.projectId === session.project.id;
+          }
+        );
+
+        if (!newActivityInProject) {
+          throw new Error(`Activity #${request.newActivityId} is not in project #${session.project.id}, for session #${session.id}.`);
+        }
+
+        if (session.state === SessionState.Paused) {
+          this._loggerService.debug(
+            SessionService.name,
+            this.pauseAndSetActivity.name,
+            "sessionId",
+            request.sessionId,
+            "Unable to pause the session because the session is already paused.",
+          );
+
+          session.activity = newActivity;
+          await this._databaseService.sessions().save(session);
+          return result;
+        }
+
+        if (session.state === SessionState.Finished) {
+          throw new Error(`The session #${request.sessionId} cannot be paused because it has finished.`);
+        }
+
+        if (request.date !== undefined) {
+          const startDate = session.activityStartDate;
+          let elapsedTime = request.date.getTime() - startDate.getTime();
+          let log: SessionLog | undefined;
+
+          const existingLogEntryWithSameDate = await this._databaseService.sessionLogs()
+            .findOne({
+              where: {
+                session,
+                finishDate: request.date,
+              },
+            });
+
+          if (existingLogEntryWithSameDate) {
+            this._loggerService.debug(
+              SessionService.name,
+              this.pauseAndSetActivity.name,
+              "sessionId",
+              request.sessionId,
+              `Pause without log because the current status ${SessionState[SessionState.Run]} and an entry with the date ${request.date} was found in the log.`,
+              "Elapsed time",
+              elapsedTime
+            );
+          } else {
+            this._loggerService.debug(
+              SessionService.name,
+              this.pauseAndSetActivity.name,
+              "sessionId",
+              request.sessionId,
+              `Pause and add log because the current status ${SessionState[SessionState.Run]}.`,
+              "Elapsed time",
+              elapsedTime
+            );
+
+            log = {
+              id: this._guidService.newGuid(),
+              session,
+              activity: { ...session.activity }, // to kill reference
+              distance: request.distance,
+              avgSpeed: request.avgSpeed,
+              maxSpeed: request.maxSpeed,
+              steps: 0,
+              elapsedTime,
+              startDate,
+              finishDate: request.date,
+              createdDate: this._dateTimeService.now,
+            };
+
+            await this._databaseService.sessionLogs().insert(log);
+
+            result = {
+              id: log.id,
+              activityId: log.activity.id,
+              activityColor: log.activity.color ?? null,
+              activityName: log.activity.name,
+              avgSpeed: log.avgSpeed,
+              distance: log.distance,
+              elapsedTime: log.elapsedTime,
+              finishDate: log.finishDate,
+              maxSpeed: log.maxSpeed,
+              startDate: log.startDate,
+              sessionElapsedTime: session.elapsedTime,
+            };
+          }
+
+          if (log) {
+            session.distance += log.distance;
+            session.elapsedTime += log.elapsedTime;
+            session.avgSpeed = (session.avgSpeed + log.avgSpeed) / 2;
+            session.maxSpeed = Math.max(log.maxSpeed, session.maxSpeed);
+            session.activityFinishDate = log.finishDate;
+          }
+        }
+
+        session.state = SessionState.Paused;
+        session.activity = newActivity;
 
         await this._databaseService.sessions().save(session);
 

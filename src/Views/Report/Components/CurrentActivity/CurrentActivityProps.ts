@@ -7,7 +7,7 @@ export type CurrentActivityProps = {
 
   activityName: string;
 
-  activityColor: ColorPalette | undefined;
+  activityColor: ColorPalette | null;
 
   // TODO: use common type instead
   onPress(e: ReportViewItemPressEventArgs): void;

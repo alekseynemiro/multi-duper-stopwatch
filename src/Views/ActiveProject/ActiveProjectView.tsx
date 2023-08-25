@@ -13,6 +13,7 @@ import { ActiveProjectFinishResult } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
+  HorizontalListLayoutActivityDeleteEventArgs,
   HorizontalListLayoutActivityPressEventArgs,
   HorizontalListLayoutActivityUpdateEventArgs,
   SessionNameModal,
@@ -300,12 +301,24 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
-  const activityListUpdated = useCallback(
-    (): void => {
-      setActivities(activeProjectService.activities ?? []);
+  const activityDelete = useCallback(
+    async(e: HorizontalListLayoutActivityDeleteEventArgs): Promise<void> => {
+      return activeProjectService.deleteActivity(e.activityId);
     },
     [
       activeProjectService,
+    ]
+  );
+
+  const activityListUpdated = useCallback(
+    (): void => {
+      const newActivities = [...activeProjectService.activities ?? []];
+      setActivities(newActivities);
+      setCurrentActivity(newActivities.find(currentActivityPredicate));
+    },
+    [
+      activeProjectService,
+      currentActivityPredicate,
     ]
   );
 
@@ -363,6 +376,7 @@ export function ActiveProjectView(): JSX.Element {
           activities={activities}
           onActivityPress={toggle}
           onActivityUpdate={activityUpdate}
+          onActivityDelete={activityDelete}
         />
       </View>
       <View

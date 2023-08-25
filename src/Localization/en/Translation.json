@@ -64,6 +64,18 @@
       "validation": {
         "activityNameIsRequired": "Activity name is required."
       }
+    },
+    "activityPopupMenu": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "activityDeleteConfirmation": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete activity {{activityName}}?\n\nIt will be impossible to restore the activity after deletion.",
+      "cancel": "Cancel",
+      "delete": "Delete"
     }
   },
   "report": {

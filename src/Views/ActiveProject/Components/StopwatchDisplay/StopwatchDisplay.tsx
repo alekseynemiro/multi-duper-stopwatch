@@ -6,6 +6,7 @@ import {
   useLocalizationService,
   useSessionStorageService,
 } from "@config";
+import { ColorPalette } from "@data";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { colors } from "@styles";
 import { SessionStorageKeys } from "@types";
@@ -51,6 +52,18 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): void => {
+      if (!currentActivity && showCurrentActivity) {
+        setShowCurrentActivity(false);
+      }
+    },
+    [
+      currentActivity,
+      showCurrentActivity,
+    ]
+  );
+
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
@@ -85,10 +98,10 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                       stopwatchDisplayStyles.mode,
                       {
                         backgroundColor: currentActivity?.color
-                          ? getColorCode((currentActivity as ActivityModel).color)
+                          ? getColorCode((currentActivity as ActivityModel).color as ColorPalette)
                           : colors.white,
                         color: currentActivity?.color
-                          ? getContrastColorCode((currentActivity as ActivityModel).color)
+                          ? getContrastColorCode((currentActivity as ActivityModel).color as ColorPalette)
                           : colors.text,
                       },
                     ]}

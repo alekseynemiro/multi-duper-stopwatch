@@ -4,7 +4,7 @@ export type RecoveryModel = {
 
   name: string;
 
-  color: ColorPalette | undefined;
+  color: ColorPalette | null;
 
   startDate: Date;
 
