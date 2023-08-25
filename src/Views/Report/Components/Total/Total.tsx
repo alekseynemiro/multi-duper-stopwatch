@@ -20,7 +20,7 @@ export function Total(props: TotalProps): JSX.Element {
   } = props;
 
   const getColor = useCallback(
-    (color: ColorPalette | undefined): string => {
+    (color: ColorPalette | null): string => {
       if (color) {
         return getColorCode(color);
       }
