@@ -11,6 +11,7 @@ export function ActivityPopupMenu(props: ActivityPopupMenuProps): JSX.Element {
 
   const {
     activityId,
+    canDelete,
     onPress,
   } = props;
 
@@ -61,6 +62,7 @@ export function ActivityPopupMenu(props: ActivityPopupMenuProps): JSX.Element {
               <Text>{localization.get("activeProject.activityPopupMenu.edit")}</Text>
             </Button>
             <Button
+              disabled={!canDelete}
               variant="light"
               childWrapperStyle={activityPopupMenuStyles.buttonChildContainer}
               onPress={(): void => {
