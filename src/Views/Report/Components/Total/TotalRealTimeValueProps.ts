@@ -4,4 +4,6 @@ export type TotalRealTimeValueProps = {
 
   value: TimeSpan;
 
+  basedOnValue: boolean;
+
 };

@@ -17,6 +17,7 @@ export function Total(props: TotalProps): JSX.Element {
     activities,
     elapsed,
     realTimeUpdate,
+    basedOnElapsed,
   } = props;
 
   const getColor = useCallback(
@@ -81,6 +82,7 @@ export function Total(props: TotalProps): JSX.Element {
               && (
                 <TotalRealTimeValue
                   value={elapsed}
+                  basedOnValue={basedOnElapsed}
                 />
               )
               || (

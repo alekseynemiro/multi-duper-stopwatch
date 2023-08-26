@@ -433,6 +433,16 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
 
   const renderFooter = useCallback(
     (): JSX.Element => {
+      const realTimeUpdate = !!state.currentActivity
+      && (
+        state.filterByActivities.length === 0
+        || state.filterByActivities.some(
+          (x: FilteredActivityModel): boolean => {
+            return x.id === state.currentActivity?.id;
+          }
+        )
+      );
+
       return (
         <View
           style={reportViewStyles.footer}
@@ -454,17 +464,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           <TableRowSeparator />
           <Total
             activities={state.filterByActivities}
-            realTimeUpdate={
-              !!state.currentActivity
-              && (
-                state.filterByActivities.length === 0
-                || state.filterByActivities.some(
-                  (x: FilteredActivityModel): boolean => {
-                    return x.id === state.currentActivity?.id;
-                  }
-                )
-              )
-            }
+            realTimeUpdate={realTimeUpdate}
+            basedOnElapsed={realTimeUpdate && state.filterByActivities.length > 0}
             elapsed={getTimeSpan(state.outputTotalTime)}
           />
           {
