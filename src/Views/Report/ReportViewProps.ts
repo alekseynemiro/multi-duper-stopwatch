@@ -9,6 +9,8 @@ export type ReportViewProps = {
 
   autoScrollToBottom?: boolean;
 
+  isActiveProject?: boolean;
+
   load?(): Promise<void>;
 
   addItem?(item: ReportItemModel): void;

@@ -39,7 +39,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
 
   useEffect(
     (): void => {
-      const mode: number = sessionStorageService.getItem<SessionStorageKeys, number>("stopwatch-mode");
+      const mode: number = sessionStorageService.getItem<SessionStorageKeys, number>("activeProject.stopwatchMode");
 
       if (mode === 1) {
         setShowCurrentActivity(true);
@@ -75,7 +75,7 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
           setShowCurrentActivity(value);
 
           sessionStorageService.setItem<SessionStorageKeys>(
-            "stopwatch-mode",
+            "activeProject.stopwatchMode",
             value ? 1 : 0
           );
         }

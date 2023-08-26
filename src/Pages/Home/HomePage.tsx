@@ -310,6 +310,7 @@ export function HomePage(): JSX.Element {
         ref={reportViewRef}
         sessionId={sessionId}
         autoScrollToBottom={true}
+        isActiveProject={true}
         onLoad={reportViewLoadHandler}
       />
     )
