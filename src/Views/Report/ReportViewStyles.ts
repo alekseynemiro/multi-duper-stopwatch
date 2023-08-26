@@ -24,10 +24,6 @@ export const reportViewStyles = StyleSheet.create({
     marginBottom: 0,
     height: 48,
   },
-  separator: {
-    ...styles.border,
-    marginVertical: 8,
-  },
   tableHeaderText: {
     ...styles.bold,
   },

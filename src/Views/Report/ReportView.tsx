@@ -19,6 +19,7 @@ import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { PluralFormatter } from "@components/PluralFormatter";
+import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
   useLocalizationService,
   useLoggerService,
@@ -31,10 +32,15 @@ import {
   FilterModal,
   ReportViewItem,
   ReportViewItemPressEventArgs,
-  Separator,
   Total,
 } from "./Components";
-import { ActivityModel, CurrentActivityModel, FilteredActivityModel, ReportItemModel, ReportViewStateModel } from "./Models";
+import {
+  ActivityModel,
+  CurrentActivityModel,
+  FilteredActivityModel,
+  ReportItemModel,
+  ReportViewStateModel,
+} from "./Models";
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
 
@@ -310,7 +316,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           ...state.filterByActivities,
           {
             id: activityId,
-            color: state.groupedActivities.get(activityId)?.color,
+            color: state.groupedActivities.get(activityId)?.color ?? null,
           },
         ];
 
@@ -435,7 +441,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             state.currentActivity
               && (
                 <>
-                  <Separator />
+                  <TableRowSeparator />
                   <CurrentActivity
                     activityId={state.currentActivity.id}
                     activityColor={state.currentActivity.color}
@@ -445,7 +451,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
                 </>
               )
           }
-          <Separator />
+          <TableRowSeparator />
           <Total
             activities={state.filterByActivities}
             realTimeUpdate={
@@ -578,7 +584,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
               renderItem={renderItem}
-              ItemSeparatorComponent={Separator}
+              ItemSeparatorComponent={TableRowSeparator}
               ListHeaderComponent={renderHeader}
               stickyHeaderIndices={[0]}
             />

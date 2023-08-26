@@ -51,10 +51,6 @@ export const filterModalStyles = StyleSheet.create({
     marginBottom: 0,
     height: 48,
   },
-  separator: {
-    ...styles.border,
-    marginVertical: 8,
-  },
   checkBoxCol: {
     width: 48,
     alignItems: "center",
