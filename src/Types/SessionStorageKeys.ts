@@ -1,2 +1,3 @@
 export type SessionStorageKeys =
-  | "stopwatch-mode";
+  | "activeProject.stopwatchMode"
+  | "activeProject.reportFilters";

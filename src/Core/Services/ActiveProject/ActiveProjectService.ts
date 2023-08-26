@@ -981,7 +981,7 @@ export class ActiveProjectService implements IActiveProjectService {
         this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
       ]);
 
-      this._sessionStorageService.removeItem<SessionStorageKeys>("stopwatch-mode");
+      this._sessionStorageService.removeItem<SessionStorageKeys>("activeProject.stopwatchMode");
 
       this._stopwatch.reset();
     } finally {

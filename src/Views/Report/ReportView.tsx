@@ -24,8 +24,10 @@ import {
   useLocalizationService,
   useLoggerService,
   useSessionLogService,
+  useSessionStorageService,
 } from "@config";
 import { GetAllResultItem } from "@dto/SessionLogs";
+import { SessionStorageKeys } from "@types";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
   CurrentActivity,
@@ -48,11 +50,13 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
   const {
     sessionId,
     autoScrollToBottom,
+    isActiveProject,
     onLoad,
   } = props;
 
   const localization = useLocalizationService();
   const sessionLogService = useSessionLogService();
+  const sessionStorageService = useSessionStorageService();
   const loggerService = useLoggerService();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -104,7 +108,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       let totalTime = 0;
 
       const groupedActivities = new Map<string, ActivityModel>();
-      const logs =  data.items.map(
+      const logs = data.items.map(
         (x: GetAllResultItem): ReportItemModel => {
           totalTime += x.elapsedTime;
 
@@ -132,14 +136,56 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
         }
       );
 
+      let outputTotalTime = 0;
+      let outputLogs: Array<ReportItemModel> = [];
+      let filterByActivities: Array<FilteredActivityModel> = [];
+
+      const storedFilters = sessionStorageService.getItem<SessionStorageKeys, Array<string>>(
+        "activeProject.reportFilters"
+      );
+
+      if (isActiveProject && storedFilters?.length > 0) {
+        filterByActivities = Array.from(groupedActivities.values())
+          .filter(
+            (x: ActivityModel): boolean => {
+              return storedFilters.includes(x.id);
+            }
+          )
+          .map(
+            (x: ActivityModel): FilteredActivityModel => {
+              return {
+                id: x.id,
+                color: x.color,
+              };
+            }
+          );
+
+          outputLogs = logs.filter(
+            (x: ReportItemModel): boolean => {
+              const filtered = storedFilters.includes(x.activityId);
+
+              if (filtered) {
+                outputTotalTime += x.elapsedTime;
+                return true;
+              }
+
+              return false;
+            }
+          );
+      } else {
+        outputTotalTime = totalTime;
+        outputLogs = logs;
+      }
+
       setState({
         ...state,
         logs,
         totalTime,
         groupedActivities,
-        outputTotalTime: totalTime,
-        outputLogs: logs,
+        outputTotalTime,
+        outputLogs,
         showLoadingIndicator: false,
+        filterByActivities,
       });
 
       if (autoScrollToBottom) {
@@ -153,7 +199,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       sessionId,
       autoScrollToBottom,
       sessionLogService,
+      sessionStorageService,
       loggerService,
+      isActiveProject,
       onLoad,
       scrollToBottom,
     ]
@@ -284,10 +332,17 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
         filterByActivities: [],
         outputLogs: state.logs,
         outputTotalTime: state.totalTime,
+        showFilterModal: false,
       });
+
+      if (isActiveProject) {
+        sessionStorageService.removeItem<SessionStorageKeys>("activeProject.reportFilters");
+      }
     },
     [
       state,
+      isActiveProject,
+      sessionStorageService,
     ]
   );
 
@@ -650,14 +705,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
         }
         onSave={(activities: Array<string>): void => {
           if (activities.length === 0) {
-          setState({
-            ...state,
-            filterByActivities: [],
-            outputLogs: state.logs,
-            outputTotalTime: state.totalTime,
-            showFilterModal: false,
-          });
-
+            clearFilter();
             return;
           }
 
@@ -702,6 +750,17 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             outputTotalTime: outputTotal,
             showFilterModal: false,
           });
+
+          if (isActiveProject) {
+            sessionStorageService.setItem<SessionStorageKeys>(
+              "activeProject.reportFilters",
+              newFilteredByActivities.map(
+                (x: FilteredActivityModel): string => {
+                  return x.id;
+                }
+              )
+            );
+          }
         }}
         onCancel={(): void => {
           setState({
