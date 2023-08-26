@@ -5,7 +5,7 @@ export type ReportViewItemProps = {
 
   activityId: string;
 
-  activityColor: ColorPalette;
+  activityColor: ColorPalette | null;
 
   activityName: string;
 

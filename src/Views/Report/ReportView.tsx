@@ -310,7 +310,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           ...state.filterByActivities,
           {
             id: activityId,
-            color: state.groupedActivities.get(activityId)?.color,
+            color: state.groupedActivities.get(activityId)?.color ?? null,
           },
         ];
 
