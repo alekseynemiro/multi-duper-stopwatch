@@ -30,6 +30,8 @@ export class ActiveProjectStopwatch {
 
   private _currentActivityElapsed: number = 0;
 
+  private _lastTotalElapsed: number = 0;
+
   public get isRunning(): boolean {
     return this._id !== undefined;
   }
@@ -53,6 +55,7 @@ export class ActiveProjectStopwatch {
     );
 
     this._totalElapsed = value;
+    this._lastTotalElapsed = 0;
   }
 
   public startNewSession(): number {
@@ -67,6 +70,7 @@ export class ActiveProjectStopwatch {
     this._sessionStartTime = time;
     this._currentActivityStart = time;
     this._currentActivityElapsed = 0;
+    this._lastTotalElapsed = 0;
 
     this.start();
 
@@ -108,6 +112,7 @@ export class ActiveProjectStopwatch {
     this._currentActivityStart = undefined;
     this._currentActivityElapsed = 0;
     this._totalElapsed = 0;
+    this._lastTotalElapsed = 0;
   }
 
   public addTickListener(callback: ActiveProjectStopwatchTickEvent): NativeEventSubscription {
@@ -182,6 +187,8 @@ export class ActiveProjectStopwatch {
 
     this.onTick();
 
+    this._lastTotalElapsed = 0;
+
     return lastTick;
   }
 
@@ -199,6 +206,7 @@ export class ActiveProjectStopwatch {
       clearInterval(this._id);
     }
 
+    this._lastTotalElapsed = 0;
     this._id = setInterval(this.timerHandler, this._interval);
     this._timerHandlerIsRunning = 0;
   }
@@ -228,11 +236,14 @@ export class ActiveProjectStopwatch {
     const eventArgs: ActiveProjectStopwatchTickEventArgs = {
       total: totalElapsed,
       activity: activityElapsed,
+      interval: this._lastTotalElapsed > 0 ? totalElapsed - this._lastTotalElapsed : 0,
     };
 
     for (const listener of this._tickListeners) {
       listener(eventArgs);
     }
+
+    this._lastTotalElapsed = totalElapsed;
   }
 
 }

@@ -4,4 +4,6 @@ export type ActiveProjectStopwatchTickEventArgs = {
 
   activity: number | undefined;
 
+  interval: number;
+
 };
