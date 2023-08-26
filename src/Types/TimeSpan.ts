@@ -1,5 +1,7 @@
 export type TimeSpan = {
 
+  ticks: number;
+
   days: number;
 
   hours: number;

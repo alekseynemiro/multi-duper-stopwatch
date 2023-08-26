@@ -20,6 +20,7 @@ export const getTimeSpan = (value: number): TimeSpan => {
     minutes,
     hours,
     days,
+    ticks: value,
     displayValue: (days > 0 ? days.toString() + "." : "")
       + String(hours).padStart(2, "0") + ":"
       + String(minutes).padStart(2, "0") + ":"

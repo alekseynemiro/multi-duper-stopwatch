@@ -9,4 +9,6 @@ export type TotalProps = {
 
   realTimeUpdate: boolean;
 
+  basedOnElapsed: boolean;
+
 };

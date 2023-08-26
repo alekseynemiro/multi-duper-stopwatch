@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { DurationFormatter } from "@components/DurationFormatter";
 import { useActiveProjectService } from "@config";
 import { ActiveProjectStopwatchTickEventArgs } from "@services/ActiveProject";
@@ -11,16 +11,27 @@ export function TotalRealTimeValue(props: TotalRealTimeValueProps): JSX.Element 
 
   const {
     value,
+    basedOnValue,
   } = props;
 
   const [elapsed, setElapsed] = useState<TimeSpan>(value);
 
+  const tickHandler = useCallback(
+    (e: ActiveProjectStopwatchTickEventArgs): void => {
+      if (basedOnValue) {
+        setElapsed(getTimeSpan(value.ticks + (e.activity ?? 0)));
+      } else {
+        setElapsed(getTimeSpan(e.total));
+      }
+    },
+    [
+      basedOnValue,
+      value,
+    ]
+  );
+
   useEffect(
     (): { (): void } => {
-      const tickHandler = (e: ActiveProjectStopwatchTickEventArgs): void => {
-        setElapsed(getTimeSpan(e.total));
-      };
-
       const stopwatchTickSubscription = activeProjectService.addEventListener(
         "stopwatch-tick",
         tickHandler
@@ -31,7 +42,9 @@ export function TotalRealTimeValue(props: TotalRealTimeValueProps): JSX.Element 
       };
     },
     [
+      value,
       activeProjectService,
+      tickHandler,
     ]
   );
 
