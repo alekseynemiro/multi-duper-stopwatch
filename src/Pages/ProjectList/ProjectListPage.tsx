@@ -61,15 +61,15 @@ export function ProjectListPage(): JSX.Element {
   const requestToDeleteProject = useCallback(
     (project: GetAllResultItem): void => {
       Alert.alert(
-        localization.get("projectList.confirmationTitle"),
-        localization.get("projectList.confirmationMessage", { projectName: project.name }),
+        localization.get("projectList.deleteConfirmation.title"),
+        localization.get("projectList.deleteConfirmation.message", { projectName: project.name }),
         [
           {
-            text: localization.get("projectList.cancel"),
+            text: localization.get("projectList.deleteConfirmation.cancel"),
             style: "cancel",
           },
           {
-            text: localization.get("projectList.delete"),
+            text: localization.get("projectList.deleteConfirmation.delete"),
             onPress: (): void => {
               deleteProject(project.id);
             },
@@ -80,6 +80,87 @@ export function ProjectListPage(): JSX.Element {
     [
       deleteProject,
       localization,
+    ]
+  );
+
+  const play = useCallback(
+    async(project: GetAllResultItem): Promise<void> => {
+      // TODO: Business logic service
+      const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
+
+      if (lastSessionId) {
+        const session = await sessionService.get(lastSessionId);
+
+        if (session.state !== SessionState.Finished) {
+          await sessionService.finish({
+            sessionId: lastSessionId,
+            avgSpeed: 0,
+            distance: 0,
+            maxSpeed: 0,
+            date: undefined,
+          });
+        }
+
+        await settingsService.set(
+          SettingKey.LastSessionId,
+          null
+        );
+      }
+
+      await activeProjectService.reset();
+      // --
+
+      navigation.navigate(
+        Routes.Home,
+        {
+          projectId: project.id,
+        }
+      );
+    },
+    [
+      settingsService,
+      activeProjectService,
+      sessionService,
+      navigation,
+    ]
+  );
+
+  const playHandler = useCallback(
+    async(project: GetAllResultItem): Promise<void> => {
+      if (
+        activeProjectService.session
+        && activeProjectService.session.state !== SessionState.Finished
+      ) {
+        Alert.alert(
+          localization.get("projectList.activeSessionWarning.title"),
+          localization.get(
+            "projectList.activeSessionWarning.message",
+            {
+              activeProjectName: activeProjectService.project?.name,
+              newProjectName: project.name,
+            }
+          ),
+          [
+            {
+              text: localization.get("projectList.activeSessionWarning.no"),
+              style: "cancel",
+            },
+            {
+              text: localization.get("projectList.activeSessionWarning.yes"),
+              onPress: (): Promise<void> => {
+                return play(project);
+              },
+            },
+          ]
+        );
+      } else {
+        return play(project);
+      }
+    },
+    [
+      activeProjectService,
+      localization,
+      play,
     ]
   );
 
@@ -116,38 +197,8 @@ export function ProjectListPage(): JSX.Element {
                   projectCode,
                 }
               )}
-              onPress={async(): Promise<void> => {
-                // TODO: Business logic service
-                const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
-
-                if (lastSessionId) {
-                  const session = await sessionService.get(lastSessionId);
-
-                  if (session.state !== SessionState.Finished) {
-                    await sessionService.finish({
-                      sessionId: lastSessionId,
-                      avgSpeed: 0,
-                      distance: 0,
-                      maxSpeed: 0,
-                      date: undefined,
-                    });
-                  }
-
-                  await settingsService.set(
-                    SettingKey.LastSessionId,
-                    null
-                  );
-                }
-
-                await activeProjectService.reset();
-                // --
-
-                navigation.navigate(
-                  Routes.Home,
-                  {
-                    projectId: x.id,
-                  }
-                );
+              onPress={(): Promise<void> => {
+                return playHandler(x);
               }}
             >
               <Icon
@@ -215,11 +266,9 @@ export function ProjectListPage(): JSX.Element {
     },
     [
       localization,
-      settingsService,
-      activeProjectService,
-      sessionService,
       navigation,
       requestToDeleteProject,
+      playHandler,
     ]
   );
 

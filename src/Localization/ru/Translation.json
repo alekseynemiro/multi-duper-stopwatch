@@ -100,16 +100,24 @@
     }
   },
   "projectList": {
-    "confirmationTitle": "Подтверждение",
-    "confirmationMessage": "Вы действительно хотите удалить проект {{projectName}}?\n\nВосстановить проект после удаления будет невозможно.",
-    "cancel": "Отмена",
-    "delete": "Удалить",
     "noProjects": "У вас еще нет ни одного проекта.",
     "createProject": "Создать проект",
     "accessibility": {
       "run": "Запустить проект \"{{projectName}}\" #{{projectCode}}.",
       "edit": "Редактировать проект \"{{projectName}}\" #{{projectCode}}.",
       "delete": "Удалить проект \"{{projectName}}\" #{{projectCode}}."
+    },
+    "deleteConfirmation": {
+      "title": "Подтверждение",
+      "message": "Вы действительно хотите удалить проект {{projectName}}?\n\nВосстановить проект после удаления будет невозможно.",
+      "cancel": "Отмена",
+      "delete": "Удалить"
+    },
+    "activeSessionWarning": {
+      "title": "Внимание",
+      "message": "У вас есть активный сеанс проекта \"{{activeProjectName}}\".\n\nЕсли вы начнете новый сеанс для проекта \"{{newProjectName}}\", то активный сеанс проекта \"{{activeProjectName}}\" будет автоматически завершён.\n\nВы действительно хотите начать новый сеанс для проекта \"{{newProjectName}}\"?",
+      "yes": "Да",
+      "no": "Нет"
     }
   },
   "projectEditor": {

@@ -99,16 +99,24 @@
     }
   },
   "projectList": {
-    "confirmationTitle": "Confirmation",
-    "confirmationMessage": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
-    "cancel": "Cancel",
-    "delete": "Delete",
     "noProjects": "You don't have any projects yet.",
     "createProject": "Create a new project",
     "accessibility": {
       "run": "Run project \"{{projectName}}\" #{{projectCode}}.",
       "edit": "Edit project \"{{projectName}}\" #{{projectCode}}.",
       "delete": "Delete project \"{{projectName}}\" #{{projectCode}}."
+    },
+    "deleteConfirmation": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "activeSessionWarning": {
+      "title": "Attention",
+      "message": "You have started a session for the \"{{activeProjectName}}\" project.\n\nIf you run the project \"{{newProjectName}}\", then the session of the project \"{{activeProjectName}}\" will be automatically finished.\n\nAre you sure you want to run project \"{{newProjectName}}\"?",
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "projectEditor": {
