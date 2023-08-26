@@ -4,13 +4,13 @@ import { FlatList } from "react-native-gesture-handler";
 import { Button } from "@components/Button";
 import { CheckBox } from "@components/CheckBox";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { TableRowSeparator } from "@components/TableRowSeparator";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
 import { getColorCode } from "@utils/ColorPaletteUtils";
 import { ActivityModel } from "@views/Report/Models";
 import { FilterModalProps } from "./FilterModalProps";
 import { filterModalStyles } from "./FilterModalStyles";
-import { Separator } from "./Separator";
 
 export function FilterModal(props: FilterModalProps): JSX.Element {
   const localization = useLocalizationService();
@@ -136,7 +136,7 @@ export function FilterModal(props: FilterModalProps): JSX.Element {
             extraData={selectedActivities}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            ItemSeparatorComponent={Separator}
+            ItemSeparatorComponent={TableRowSeparator}
           />
           <View style={filterModalStyles.row}>
             <HorizontalLine size="sm" />
