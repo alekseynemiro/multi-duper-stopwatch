@@ -57,7 +57,7 @@ export class SessionLogService implements ISessionLogService {
                 distance: x.distance,
                 elapsedTime: x.elapsedTime,
                 finishDate: x.finishDate,
-                activityColor: x.activity.color,
+                activityColor: x.activity.color ?? null,
                 activityName: x.activity.name,
                 activityId: x.activity.id,
                 maxSpeed: x.maxSpeed,
