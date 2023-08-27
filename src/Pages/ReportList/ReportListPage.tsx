@@ -1,11 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { FlatList, ListRenderItemInfo, Text, View } from "react-native";
+import { FlatList, ListRenderItemInfo, Text, TouchableOpacity, View } from "react-native";
 import { useWindowDimensions } from "react-native";
-import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { DateTimeFormatter } from "@components/DateTimeFormatter";
 import { DurationFormatter } from "@components/DurationFormatter";
-import { Icon } from "@components/Icon";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import { Routes, useLocalizationService, useSessionService } from "@config";
 import { GetAllResultItem } from "@dto/Sessions";
@@ -110,12 +108,6 @@ export function ReportListPage(): JSX.Element {
               {localization.get("reportList.time")}
             </Text>
           </View>
-          <View
-            style={[
-              reportListPageStyles.tableCell,
-              reportListPageStyles.detailsButtonCol,
-            ]}
-          />
         </View>
       );
     },
@@ -132,8 +124,17 @@ export function ReportListPage(): JSX.Element {
       );
 
       return (
-        <View
+        <TouchableOpacity
           style={reportListPageStyles.tableRow}
+          accessibilityLabel={localization.get("reportList.accessibility.details", { sessionName: name })}
+          onPress={(): void => {
+            navigation.navigate(
+              Routes.Report,
+              {
+                sessionId: item.id,
+              }
+            );
+          }}
         >
           <View
             style={[
@@ -195,32 +196,7 @@ export function ReportListPage(): JSX.Element {
               value={getTimeSpan(item.elapsedTime)}
             />
           </View>
-          <View
-            style={[
-              reportListPageStyles.tableCell,
-              reportListPageStyles.detailsButtonCol,
-            ]}
-          >
-            <Button
-              variant="transparent"
-              style={reportListPageStyles.detailsButton}
-              accessibilityLabel={localization.get("reportList.accessibility.details", { sessionName: name })}
-              onPress={(): void => {
-                navigation.navigate(
-                  Routes.Report,
-                  {
-                    sessionId: item.id,
-                  }
-                );
-              }}
-            >
-              <Icon
-                name="details"
-                style={reportListPageStyles.detailsButtonIcon}
-              />
-            </Button>
-          </View>
-        </View>
+        </TouchableOpacity>
       );
     },
     [

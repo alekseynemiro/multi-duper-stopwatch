@@ -19,6 +19,7 @@ export const reportListPageStyles = StyleSheet.create({
     flex: 1,
     alignSelf: "stretch",
     flexDirection: "row",
+    minHeight: 48,
   },
   tableCell: {
     ...styles.tableCell,
@@ -46,16 +47,6 @@ export const reportListPageStyles = StyleSheet.create({
   elapsedTimeCol: {
     width: 110,
     alignItems: "center",
-  },
-  detailsButtonCol: {
-    width: 64,
-  },
-  detailsButton: {
-    minWidth: 48,
-    minHeight: 48,
-  },
-  detailsButtonIcon: {
-    fontSize: 24,
   },
   noData: {
     textAlign: "center",
