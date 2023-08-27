@@ -18,4 +18,5 @@ export const iconMap = new Map<IconName, string>()
   .set("info", "info-circle")
   .set("home-page", "house-user")
   .set("add", "plus")
-  .set("cancel", "window-close");
+  .set("cancel", "window-close")
+  .set("replace", "exchange-alt");
