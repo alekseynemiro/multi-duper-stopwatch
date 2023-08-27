@@ -125,7 +125,11 @@ export class SessionService implements ISessionService {
         const startDate = session.activityStartDate;
         let elapsedTime = request.date.getTime() - startDate.getTime();
 
-        if (session.state === SessionState.Paused && session.activity.id !== activity.id) {
+        if (
+          session.state === SessionState.Paused
+          && session.activity.id !== activity.id
+          && session.activityFinishDate
+        ) {
           elapsedTime = (session.activityFinishDate as Date).getTime() - session.activityStartDate.getTime();
         }
 
