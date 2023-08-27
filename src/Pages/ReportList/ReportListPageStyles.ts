@@ -4,17 +4,21 @@ import { colors, styles } from "@styles";
 export const reportListPageStyles = StyleSheet.create({
   contentView: {
     ...styles.contentView,
-  },
-  table: {
-    ...styles.table,
-    ...styles.w100,
     flex: 1,
   },
-  tableRow: {
+  table: {
+    flex: 1,
+  },
+  tableRowHeader: {
     ...styles.tableRow,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingBottom: 8,
+    ...styles.border,
+    height: 48,
+    backgroundColor: colors.background,
+  },
+  tableRow: {
+    flex: 1,
+    alignSelf: "stretch",
+    flexDirection: "row",
   },
   tableCell: {
     ...styles.tableCell,
