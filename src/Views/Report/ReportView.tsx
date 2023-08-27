@@ -566,6 +566,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
           }
           {
             state.filterByActivities.length === 0
+            && state.logs.length > 0
             && (
               <View
                 style={reportViewStyles.filter}
