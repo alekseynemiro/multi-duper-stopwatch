@@ -4,4 +4,6 @@ export interface ISessionLogService {
 
   getAll(sessionId: string): Promise<GetAllResult>
 
+  delete(id: string): Promise<void>;
+
 }

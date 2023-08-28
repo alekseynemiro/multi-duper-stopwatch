@@ -1018,6 +1018,10 @@ export class ActiveProjectService implements IActiveProjectService {
     this._stopwatch.tick();
   }
 
+  public subtract(value: number): void {
+    this._stopwatch.subtract(value);
+  }
+
   public async updateActivity(activity: Activity): Promise<void> {
     this._loggerService.debug(
       ActiveProjectService.name,

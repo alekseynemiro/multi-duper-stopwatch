@@ -3,6 +3,8 @@ import { ReportViewItemPressEventArgs } from "./ReportViewItemPressEventArgs";
 
 export type ReportViewItemProps = {
 
+  id: string;
+
   activityId: string;
 
   activityColor: ColorPalette | null;
@@ -12,5 +14,7 @@ export type ReportViewItemProps = {
   elapsedTime: number;
 
   onPress(e: ReportViewItemPressEventArgs): void;
+
+  onLongPress(e: ReportViewItemPressEventArgs): void;
 
 };

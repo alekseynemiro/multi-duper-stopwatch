@@ -28,4 +28,5 @@ export type IconName =
   | "home-page"
   | "star"
   | "add"
-  | "cancel";
+  | "cancel"
+  | "replace";

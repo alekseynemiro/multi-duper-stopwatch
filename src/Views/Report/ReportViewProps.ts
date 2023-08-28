@@ -1,5 +1,5 @@
 import { MutableRefObject } from "react";
-import { CurrentActivityModel, ReportItemModel } from "./Models";
+import { CurrentActivityModel, ReportItemModel, ReportViewItemDeletedEventArgs } from "./Models";
 
 export type ReportViewProps = {
 
@@ -20,5 +20,7 @@ export type ReportViewProps = {
   clearCurrentActivity?(): void;
 
   onLoad?(): void;
+
+  onReportItemDeleted?(e: ReportViewItemDeletedEventArgs): void;
 
 };

@@ -9,6 +9,7 @@ import
     useState,
   } from "react";
 import {
+  Alert,
   FlatList,
   ListRenderItemInfo,
   ScrollView,
@@ -33,6 +34,9 @@ import {
   CurrentActivity,
   FilterModal,
   ReportViewItem,
+  ReportViewItemPopupMenu,
+  ReportViewItemPopupMenuMethods,
+  ReportViewItemPopupMenuPressEventArgs,
   ReportViewItemPressEventArgs,
   Total,
 } from "./Components";
@@ -46,12 +50,13 @@ import {
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
 
-export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element => {
+export const ReportView = forwardRef((props: ReportViewProps, ref: React.ForwardedRef<unknown>): JSX.Element => {
   const {
     sessionId,
     autoScrollToBottom,
     isActiveProject,
     onLoad,
+    onReportItemDeleted,
   } = props;
 
   const localization = useLocalizationService();
@@ -60,6 +65,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
   const loggerService = useLoggerService();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
+  const reportViewItemPopupMenuRef = useRef<ReportViewItemPopupMenuMethods>();
 
   const [state, setState] = useState<ReportViewStateModel>({
     showLoadingIndicator: true,
@@ -412,20 +418,34 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
     ]
   );
 
+  const renderItemLongPressHandler = useCallback(
+    ({ id }: ReportViewItemPressEventArgs): void => {
+      if (!reportViewItemPopupMenuRef.current) {
+        throw new Error("Popup menu ref is empty.");
+      }
+
+      reportViewItemPopupMenuRef.current.open(id);
+    },
+    []
+  );
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ReportItemModel>): React.ReactElement => {
       return (
         <ReportViewItem
+          id={item.id}
           activityId={item.activityId}
           activityColor={item.color}
           activityName={item.name}
           elapsedTime={item.elapsedTime}
           onPress={renderItemPressHandler}
+          onLongPress={renderItemLongPressHandler}
         />
       );
     },
     [
       renderItemPressHandler,
+      renderItemLongPressHandler,
     ]
   );
 
@@ -592,6 +612,175 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
       localization,
       renderItemPressHandler,
       clearFilter,
+    ]
+  );
+
+  const deleteItem = useCallback(
+    async(id: string): Promise<void> => {
+      if (!id) {
+        throw new Error("'id' cannot be empty.");
+      }
+
+      const logEntry = state.logs.find(
+        (x: ReportItemModel): boolean => {
+          return x.id === id;
+        }
+      );
+
+      if (!logEntry) {
+        throw new Error(`Log entry #${id} not found.`);
+      }
+
+      await sessionLogService.delete(id!);
+
+      let newTotalTime = 0;
+      let newOutputTotalTime = 0;
+      let newOutputLogs: Array<ReportItemModel> = [];
+
+      const newFilterByActivities: Array<FilteredActivityModel> = [];
+      const newGroupedActivities = new Map<string, ActivityModel>();
+      const newLogs = [...state.logs]
+        .filter(
+          (x: ReportItemModel): boolean => {
+            if (x.id === id) {
+              return false;
+            }
+
+            newGroupedActivities.set(
+              x.activityId,
+              {
+                id: x.activityId,
+                color: x.color,
+                name: x.name,
+              }
+            );
+
+            if (
+              state.filterByActivities.some(
+                (xx: FilteredActivityModel): boolean => xx.id === x.activityId
+              )
+            ) {
+              newFilterByActivities.push({
+                id: x.activityId,
+                color: x.color,
+              });
+            }
+
+            newTotalTime += x.elapsedTime;
+
+            return true;
+          }
+        );
+
+      if (newFilterByActivities.length > 0) {
+        newOutputLogs = newLogs.filter(
+          (x: ReportItemModel): boolean => {
+            const filtered = newFilterByActivities.some(
+              (xx: FilteredActivityModel): boolean => {
+                return xx.id === x.activityId;
+              }
+            );
+
+            if (filtered) {
+              newOutputTotalTime += x.elapsedTime;
+              return true;
+            }
+
+            return false;
+          }
+        );
+      } else {
+        newOutputLogs = newLogs;
+        newOutputTotalTime = newTotalTime;
+      }
+
+      setState({
+        ...state,
+        logs: newLogs,
+        totalTime: newTotalTime,
+        groupedActivities: newGroupedActivities,
+        filterByActivities: newFilterByActivities,
+        outputLogs: newOutputLogs,
+        outputTotalTime: newOutputTotalTime,
+      });
+
+      onReportItemDeleted && onReportItemDeleted({
+        id,
+        elapsedTime: logEntry.elapsedTime,
+      });
+    },
+    [
+      state,
+      sessionLogService,
+      onReportItemDeleted,
+    ]
+  );
+
+  const requestToDeleteReportItem = useCallback(
+    (id: string): void => {
+      if (!state.logs.length) {
+        throw new Error("Log is empty.");
+      }
+
+      const logEntry = state.logs.find(
+        (x: ReportItemModel): boolean => {
+          return x.id === id;
+        }
+      );
+
+      if (!logEntry) {
+        throw new Error(`Log entry #${id} not found.`);
+      }
+
+      Alert.alert(
+        localization.get("report.reportItemDeleteConfirmation.title"),
+        localization.get(
+          "report.reportItemDeleteConfirmation.message",
+          {
+            activityName: logEntry.name,
+            elapsedTime: getTimeSpan(logEntry.elapsedTime).displayValue,
+          }
+        ),
+        [
+          {
+            text: localization.get("report.reportItemDeleteConfirmation.cancel"),
+            style: "cancel",
+          },
+          {
+            text: localization.get("report.reportItemDeleteConfirmation.delete"),
+            onPress: (): Promise<void> => {
+              return deleteItem(id);
+            },
+          },
+        ]
+      );
+    },
+    [
+      state,
+      localization,
+      deleteItem,
+    ]
+  );
+
+  const handleReportItemPopupMenuItemPress = useCallback(
+    (e: ReportViewItemPopupMenuPressEventArgs): void => {
+      switch (e.action) {
+        case "delete": {
+          requestToDeleteReportItem(e.id!);
+          break;
+        }
+        case "delete-forced": {
+          deleteItem(e.id!);
+          break;
+        }
+        default: {
+          throw new Error(`Unknown action ${e.action}.`);
+        }
+      }
+    },
+    [
+      requestToDeleteReportItem,
+      deleteItem,
     ]
   );
 
@@ -769,6 +958,11 @@ export const ReportView = forwardRef((props: ReportViewProps, ref): JSX.Element 
             showFilterModal: false,
           });
         }}
+      />
+
+      <ReportViewItemPopupMenu
+        ref={reportViewItemPopupMenuRef}
+        onPress={handleReportItemPopupMenuItemPress}
       />
     </View>
   );
