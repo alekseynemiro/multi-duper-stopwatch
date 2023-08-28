@@ -96,6 +96,11 @@
     "filterModal": {
       "ok": "Ok",
       "cancel": "Cancel"
+    },
+    "itemPopupMenu": {
+      "replace": "Replace",
+      "delete": "Delete",
+      "cancel": "Cancel"
     }
   },
   "projectList": {

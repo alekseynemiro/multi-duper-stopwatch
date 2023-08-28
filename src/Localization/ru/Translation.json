@@ -97,6 +97,11 @@
     "filterModal": {
       "ok": "Применить",
       "cancel": "Отмена"
+    },
+    "itemPopupMenu": {
+      "replace": "Заменить",
+      "delete": "Удалить",
+      "cancel": "Закрыть"
     }
   },
   "projectList": {
