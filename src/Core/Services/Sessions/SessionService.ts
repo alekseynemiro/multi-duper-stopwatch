@@ -793,4 +793,70 @@ export class SessionService implements ISessionService {
     );
   }
 
+  public async recalculate(sessionId: string): Promise<void> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.recalculate.name,
+      sessionId
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<void> => {
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: sessionId,
+            },
+          });
+
+        const allLogs = await this._databaseService.sessionLogs()
+          .find({
+            where: {
+              session,
+            },
+          });
+
+        type Stats = {
+          elapsedTime: number,
+          steps: number,
+          distance: number,
+          maxSpeed: number,
+          avgSpeed: number,
+          events: number,
+        };
+
+        const stats: Stats = allLogs.reduce(
+          (accumulator: Stats, currentItem: SessionLog): Stats => {
+            return {
+              elapsedTime: accumulator.elapsedTime + currentItem.elapsedTime,
+              steps: accumulator.steps + currentItem.steps,
+              distance: accumulator.distance + currentItem.distance,
+              maxSpeed: Math.max(accumulator.maxSpeed, currentItem.maxSpeed),
+              avgSpeed: (accumulator.avgSpeed + currentItem.avgSpeed) / 2,
+              events: accumulator.events + 1,
+            };
+          },
+          {
+            elapsedTime: 0,
+            steps: 0,
+            distance: 0,
+            maxSpeed: 0,
+            avgSpeed: 0,
+            events: 0,
+          }
+        );
+
+        session.elapsedTime = stats.elapsedTime;
+        session.steps = stats.steps;
+        session.distance = stats.distance;
+        session.maxSpeed = stats.maxSpeed;
+        session.avgSpeed = stats.avgSpeed;
+        session.events = stats.events;
+
+        await this._databaseService.sessions().save(session);
+      },
+      `${SessionService.name}.${this.recalculate.name}`
+    );
+  }
+
 }

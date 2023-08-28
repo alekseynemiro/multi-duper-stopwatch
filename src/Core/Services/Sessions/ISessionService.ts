@@ -30,4 +30,6 @@ export interface ISessionService {
 
   get(sessionId: string): Promise<GetResult>;
 
+  recalculate(sessionId: string): Promise<void>;
+
 }
