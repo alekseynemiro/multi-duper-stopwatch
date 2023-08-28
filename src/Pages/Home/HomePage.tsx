@@ -18,7 +18,7 @@ import { ActiveProjectServiceEventArgs } from "@services/ActiveProject";
 import { styles } from "@styles";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
-import { ReportView, ReportViewProps } from "@views/Report";
+import { ReportView, ReportViewItemDeletedEventArgs, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
 
 export function HomePage(): JSX.Element {
@@ -142,6 +142,15 @@ export function HomePage(): JSX.Element {
     [
       activeProjectService,
       reportViewRef,
+    ]
+  );
+
+  const reportViewItemDeleteHandler = useCallback(
+    (e: ReportViewItemDeletedEventArgs): void => {
+      activeProjectService.subtract(e.elapsedTime);
+    },
+    [
+      activeProjectService,
     ]
   );
 
@@ -312,6 +321,7 @@ export function HomePage(): JSX.Element {
         autoScrollToBottom={true}
         isActiveProject={true}
         onLoad={reportViewLoadHandler}
+        onReportItemDeleted={reportViewItemDeleteHandler}
       />
     )
     : (

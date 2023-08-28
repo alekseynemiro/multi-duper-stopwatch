@@ -8,11 +8,13 @@ import { ReportViewItemProps } from "./ReportViewItemProps";
 
 function ReportViewItemComponent(props: ReportViewItemProps): JSX.Element {
   const {
+    id,
     activityId,
     activityColor,
     activityName,
     elapsedTime,
     onPress,
+    onLongPress,
   } = props;
 
   const color = useMemo(
@@ -31,14 +33,32 @@ function ReportViewItemComponent(props: ReportViewItemProps): JSX.Element {
   const pressHandler = useCallback(
     (): void => {
       onPress({
+        id,
         activityId,
         activityColor,
       });
     },
     [
+      id,
       activityId,
       activityColor,
       onPress,
+    ]
+  );
+
+  const longPressHandler = useCallback(
+    (): void => {
+      onLongPress({
+        id,
+        activityId,
+        activityColor,
+      });
+    },
+    [
+      id,
+      activityId,
+      activityColor,
+      onLongPress,
     ]
   );
 
@@ -46,6 +66,7 @@ function ReportViewItemComponent(props: ReportViewItemProps): JSX.Element {
     <TouchableOpacity
       style={reportViewStyles.tableRow}
       onPress={pressHandler}
+      onLongPress={longPressHandler}
     >
       <View
         style={reportViewStyles.iconCol}
