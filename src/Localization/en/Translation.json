@@ -107,6 +107,11 @@
       "message": "Are you sure you want to delete entry \"{{activityName}}\" ({{elapsedTime}}) from the report?\n\nIt will be impossible to restore the entry after deletion.",
       "delete": "Delete",
       "cancel": "Cancel"
+    },
+    "replaceModal": {
+      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\" ({{elapsedTime}}) with.",
+      "replace": "Replace",
+      "cancel": "Cancel"
     }
   },
   "projectList": {
