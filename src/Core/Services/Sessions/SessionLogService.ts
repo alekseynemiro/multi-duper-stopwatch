@@ -108,4 +108,38 @@ export class SessionLogService implements ISessionLogService {
     );
   }
 
+  public async replaceWithActivity(id: string, newActivityId: string): Promise<void> {
+    this._loggerService.debug(
+      SessionLogService.name,
+      this.replaceWithActivity.name,
+      id,
+      "newActivityId",
+      newActivityId
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<void> => {
+        const sessionLog = await this._databaseService.sessionLogs()
+          .findOneOrFail({
+            where: {
+              id,
+            },
+          });
+
+        const activity = await this._databaseService.activities()
+          .findOneOrFail({
+            where: {
+              id: newActivityId,
+              isDeleted: false,
+            },
+          });
+
+
+        sessionLog.activity = activity;
+
+        await this._databaseService.sessionLogs().save(sessionLog);
+      }
+    );
+  }
+
 }

@@ -6,4 +6,6 @@ export interface ISessionLogService {
 
   delete(id: string): Promise<void>;
 
+  replaceWithActivity(id: string, newActivityId: string): Promise<void>;
+
 }
