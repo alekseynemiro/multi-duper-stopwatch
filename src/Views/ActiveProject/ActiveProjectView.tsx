@@ -31,10 +31,12 @@ export function ActiveProjectView(): JSX.Element {
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
+
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true);
   const [activities, setActivities] = useState<Array<ActivityModel>>([]);
   const [currentActivity, setCurrentActivity] = useState<ActivityModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
 
   const currentActivityPredicate = useCallback(
     (x: ActivityModel): boolean => {
@@ -92,6 +94,7 @@ export function ActiveProjectView(): JSX.Element {
         setCurrentActivity(undefined);
       }
 
+      setSessionId(activeProjectService.session?.id);
       setShowLoadingIndicator(false);
 
       currentProjectId.current = activeProjectService.project.id;
@@ -324,12 +327,20 @@ export function ActiveProjectView(): JSX.Element {
 
   useEffect(
     (): { (): void } => {
+      const sessionStartedSubscription = activeProjectService.addEventListener(
+        "session-loaded",
+        (): void => {
+          setSessionId(activeProjectService.session?.id);
+        }
+      );
+
       const activityListUpdatedSubscription = activeProjectService.addEventListener(
         "activity-list-updated",
         activityListUpdated
       );
 
       return async(): Promise<void> => {
+        sessionStartedSubscription.remove();
         activityListUpdatedSubscription.remove();
       };
     },
@@ -401,6 +412,7 @@ export function ActiveProjectView(): JSX.Element {
         </Button>
         <Button
           variant="light"
+          disabled={!sessionId}
           childWrapperStyle={activeProjectViewStyles.footerButton}
           onPress={finishRequest}
         >
