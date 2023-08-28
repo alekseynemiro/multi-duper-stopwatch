@@ -51,6 +51,12 @@ export class SessionLog {
   public finishDate!: Date;
 
   @Column({
+    name: "IsDeleted",
+    nullable: false,
+  })
+  public isDeleted!: boolean;
+
+  @Column({
     name: "CreatedDate",
     nullable: false,
   })

@@ -159,6 +159,7 @@ export class SessionService implements ISessionService {
               startDate,
               finishDate: request.date,
               createdDate: this._dateTimeService.now,
+              isDeleted: false,
             };
 
             await this._databaseService.sessionLogs().insert(log);
@@ -190,6 +191,7 @@ export class SessionService implements ISessionService {
               startDate,
               finishDate: request.date,
               createdDate: this._dateTimeService.now,
+              isDeleted: false,
             };
 
             await this._databaseService.sessionLogs().insert(log);
@@ -317,6 +319,7 @@ export class SessionService implements ISessionService {
               where: {
                 session,
                 finishDate: request.date,
+                isDeleted: false,
               },
             });
 
@@ -353,6 +356,7 @@ export class SessionService implements ISessionService {
               startDate,
               finishDate: request.date,
               createdDate: this._dateTimeService.now,
+              isDeleted: false,
             };
 
             await this._databaseService.sessionLogs().insert(log);
@@ -465,6 +469,7 @@ export class SessionService implements ISessionService {
               where: {
                 session,
                 finishDate: request.date,
+                isDeleted: false,
               },
             });
 
@@ -501,6 +506,7 @@ export class SessionService implements ISessionService {
               startDate,
               finishDate: request.date,
               createdDate: this._dateTimeService.now,
+              isDeleted: false,
             };
 
             await this._databaseService.sessionLogs().insert(log);
@@ -577,6 +583,7 @@ export class SessionService implements ISessionService {
                 where: {
                   session,
                   finishDate: request.date,
+                  isDeleted: false,
                 },
               });
 
@@ -613,6 +620,7 @@ export class SessionService implements ISessionService {
                 startDate,
                 finishDate: request.date,
                 createdDate: this._dateTimeService.now,
+                isDeleted: false,
               };
 
               await this._databaseService.sessionLogs().insert(log);
@@ -634,6 +642,7 @@ export class SessionService implements ISessionService {
           .find({
             where: {
               session,
+              isDeleted: false,
             },
           });
 
@@ -813,6 +822,7 @@ export class SessionService implements ISessionService {
           .find({
             where: {
               session,
+              isDeleted: false,
             },
           });
 

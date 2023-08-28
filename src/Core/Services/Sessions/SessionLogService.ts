@@ -45,6 +45,7 @@ export class SessionLogService implements ISessionLogService {
           .find({
             where: {
               session,
+              isDeleted: false,
             },
             order: {
               createdDate: "asc",
@@ -89,6 +90,7 @@ export class SessionLogService implements ISessionLogService {
           .findOneOrFail({
             where: {
               id,
+              isDeleted: false,
             },
             relations: {
               session: true,
@@ -101,8 +103,10 @@ export class SessionLogService implements ISessionLogService {
           throw new Error(`Failed to get the session associated with the log entry #${id}.`);
         }
 
+        sessionLog.isDeleted = true;
+
         // TODO: Transaction
-        await this._databaseService.sessionLogs().delete(sessionLog.id);
+        await this._databaseService.sessionLogs().save(sessionLog);
         await this._sessionService.recalculate(session.id);
       }
     );
@@ -123,6 +127,7 @@ export class SessionLogService implements ISessionLogService {
           .findOneOrFail({
             where: {
               id,
+              isDeleted: false,
             },
           });
 
