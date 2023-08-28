@@ -149,6 +149,11 @@ export class ActiveProjectStopwatch {
     this.onTick();
   }
 
+  public subtract(value: number): void {
+    this._totalElapsed -= value;
+    this.onTick();
+  }
+
   public stop(): number {
     this._loggerService.debug(
       ActiveProjectStopwatch.name,

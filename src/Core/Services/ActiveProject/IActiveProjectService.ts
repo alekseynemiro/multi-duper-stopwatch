@@ -44,6 +44,8 @@ export interface IActiveProjectService {
 
   tick(): void;
 
+  subtract(value: number): void;
+
   updateActivity(activity: Activity): Promise<void>;
 
   deleteActivity(activityId: string): Promise<void>;
