@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { CarouselRenderItemInfo } from "react-native-reanimated-carousel/lib/typescript/types";
@@ -15,7 +15,6 @@ import { SessionState } from "@data";
 import { Activity, ActivityLoggedResult, ActivityStatus } from "@dto/ActiveProject";
 import { useFocusEffect } from "@react-navigation/native";
 import { ActiveProjectServiceEventArgs } from "@services/ActiveProject";
-import { styles } from "@styles";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
 import { ReportView, ReportViewItemDeletedEventArgs, ReportViewProps } from "@views/Report";
@@ -33,10 +32,22 @@ export function HomePage(): JSX.Element {
 
   const reportViewRef = useRef<ReportViewProps>();
 
+  type ScreenType = "main" | "report";
+  const defaultScreens = useMemo(
+    (): Map<ScreenType, JSX.Element> => {
+      return new Map<ScreenType, JSX.Element>()
+        .set("main", <ActiveProjectView />);
+    },
+    []
+  );
+
+  const lastSessionIdRef = useRef<string | undefined>();
+
   const [projectId, setProjectId] = useState<string | undefined>(route.params?.projectId);
   const [sessionId, setSessionId] = useState<string | undefined>(route.params?.sessionId);
   const [loading, setLoading] = useState<boolean>(true);
   const [canOpenProject, setCanOpenProject] = useState<boolean>(false);
+  const [screens, setScreens] = useState<Map<ScreenType, JSX.Element>>(defaultScreens);
 
   loggerService.debug(
     HomePage.name,
@@ -261,6 +272,39 @@ export function HomePage(): JSX.Element {
     []
   );
 
+  useEffect(
+    (): void => {
+      if (sessionId && sessionId !== lastSessionIdRef.current) {
+        lastSessionIdRef.current = sessionId;
+
+        const newScreens = new Map<ScreenType, JSX.Element>()
+          .set(
+            "main",
+            screens.get("main")!
+          )
+          .set(
+            "report",
+            <ReportView
+              ref={reportViewRef}
+              sessionId={sessionId}
+              autoScrollToBottom={true}
+              isActiveProject={true}
+              onLoad={reportViewLoadHandler}
+              onReportItemDeleted={reportViewItemDeleteHandler}
+            />
+          );
+
+        setScreens(newScreens);
+      }
+    },
+    [
+      screens,
+      sessionId,
+      reportViewLoadHandler,
+      reportViewItemDeleteHandler,
+    ]
+  );
+
   useFocusEffect(
     useCallback(
       (): void => {
@@ -309,33 +353,6 @@ export function HomePage(): JSX.Element {
     );
   }
 
-  const activeProjectView = (
-    <ActiveProjectView />
-  );
-
-  const reportView = sessionId
-    ? (
-      <ReportView
-        ref={reportViewRef}
-        sessionId={sessionId}
-        autoScrollToBottom={true}
-        isActiveProject={true}
-        onLoad={reportViewLoadHandler}
-        onReportItemDeleted={reportViewItemDeleteHandler}
-      />
-    )
-    : (
-      <View
-        style={styles.contentView}
-      >
-        <Text
-          style={styles.textCenter}
-        >
-          {localization.get("home.noReport")}
-        </Text>
-      </View>
-    );
-
   return (
     <Carousel
       width={width}
@@ -347,10 +364,7 @@ export function HomePage(): JSX.Element {
       panGestureHandlerProps={{
         activeOffsetX: [-10, 10],
       }}
-      data={[
-        activeProjectView,
-        reportView,
-      ]}
+      data={Array.from(screens.values())}
       renderItem={({ item }: CarouselRenderItemInfo<JSX.Element>) => {
         return item;
       }}
