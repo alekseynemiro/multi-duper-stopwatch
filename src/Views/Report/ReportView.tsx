@@ -24,15 +24,19 @@ import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
   useLocalizationService,
   useLoggerService,
+  useProjectService,
   useSessionLogService,
+  useSessionService,
   useSessionStorageService,
 } from "@config";
+import { GetResultActivity } from "@dto/Projects";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { SessionStorageKeys } from "@types";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
   CurrentActivity,
   FilterModal,
+  ReplaceModal,
   ReportViewItem,
   ReportViewItemPopupMenu,
   ReportViewItemPopupMenuMethods,
@@ -60,6 +64,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
   } = props;
 
   const localization = useLocalizationService();
+  const projectService = useProjectService();
+  const sessionService = useSessionService();
   const sessionLogService = useSessionLogService();
   const sessionStorageService = useSessionStorageService();
   const loggerService = useLoggerService();
@@ -69,6 +75,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
   const [state, setState] = useState<ReportViewStateModel>({
     showLoadingIndicator: true,
+    activities: [],
     logs: [],
     outputLogs: [],
     groupedActivities: new Map<string, ActivityModel>(),
@@ -77,6 +84,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     totalTime: 0,
     currentActivity: undefined,
     showFilterModal: false,
+    showReplaceModal: false,
+    selectedReportItem: undefined,
   });
 
   loggerService.debug(
@@ -109,9 +118,21 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error("'sessionId' is required. Value must not be empty.");
       }
 
+      const session = await sessionService.get(sessionId);
+      const project = await projectService.get(session.projectId);
       const data = await sessionLogService.getAll(sessionId);
 
       let totalTime = 0;
+
+      const activities = project.activities?.map(
+        (x: GetResultActivity): ActivityModel => {
+          return {
+            id: x.id,
+            color: x.color,
+            name: x.name,
+          };
+        }
+      ) ?? [];
 
       const groupedActivities = new Map<string, ActivityModel>();
       const logs = data.items.map(
@@ -185,6 +206,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
       setState({
         ...state,
+        activities,
         logs,
         totalTime,
         groupedActivities,
@@ -204,6 +226,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       state,
       sessionId,
       autoScrollToBottom,
+      projectService,
+      sessionService,
       sessionLogService,
       sessionStorageService,
       loggerService,
@@ -762,9 +786,120 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     ]
   );
 
+  const replaceWithActivity = useCallback(
+    async(reportItemId: string, newActivityId: string): Promise<void> => {
+      await sessionLogService.replaceWithActivity(reportItemId, newActivityId);
+
+      const newActivity = state.activities.find(
+        (x: ActivityModel): boolean => {
+          return x.id === newActivityId;
+        }
+      );
+
+      if (!newActivity) {
+        throw new Error(`Activity #${newActivityId} not found.`);
+      }
+
+      const newLogs = [...state.logs].map(
+        (x: ReportItemModel): ReportItemModel => {
+          if (x.id === reportItemId) {
+            return {
+              ...x,
+              activityId: newActivityId,
+              color: newActivity.color,
+              name: newActivity.name,
+            };
+          }
+
+          return x;
+        }
+      );
+
+      let newOutputLogs: Array<ReportItemModel> = [];
+      let newOutputTotalTime = 0;
+
+      const newGroupedActivities = new Map<string, ActivityModel>();
+      const newFilterByActivities: Array<FilteredActivityModel> = [];
+
+      newLogs.forEach(
+        (x: ReportItemModel): void => {
+          if (!newGroupedActivities.has(x.activityId)) {
+            newGroupedActivities.set(
+              x.activityId,
+              {
+                id: x.id,
+                color: x.color,
+                name: x.name,
+              }
+            );
+          }
+        }
+      );
+
+      state.filterByActivities.forEach(
+        (x: FilteredActivityModel): void => {
+          if (newGroupedActivities.has(x.id)) {
+            newFilterByActivities.push({
+              id: x.id,
+              color: x.color,
+            });
+          }
+        }
+      );
+
+      if (newFilterByActivities.length > 0) {
+        newOutputLogs = newLogs.filter(
+          (x: ReportItemModel): boolean => {
+            const filtered = newFilterByActivities.some(
+              (xx: FilteredActivityModel): boolean => {
+                return xx.id === x.activityId;
+              }
+            );
+
+            if (filtered) {
+              newOutputTotalTime += x.elapsedTime;
+              return true;
+            }
+
+            return false;
+          }
+        );
+      } else {
+        newOutputLogs = newLogs;
+        newOutputTotalTime = state.totalTime;
+      }
+
+      setState({
+        ...state,
+        logs: newLogs,
+        outputLogs: newOutputLogs,
+        outputTotalTime: newOutputTotalTime,
+        groupedActivities: newGroupedActivities,
+        filterByActivities: newFilterByActivities,
+        showReplaceModal: false,
+      });
+    },
+    [
+      state,
+      sessionLogService,
+    ]
+  );
+
   const handleReportItemPopupMenuItemPress = useCallback(
     (e: ReportViewItemPopupMenuPressEventArgs): void => {
       switch (e.action) {
+        case "replace": {
+          setState({
+            ...state,
+            selectedReportItem: state.logs.find(
+              (x: ReportItemModel): boolean => {
+                return x.id === e.id;
+              }
+            ),
+            showReplaceModal: true,
+          });
+          break;
+        }
         case "delete": {
           requestToDeleteReportItem(e.id!);
           break;
@@ -779,6 +914,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       }
     },
     [
+      state,
       requestToDeleteReportItem,
       deleteItem,
     ]
@@ -959,6 +1095,23 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
           });
         }}
       />
+
+      {
+        state.showReplaceModal
+        && (
+          <ReplaceModal
+            reportItem={state.selectedReportItem!}
+            activities={state.activities}
+            onReplace={replaceWithActivity}
+            onCancel={(): void => {
+              setState({
+                ...state,
+                showReplaceModal: false,
+              });
+            }}
+          />
+        )
+      }
 
       <ReportViewItemPopupMenu
         ref={reportViewItemPopupMenuRef}

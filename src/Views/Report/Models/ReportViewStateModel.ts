@@ -5,6 +5,8 @@ import { ReportItemModel } from "./ReportItemModel";
 
 export type ReportViewStateModel = {
 
+  activities: Array<ActivityModel>;
+
   logs: Array<ReportItemModel>;
 
   groupedActivities: Map<string, ActivityModel>;
@@ -22,5 +24,9 @@ export type ReportViewStateModel = {
   showLoadingIndicator: boolean;
 
   showFilterModal: boolean;
+
+  showReplaceModal: boolean;
+
+  selectedReportItem: ReportItemModel | undefined;
 
 };
