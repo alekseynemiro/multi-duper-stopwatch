@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "./Colors";
+import { defaultFontSize } from "./Config";
 
 export const styles = StyleSheet.create({
   table: {
@@ -47,5 +48,8 @@ export const styles = StyleSheet.create({
   },
   textCenter: {
     textAlign: "center",
+  },
+  textSmall: {
+    fontSize: defaultFontSize - 2,
   },
 });
