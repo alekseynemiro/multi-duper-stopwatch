@@ -683,6 +683,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
               state.filterByActivities.some(
                 (xx: FilteredActivityModel): boolean => xx.id === x.activityId
               )
+              && !newFilterByActivities.some(
+                (xx: FilteredActivityModel): boolean => xx.id === x.activityId
+              )
             ) {
               newFilterByActivities.push({
                 id: x.activityId,
