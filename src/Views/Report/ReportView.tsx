@@ -827,7 +827,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
             newGroupedActivities.set(
               x.activityId,
               {
-                id: x.id,
+                id: x.activityId,
                 color: x.color,
                 name: x.name,
               }
