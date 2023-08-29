@@ -10,6 +10,7 @@ import { aboutPageStyles } from "./AboutPageStyles";
 
 export function AboutPage(): JSX.Element {
   const localization = useLocalizationService();
+  const utmSource = "ru.nemiro.apps.multiduperstopwatch";
 
   return (
     <ScrollView
@@ -42,7 +43,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://aleksey.nemiro.ru");
+            Linking.openURL(`https://aleksey.nemiro.ru?utm_source=${utmSource}`);
           }}
         >
           <Icon
@@ -53,7 +54,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://vk.com/aleksey.nemiro");
+            Linking.openURL(`https://vk.com/aleksey.nemiro?utm_source=${utmSource}`);
           }}
         >
           <Icon
@@ -64,7 +65,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://github.com/alekseynemiro");
+            Linking.openURL(`https://github.com/alekseynemiro?utm_source=${utmSource}`);
           }}
         >
           <Icon
