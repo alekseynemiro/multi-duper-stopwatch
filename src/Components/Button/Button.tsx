@@ -19,54 +19,58 @@ export function Button(props: ButtonProps): JSX.Element {
     accessibilityValue,
     importantForAccessibility,
     onPress,
+    onLongPress,
   } = props;
 
   return (
-    <View style={buttonStyles.container}>
-      <TouchableOpacity
-        disabled={disabled}
-        style={[
-          buttonStyles.button,
-          buttonStyles[variant ?? "primary"],
-          disabled && buttonStyles.disabled,
-          style,
-        ]}
-        accessible={accessible}
-        accessibilityState={accessibilityState}
-        accessibilityValue={accessibilityValue}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityHint={accessibilityHint}
-        importantForAccessibility={importantForAccessibility}
-        onPress={(): void => {
-          if (!disabled) {
-            onPress();
-          }
-        }}
-      >
-        {
-          title
-          && (
-            <Text
-              style={[
-                buttonStyles[`${variant ?? "primary"}Title`],
-                titleStyle,
-              ]}
-            >
-              {title}
-            </Text>
-          )
+    <TouchableOpacity
+      disabled={disabled}
+      style={[
+        buttonStyles.button,
+        buttonStyles[variant ?? "primary"],
+        disabled && buttonStyles.disabled,
+        style,
+      ]}
+      accessible={accessible}
+      accessibilityState={accessibilityState}
+      accessibilityValue={accessibilityValue}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      importantForAccessibility={importantForAccessibility}
+      onPress={(): void => {
+        if (!disabled) {
+          onPress && onPress();
         }
-        {
-          children
-          && (
-            <View
-              style={childWrapperStyle}
-            >
-              {children}
-            </View>
-          )
+      }}
+      onLongPress={(): void => {
+        if (!disabled) {
+          onLongPress && onLongPress();
         }
-      </TouchableOpacity>
-    </View>
+      }}
+    >
+      {
+        title
+        && (
+          <Text
+            style={[
+              buttonStyles[`${variant ?? "primary"}Title`],
+              titleStyle,
+            ]}
+          >
+            {title}
+          </Text>
+        )
+      }
+      {
+        children
+        && (
+          <View
+            style={childWrapperStyle}
+          >
+            {children}
+          </View>
+        )
+      }
+    </TouchableOpacity>
   );
 }

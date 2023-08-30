@@ -8,7 +8,7 @@ export type GetAllResultItem = {
 
   activityName: string;
 
-  activityColor: ColorPalette;
+  activityColor: ColorPalette | null;
 
   elapsedTime: number;
 

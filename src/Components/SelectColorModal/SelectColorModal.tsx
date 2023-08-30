@@ -2,18 +2,18 @@ import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { useLocalizationService } from "@config";
 import { colors } from "@styles";
 import { getColorByCode } from "@utils/ColorPaletteUtils";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { SelectColorModalProps } from "./SelectColorModalProps";
 import { selectColorModalStyles } from "./SelectColorModalStyles";
 
 export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={true}
     >
@@ -21,7 +21,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
         <View style={selectColorModalStyles.modalView}>
           <View style={selectColorModalStyles.row}>
             <Text>
-              {localization.get("projectEditor.selectColor.title")}
+              {localization.get("selectColor.title")}
             </Text>
             <View style={selectColorModalStyles.colorListContainer}>
               {
@@ -30,7 +30,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
                     <TouchableOpacity
                       key={x.color}
                       accessible={false}
-                      accessibilityLabel={localization.get(`projectEditor.selectColor.accessibility.color${index + 1}` as any)}
+                      accessibilityLabel={localization.get(`selectColor.accessibility.color${index + 1}` as any)}
                       style={{
                         ...selectColorModalStyles.color,
                         backgroundColor: x.color,
@@ -48,7 +48,7 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
           <View style={selectColorModalStyles.footer}>
             <Button
               variant="secondary"
-              title={localization.get("projectEditor.selectColor.close")}
+              title={localization.get("selectColor.close")}
               onPress={props.onClose}
             />
           </View>

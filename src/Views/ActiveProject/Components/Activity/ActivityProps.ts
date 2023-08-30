@@ -7,10 +7,12 @@ export type ActivityProps = {
 
   name: string;
 
-  color: ColorPalette | undefined;
+  color: ColorPalette | null;
 
   status: ActivityStatus;
 
   onPress(activityId: string): void;
+
+  onLongPress(activityId: string): void;
 
 };

@@ -55,6 +55,8 @@ export type ButtonProps = {
    */
   importantForAccessibility?: ("auto" | "yes" | "no" | "no-hide-descendants") | undefined;
 
-  onPress(): void;
+  onPress?(): void;
+
+  onLongPress?(): void;
 
 };

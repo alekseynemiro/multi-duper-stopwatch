@@ -4,7 +4,9 @@ import {
   FinishRequest,
   GetAllResult,
   GetResult,
+  PauseAndSetActivityRequest,
   PauseRequest,
+  PauseResult,
   RenameRequest,
   ToggleRequest,
   ToggleResult,
@@ -16,7 +18,9 @@ export interface ISessionService {
 
   toggle(request: ToggleRequest): Promise<ToggleResult>;
 
-  pause(request: PauseRequest): Promise<void>;
+  pause(request: PauseRequest): Promise<PauseResult | undefined>;
+
+  pauseAndSetActivity(request: PauseAndSetActivityRequest): Promise<PauseResult | undefined>;
 
   finish(request: FinishRequest): Promise<void>;
 
@@ -25,5 +29,7 @@ export interface ISessionService {
   getAll(): Promise<GetAllResult>;
 
   get(sessionId: string): Promise<GetResult>;
+
+  recalculate(sessionId: string): Promise<void>;
 
 }

@@ -1,46 +1,83 @@
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { View } from "react-native";
-import { ServiceIdentifier, serviceProvider } from "@config";
+import {
+  useActiveProjectService,
+  useLocalizationService,
+  useSessionStorageService,
+} from "@config";
+import { ColorPalette } from "@data";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
-import { IStopwatchService } from "@services/Stopwatch";
 import { colors } from "@styles";
+import { SessionStorageKeys } from "@types";
 import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
-
-const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
 
 export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
   const {
     currentActivity,
   } = props;
 
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const activeProjectService = useActiveProjectService();
+  const sessionStorageService = useSessionStorageService();
 
-  const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>();
+  const [showCurrentActivity, setShowCurrentActivity] = useState<boolean>(false);
 
   useEffect(
-    (): { (): void } => {
-      return (): void => {
-        stopwatchService.clearOffset();
-      };
+    (): void => {
+      activeProjectService.tick();
     },
-    []
+    [
+      showCurrentActivity,
+      activeProjectService,
+      sessionStorageService,
+    ]
+  );
+
+  useEffect(
+    (): void => {
+      const mode: number = sessionStorageService.getItem<SessionStorageKeys, number>("activeProject.stopwatchMode");
+
+      if (mode === 1) {
+        setShowCurrentActivity(true);
+      } else {
+        setShowCurrentActivity(false);
+      }
+    },
+    [
+      sessionStorageService,
+    ]
+  );
+
+  useEffect(
+    (): void => {
+      if (!currentActivity && showCurrentActivity) {
+        setShowCurrentActivity(false);
+      }
+    },
+    [
+      currentActivity,
+      showCurrentActivity,
+    ]
   );
 
   return (
     <TouchableOpacity
       style={stopwatchDisplayStyles.container}
       onPress={(): void => {
-        if (showCurrentActivity) {
-          stopwatchService.clearOffset();
-          setShowCurrentActivity(false);
-        } else {
-          stopwatchService.setOffset();
-          setShowCurrentActivity(true);
+
+        if (currentActivity) {
+          const value = !showCurrentActivity;
+
+          setShowCurrentActivity(value);
+
+          sessionStorageService.setItem<SessionStorageKeys>(
+            "activeProject.stopwatchMode",
+            value ? 1 : 0
+          );
         }
       }}
     >
@@ -61,10 +98,10 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                       stopwatchDisplayStyles.mode,
                       {
                         backgroundColor: currentActivity?.color
-                          ? getColorCode((currentActivity as ActivityModel).color)
+                          ? getColorCode((currentActivity as ActivityModel).color as ColorPalette)
                           : colors.white,
                         color: currentActivity?.color
-                          ? getContrastColorCode((currentActivity as ActivityModel).color)
+                          ? getContrastColorCode((currentActivity as ActivityModel).color as ColorPalette)
                           : colors.text,
                       },
                     ]}
@@ -94,7 +131,10 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
             </Text>
           )
         }
-        <ElapsedTime />
+        <ElapsedTime
+          currentActivity={currentActivity}
+          showCurrentActivity={showCurrentActivity}
+        />
       </View>
     </TouchableOpacity>
   );

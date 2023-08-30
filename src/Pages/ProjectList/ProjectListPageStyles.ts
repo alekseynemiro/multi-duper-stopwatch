@@ -1,11 +1,21 @@
 import { StyleSheet } from "react-native";
-import { colors } from "@styles";
+import { styles } from "@styles";
 
 export const projectListPageStyles = StyleSheet.create({
+  contentView: {
+    ...styles.contentView,
+    flex: 1,
+  },
+  table: {
+    ...styles.table,
+  },
   tableRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingBottom: 8,
+    flex: 1,
+    alignSelf: "stretch",
+    flexDirection: "row",
+  },
+  tableCell: {
+    ...styles.tableCell,
   },
   projectNameCol: {
     flex: 1,
@@ -18,7 +28,11 @@ export const projectListPageStyles = StyleSheet.create({
     minWidth: 48,
     minHeight: 48,
     justifyContent: "center",
+    marginLeft: 10,
   },
   buttonIcon: {
+  },
+  createProjectButton: {
+    ...styles.mt16,
   },
 });

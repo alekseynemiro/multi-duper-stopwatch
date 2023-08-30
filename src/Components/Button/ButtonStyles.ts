@@ -2,10 +2,6 @@ import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
 export const buttonStyles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    paddingHorizontal: 10,
-  },
   button: {
     alignItems: "center",
     justifyContent: "center",

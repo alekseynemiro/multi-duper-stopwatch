@@ -1,9 +1,10 @@
 import { NativeEventSubscription } from "react-native";
-import { Activity, Project } from "@dto/ActiveProject";
+import { Activity, CanRecoveryResult, Project } from "@dto/ActiveProject";
 import { GetResult as Session } from "@dto/Sessions";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
 import { ActiveProjectServiceEventType } from "./ActiveProjectServiceEventType";
+import { ActiveProjectStopwatchTickEvent } from "./ActiveProjectStopwatchTickEvent";
 
 export interface IActiveProjectService {
 
@@ -15,15 +16,21 @@ export interface IActiveProjectService {
 
   readonly currentActivityId: string | undefined;
 
+  canRecovery(): Promise<CanRecoveryResult | undefined>;
+
+  recovery(date: Date): Promise<void>;
+
   checkForCrash(): Promise<void>;
 
   useLastSessionId(): Promise<void>;
+
+  useLastProjectId(): Promise<void>;
 
   useSessionId(sessionId: string): Promise<void>;
 
   useProjectId(projectId: string): Promise<void>;
 
-  setCurrentActivity(activityId: string, isRunning: boolean): Promise<void>;
+  toggleActivity(activityId: string): Promise<void>;
 
   toggleCurrentActivity(): Promise<void>;
 
@@ -35,8 +42,16 @@ export interface IActiveProjectService {
 
   keep(): Promise<void>;
 
-  addEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): NativeEventSubscription;
+  tick(): void;
 
-  removeEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): void;
+  subtract(value: number): void;
+
+  updateActivity(activity: Activity): Promise<void>;
+
+  deleteActivity(activityId: string): Promise<void>;
+
+  addEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): NativeEventSubscription;
+
+  removeEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): void;
 
 }

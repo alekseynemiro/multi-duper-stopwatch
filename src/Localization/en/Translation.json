@@ -1,5 +1,15 @@
 {
   "_comment": "Localization/en/Translation.json",
+  "initialScreen": {
+    "activityRecoveryModal": {
+      "introduction": "It looks like the previous run of the program was terminated abnormally.",
+      "timePassed": "Since the closing of the program has passed:",
+      "lastActivity": "Last activity:",
+      "wouldYouLikeToAdd": "Would you like to add this time to this activity?",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
   "header": {
     "accessibility": {
       "menu": "Menu",
@@ -38,25 +48,91 @@
       "accessibility": {
         "listOfActivities": "List of activities"
       }
+    },
+    "addActivity": {
+      "add": "Add",
+      "hold": "Please hold\nto add"
+    },
+    "activityEditModal": {
+      "activityName": "Activity name:",
+      "save": "Save",
+      "cancel": "Cancel",
+      "accessibility": {
+        "enterActivityName": "Enter name for the activity.",
+        "pressToSelectColor": "Press to select color."
+      },
+      "validation": {
+        "activityNameIsRequired": "Activity name is required."
+      }
+    },
+    "activityPopupMenu": {
+      "add": "Add",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "activityDeleteConfirmation": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete activity {{activityName}}?\n\nIt will be impossible to restore the activity after deletion.",
+      "cancel": "Cancel",
+      "delete": "Delete"
     }
   },
   "report": {
     "pageTitle": "Report",
     "activity": "Activity",
     "time": "Time",
-    "total": "Total:"
+    "total": "Total:",
+    "filteredByOneActivity": "Filtered by {{count}} activity",
+    "filteredByFewActivity": "Filtered by {{count}} activities",
+    "filteredByOtherActivities": "Filtered by {{count}} activities",
+    "setFilter": "Set filters",
+    "changeFilter": "Change",
+    "clearFilter": "Reset",
+    "noData": "There are no entries yet.",
+    "finishAnyActivity": "Finish any activity for the information to appear in the report.",
+    "tryToResetFilter": "Try resetting filters.",
+    "resetFilter": "Reset filters",
+    "filterModal": {
+      "ok": "Ok",
+      "cancel": "Cancel"
+    },
+    "itemPopupMenu": {
+      "replace": "Replace",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "reportItemDeleteConfirmation": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete entry \"{{activityName}}\" ({{elapsedTime}}) from the report?\n\nIt will be impossible to restore the entry after deletion.",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "replaceModal": {
+      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\" ({{elapsedTime}}) with.",
+      "replace": "Replace",
+      "cancel": "Cancel"
+    }
   },
   "projectList": {
-    "confirmationTitle": "Confirmation",
-    "confirmationMessage": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
-    "cancel": "Cancel",
-    "delete": "Delete",
     "noProjects": "You don't have any projects yet.",
     "createProject": "Create a new project",
     "accessibility": {
       "run": "Run project \"{{projectName}}\" #{{projectCode}}.",
       "edit": "Edit project \"{{projectName}}\" #{{projectCode}}.",
       "delete": "Delete project \"{{projectName}}\" #{{projectCode}}."
+    },
+    "deleteConfirmation": {
+      "title": "Confirmation",
+      "message": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "activeSessionWarning": {
+      "title": "Attention",
+      "message": "You have started a session for the \"{{activeProjectName}}\" project.\n\nIf you run the project \"{{newProjectName}}\", then the session of the project \"{{activeProjectName}}\" will be automatically finished.\n\nAre you sure you want to run project \"{{newProjectName}}\"?",
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "projectEditor": {
@@ -75,67 +151,6 @@
       "activityName": "Activity name:",
       "ok": "Ok",
       "cancel": "Cancel"
-    },
-    "selectColor": {
-      "title": "Tap to color for select:",
-      "close": "Close",
-      "accessibility": {
-        "color1": "Light red",
-        "color2": "Light coral",
-        "color3": "Soft red",
-        "color4": "Red",
-        "color5": "Dark red",
-        "color6": "Very dark red",
-
-        "color7": "Pale orange",
-        "color8": "Soft orange",
-        "color9": "Orange",
-        "color10": "Strong orange",
-        "color11": "Dark orange",
-        "color12": "Very dark orange",
-
-        "color13": "Pale yellow",
-        "color14": "Soft yellow",
-        "color15": "Yellow",
-        "color16": "Strong yellow",
-        "color17": "Dark yellow",
-        "color18": "Very dark yellow",
-
-        "color19": "Lime green",
-        "color20": "Pure green",
-        "color21": "Strong green",
-        "color22": "Green",
-        "color23": "Dark green",
-        "color24": "Very dark green",
-
-        "color25": "Soft cyan",
-        "color26": "Cyan",
-        "color27": "Vivid cyan",
-        "color28": "Strong cyan",
-        "color29": "Dark cyan",
-        "color30": "Very dark cyan",
-
-        "color31": "Pale blue",
-        "color32": "Light blue",
-        "color33": "Blue",
-        "color34": "Strong blue",
-        "color35": "Dark blue",
-        "color36": "Very dark blue",
-
-        "color37": "Pale magenta",
-        "color38": "Soft magenta",
-        "color39": "Magenta",
-        "color40": "Strong magenta",
-        "color41": "Dark magenta",
-        "color42": "Very dark magenta",
-
-        "color43": "White",
-        "color44": "Light gray",
-        "color45": "Gray",
-        "color46": "Dark gray",
-        "color47": "Very dark gray",
-        "color48": "Black"
-      }
     },
     "validation": {
       "activityNameIsRequired": "Activity name is required.",
@@ -172,9 +187,78 @@
     "tellYourFriends": "Tell your friends and family about the program.",
     "ifYouHaveIdeas": "If you have any ideas or comments,",
     "tellTheAuthor": "tell the author about it",
-    "thankYou": "Thank you!"
+    "thankYou": "Thank you!",
+    "license": "The software is supplied under the terms of the MIT License.",
+    "details": "Details",
+    "licensesModal": {
+      "license": "The Multi-duper Stopwatch software is licensed under the MIT license.",
+      "showLicense": "Show",
+      "thirdParty": "This software uses the following third-party components:",
+      "contactMe": "If you have any questions, please feel free to contact:"
+    }
   },
   "dateTimeFormatter": {
     "at": "at"
+  },
+  "selectColor": {
+    "title": "Tap to color for select:",
+    "close": "Close",
+    "accessibility": {
+      "color1": "Light red",
+      "color2": "Light coral",
+      "color3": "Soft red",
+      "color4": "Red",
+      "color5": "Dark red",
+      "color6": "Very dark red",
+
+      "color7": "Pale orange",
+      "color8": "Soft orange",
+      "color9": "Orange",
+      "color10": "Strong orange",
+      "color11": "Dark orange",
+      "color12": "Very dark orange",
+
+      "color13": "Pale yellow",
+      "color14": "Soft yellow",
+      "color15": "Yellow",
+      "color16": "Strong yellow",
+      "color17": "Dark yellow",
+      "color18": "Very dark yellow",
+
+      "color19": "Lime green",
+      "color20": "Pure green",
+      "color21": "Strong green",
+      "color22": "Green",
+      "color23": "Dark green",
+      "color24": "Very dark green",
+
+      "color25": "Soft cyan",
+      "color26": "Cyan",
+      "color27": "Vivid cyan",
+      "color28": "Strong cyan",
+      "color29": "Dark cyan",
+      "color30": "Very dark cyan",
+
+      "color31": "Pale blue",
+      "color32": "Light blue",
+      "color33": "Blue",
+      "color34": "Strong blue",
+      "color35": "Dark blue",
+      "color36": "Very dark blue",
+
+      "color37": "Pale magenta",
+      "color38": "Soft magenta",
+      "color39": "Magenta",
+      "color40": "Strong magenta",
+      "color41": "Dark magenta",
+      "color42": "Very dark magenta",
+
+      "color43": "White",
+      "color44": "Light gray",
+      "color45": "Gray",
+      "color46": "Dark gray",
+      "color47": "Very dark gray",
+      "color48": "Black"
+    }
   }
 }

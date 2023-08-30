@@ -8,7 +8,7 @@ export type ReportItemModel = {
 
   name: string;
 
-  color: ColorPalette;
+  color: ColorPalette | null;
 
   elapsedTime: number;
 
@@ -20,6 +20,6 @@ export type ReportItemModel = {
 
   startDate: Date;
 
-  finishDate: Date;
+  finishDate: Date | undefined;
 
 };

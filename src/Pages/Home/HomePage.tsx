@@ -1,38 +1,58 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, useWindowDimensions, View } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
+import { CarouselRenderItemInfo } from "react-native-reanimated-carousel/lib/typescript/types";
 import { ActivityIndicator } from "@components/ActivityIndicator";
 import { Button } from "@components/Button";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import {
+  Routes,
+  useActiveProjectService,
+  useLocalizationService,
+  useLoggerService,
+  useProjectService,
+} from "@config";
 import { SessionState } from "@data";
+import { Activity, ActivityLoggedResult, ActivityStatus } from "@dto/ActiveProject";
 import { useFocusEffect } from "@react-navigation/native";
-import { ActiveProjectServiceEventArgs, IActiveProjectService } from "@services/ActiveProject";
-import { ILoggerService } from "@services/Logger";
-import { IProjectService } from "@services/Projects";
-import { styles } from "@styles";
-import { useLocalization } from "@utils/LocalizationUtils";
+import { ActiveProjectServiceEventArgs } from "@services/ActiveProject";
 import { useNavigation, useRoute } from "@utils/NavigationUtils";
 import { ActiveProjectView } from "@views/ActiveProject";
-import { ReportView, ReportViewProps } from "@views/Report";
+import { ReportView, ReportViewItemDeletedEventArgs, ReportViewProps } from "@views/Report";
 import { homePageStyles } from "./HomePageStyles";
-
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-const loggerService = serviceProvider.get<ILoggerService>(ServiceIdentifier.LoggerService);
 
 export function HomePage(): JSX.Element {
   const { width } = useWindowDimensions();
 
   const navigation = useNavigation();
   const route = useRoute<Routes.Home>();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const projectService = useProjectService();
+  const activeProjectService = useActiveProjectService();
+  const loggerService = useLoggerService();
 
   const reportViewRef = useRef<ReportViewProps>();
+
+  type ScreenType = "main" | "report";
+  const defaultScreens = useMemo(
+    (): Map<ScreenType, JSX.Element> => {
+      return new Map<ScreenType, JSX.Element>()
+        .set("main", <ActiveProjectView />);
+    },
+    []
+  );
+
+  const lastSessionIdRef = useRef<string | undefined>();
 
   const [projectId, setProjectId] = useState<string | undefined>(route.params?.projectId);
   const [sessionId, setSessionId] = useState<string | undefined>(route.params?.sessionId);
   const [loading, setLoading] = useState<boolean>(true);
   const [canOpenProject, setCanOpenProject] = useState<boolean>(false);
+  const [screens, setScreens] = useState<Map<ScreenType, JSX.Element>>(defaultScreens);
+
+  loggerService.debug(
+    HomePage.name,
+    "render"
+  );
 
   const load = useCallback(
     async(): Promise<void> => {
@@ -74,6 +94,10 @@ export function HomePage(): JSX.Element {
           await activeProjectService.useLastSessionId();
         }
 
+        if (!activeProjectService.project) {
+          await activeProjectService.useLastProjectId();
+        }
+
         if (activeProjectService.session?.state === SessionState.Finished) {
           navigation.navigate(
             Routes.Home,
@@ -84,6 +108,8 @@ export function HomePage(): JSX.Element {
         }
       }
 
+      await reportViewRef.current?.load?.apply(reportViewRef.current);
+
       const projects = await projectService.getAll();
 
       setCanOpenProject(projects.items.length > 0);
@@ -93,6 +119,49 @@ export function HomePage(): JSX.Element {
       navigation,
       projectId,
       sessionId,
+      activeProjectService,
+      loggerService,
+      projectService,
+    ]
+  );
+
+  const reportViewLoadHandler = useCallback(
+    (): void => {
+      if (!activeProjectService.currentActivityId) {
+        return;
+      }
+
+      const currentActivity = activeProjectService.activities?.find(
+        (x: Activity): boolean => {
+          return x.id === activeProjectService.currentActivityId;
+        }
+      );
+
+      if (!currentActivity) {
+        return;
+      }
+
+      reportViewRef.current?.addCurrentActivity?.apply(
+        reportViewRef.current,
+        [{
+          id: currentActivity.id,
+          color: currentActivity.color,
+          name: currentActivity.name,
+        }]
+      );
+    },
+    [
+      activeProjectService,
+      reportViewRef,
+    ]
+  );
+
+  const reportViewItemDeleteHandler = useCallback(
+    (e: ReportViewItemDeletedEventArgs): void => {
+      activeProjectService.subtract(e.elapsedTime);
+    },
+    [
+      activeProjectService,
     ]
   );
 
@@ -103,6 +172,13 @@ export function HomePage(): JSX.Element {
         (): void => {
           activeProjectService.session && setSessionId(activeProjectService.session.id);
           activeProjectService.project && setProjectId(activeProjectService.project.id);
+        }
+      );
+
+      const sessionPausedSubscription = activeProjectService.addEventListener(
+        "session-paused",
+        (): void => {
+          reportViewRef.current?.clearCurrentActivity?.apply(reportViewRef.current);
         }
       );
 
@@ -121,20 +197,112 @@ export function HomePage(): JSX.Element {
       const projectLoadedSubscription = activeProjectService.addEventListener(
         "project-loaded",
         (): void => {
+          if (
+            activeProjectService.project
+            && projectId !== activeProjectService.project.id
+          ) {
+            setProjectId(activeProjectService.project.id);
+          }
+
           navigation.setOptions({
             title: activeProjectService.project?.name,
           });
         }
       );
 
+      const activityUpdatedSubscription = activeProjectService.addEventListener<{ activityId: string, status: ActivityStatus }>(
+        "activity-updated",
+        async({ activityId, status }: { activityId: string, status: ActivityStatus }): Promise<void> => {
+          if (status !== ActivityStatus.Running) {
+            return;
+          }
+
+          const activity = activeProjectService.activities?.find(
+            (x: Activity): boolean => {
+              return x.id === activityId;
+            }
+          );
+
+          if (!activity) {
+            throw new Error(`Activity #${activityId} not found.`);
+          }
+
+          reportViewRef.current?.addCurrentActivity?.apply(
+            reportViewRef.current,
+            [{
+              id: activityId,
+              color: activity.color,
+              name: activity.name,
+            }]
+          );
+        }
+      );
+
+      const activityLoggedSubscription = activeProjectService.addEventListener<ActivityLoggedResult>(
+        "activity-logged",
+        (e: ActivityLoggedResult): void => {
+          reportViewRef.current?.addItem?.apply(
+            reportViewRef.current,
+            [{
+              id: e.id,
+              activityId: e.activityId,
+              name: e.activityName,
+              color: e.activityColor,
+              maxSpeed: e.maxSpeed,
+              avgSpeed: e.avgSpeed,
+              distance: e.distance,
+              elapsedTime: e.elapsedTime,
+              startDate: e.startDate,
+              finishDate: e.finishDate,
+            }]
+          );
+        }
+      );
+
       return async(): Promise<void> => {
         sessionStartedSubscription.remove();
+        sessionPausedSubscription.remove();
         sessionFinishedSubscription.remove();
         projectLoadedSubscription.remove();
+        activityUpdatedSubscription.remove();
+        activityLoggedSubscription.remove();
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
+  );
+
+  useEffect(
+    (): void => {
+      if (sessionId && sessionId !== lastSessionIdRef.current) {
+        lastSessionIdRef.current = sessionId;
+
+        const newScreens = new Map<ScreenType, JSX.Element>()
+          .set(
+            "main",
+            screens.get("main")!
+          )
+          .set(
+            "report",
+            <ReportView
+              ref={reportViewRef}
+              sessionId={sessionId}
+              autoScrollToBottom={true}
+              isActiveProject={true}
+              onLoad={reportViewLoadHandler}
+              onReportItemDeleted={reportViewItemDeleteHandler}
+            />
+          );
+
+        setScreens(newScreens);
+      }
+    },
+    [
+      screens,
+      sessionId,
+      reportViewLoadHandler,
+      reportViewItemDeleteHandler,
+    ]
   );
 
   useFocusEffect(
@@ -185,30 +353,6 @@ export function HomePage(): JSX.Element {
     );
   }
 
-  const activeProjectView = (
-    <ActiveProjectView />
-  );
-
-  const reportView = sessionId
-    ? (
-      <ReportView
-        ref={reportViewRef}
-        sessionId={sessionId}
-        autoScrollToBottom={true}
-      />
-    )
-    : (
-      <View
-        style={styles.contentView}
-      >
-        <Text
-          style={styles.textCenter}
-        >
-          {localization.get("home.noReport")}
-        </Text>
-      </View>
-    );
-
   return (
     <Carousel
       width={width}
@@ -220,16 +364,8 @@ export function HomePage(): JSX.Element {
       panGestureHandlerProps={{
         activeOffsetX: [-10, 10],
       }}
-      data={[
-        activeProjectView,
-        reportView,
-      ]}
-      onSnapToItem={(index) => {
-        if (index === 1 && reportViewRef.current) {
-          reportViewRef.current?.load?.apply(reportViewRef.current);
-        }
-      }}
-      renderItem={({ item }) => {
+      data={Array.from(screens.values())}
+      renderItem={({ item }: CarouselRenderItemInfo<JSX.Element>) => {
         return item;
       }}
     />

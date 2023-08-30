@@ -1,18 +1,27 @@
 import { ServiceIdentifier } from "@config";
-import { Activity, ActivityInProject, IDatabaseService, Project } from "@data";
 import {
+  Activity,
+  ActivityInProject,
+  IDatabaseService,
+  Project,
+  SessionState,
+} from "@data";
+import {
+  AddActivityRequest,
   CreateProjectRequest,
+  DeleteActivityRequest,
   GetAllResult,
   GetAllResultItem,
   GetResult,
   GetResultActivity,
+  UpdateActivityRequest,
   UpdateProjectRequest,
 } from "@dto/Projects";
 import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
 import { ILoggerService } from "@services/Logger";
 import { inject, injectable } from "inversify";
-import { In } from "typeorm";
+import { In, Not } from "typeorm";
 import { IProjectService } from "./IProjectService";
 import { ProjectId } from "./Types";
 
@@ -60,7 +69,7 @@ export class ProjectService implements IProjectService {
             (x: ActivityInProject): GetResultActivity => {
               return {
                 id: x.activity.id,
-                color: x.activity.color,
+                color: x.activity.color ?? null,
                 name: x.activity.name,
                 position: x.position,
               };
@@ -153,7 +162,7 @@ export class ProjectService implements IProjectService {
               const newActivity = new Activity();
 
               newActivity.id = this._guidService.newGuid();
-              newActivity.color = activity.color;
+              newActivity.color = activity.color ?? null;
               newActivity.name = activity.name;
               newActivity.isGlobal = false;
               newActivity.isDeleted = false;
@@ -338,7 +347,7 @@ export class ProjectService implements IProjectService {
             } else {
               if (linked) {
                 // update an existing reference
-                activityInProject.activity.color = activity.color;
+                activityInProject.activity.color = activity.color ?? null;
                 activityInProject.activity.name = activity.name;
                 activityInProject.position = activity.position;
 
@@ -349,7 +358,7 @@ export class ProjectService implements IProjectService {
                 const newActivity = new Activity();
 
                 newActivity.id = this._guidService.newGuid();
-                newActivity.color = activity.color;
+                newActivity.color = activity.color ?? null;
                 newActivity.name = activity.name;
                 newActivity.isGlobal = false;
                 newActivity.isDeleted = false;
@@ -373,5 +382,144 @@ export class ProjectService implements IProjectService {
       `${ProjectService.name}.${this.update.name}`
     );
   }
+
+  public addActivity(request: AddActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.addActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId,
+      "activityName",
+      request.activityName,
+      "activityColor",
+      request.activityColor,
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activitiesInProject = await this._databaseService.activitiesInProjects()
+          .find({
+            where: {
+              projectId: request.projectId,
+            },
+          });
+
+        const activity = new Activity();
+
+        activity.id = request.activityId;
+        activity.color = request.activityColor ?? null;
+        activity.name = request.activityName;
+        activity.isDeleted = false;
+        activity.isGlobal = false;
+        activity.createdDate = this._dateTimeService.now;
+
+        const activityInProject = new ActivityInProject();
+
+        activityInProject.id = this._guidService.newGuid();
+        activityInProject.activityId = request.activityId;
+        activityInProject.projectId = request.projectId;
+        activityInProject.position = activitiesInProject.length;
+
+        await this._databaseService.activities().insert(activity);
+        await this._databaseService.activitiesInProjects().insert(activityInProject);
+      }
+    );
+  }
+
+  public updateActivity(request: UpdateActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.updateActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId,
+      "activityName",
+      request.activityName,
+      "activityColor",
+      request.activityColor,
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activity = await this._databaseService.activities().findOneOrFail({
+          where: {
+            id: request.activityId,
+          },
+        });
+
+        activity.color = request.activityColor ?? null;
+        activity.name = request.activityName;
+
+        await this._databaseService.activities().save(activity);
+      }
+    );
+  }
+
+  public deleteActivity(request: DeleteActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.deleteActivity.name,
+      "projectId",
+      request.projectId,
+      "activityId",
+      request.activityId
+    );
+
+    return this._databaseService.execute(
+      async (): Promise<void> => {
+        const activity = await this._databaseService.activities().findOneOrFail({
+          where: {
+            id: request.activityId,
+          },
+        });
+
+        const sessions = await this._databaseService.sessions().find({
+          where: {
+            activity,
+            state: Not(SessionState.Finished),
+          },
+        });
+
+        if (sessions.length > 0) {
+          this._loggerService.warn(
+            ProjectService.name,
+            this.deleteActivity.name,
+            "projectId",
+            request.projectId,
+            "activityId",
+            request.activityId,
+            `The activity #${activity.id} is used as the active activity in ${sessions.length} sessions.`
+          );
+        }
+
+        const activityInProject = await this._databaseService.activitiesInProjects().findOneOrFail({
+          where: {
+            projectId: request.projectId,
+            activityId: request.activityId,
+          },
+        });
+
+        await this._databaseService.activitiesInProjects().delete(activityInProject.id);
+
+        // mark as deleted private activities
+        const privateActivity = await this._databaseService.activities().findOne({
+          where: {
+            id: activityInProject.id,
+            isGlobal: false,
+          },
+        });
+
+        if (privateActivity) {
+          privateActivity.isDeleted = true;
+
+          await this._databaseService.activities().save(privateActivity);
+        }
+      }
+    );
+  }
+
 
 }

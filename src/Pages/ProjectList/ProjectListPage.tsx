@@ -1,76 +1,292 @@
 import React, { useCallback, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { FlatList, ListRenderItemInfo, Text, View } from "react-native";
 import { Alert } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { TableRowSeparator } from "@components/TableRowSeparator";
+import {
+  Routes,
+  useActiveProjectService,
+  useLocalizationService,
+  useProjectService,
+  useSessionService,
+  useSettingsService,
+} from "@config";
 import { SessionState, SettingKey } from "@data";
 import { GetAllResultItem } from "@dto/Projects";
 import { useFocusEffect } from "@react-navigation/native";
-import { IActiveProjectService } from "@services/ActiveProject";
-import { IProjectService } from "@services/Projects";
-import { ISessionService } from "@services/Sessions";
-import { ISettingsService } from "@services/Settings";
-import { styles } from "@styles";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { useNavigation } from "@utils/NavigationUtils";
 import { projectListPageStyles } from "./ProjectListPageStyles";
 
-const projectService = serviceProvider.get<IProjectService>(ServiceIdentifier.ProjectService);
-const sessionService = serviceProvider.get<ISessionService>(ServiceIdentifier.SessionService);
-const settingsService = serviceProvider.get<ISettingsService>(ServiceIdentifier.SettingsService);
-const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
-
 export function ProjectListPage(): JSX.Element {
   const navigation = useNavigation();
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const projectService = useProjectService();
+  const sessionService = useSessionService();
+  const settingsService = useSettingsService();
+  const activeProjectService = useActiveProjectService();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
 
-  const load = async(): Promise<void> => {
-    setShowLoadingIndicator(true);
+  const load = useCallback(
+    async(): Promise<void> => {
+      setShowLoadingIndicator(true);
 
-    const data = await projectService.getAll();
+      const data = await projectService.getAll();
 
-    setList(data.items);
-    setShowLoadingIndicator(false);
-  };
+      setList(data.items);
+      setShowLoadingIndicator(false);
+    },
+    [
+      projectService,
+    ]
+  );
 
-  const requestToDeleteProject = (project: GetAllResultItem): void => {
-    Alert.alert(
-      localization.get("projectList.confirmationTitle"),
-      localization.get("projectList.confirmationMessage", { projectName: project.name }),
-      [
-        {
-          text: localization.get("projectList.cancel"),
-          style: "cancel",
-        },
-        {
-          text: localization.get("projectList.delete"),
-          onPress: (): void => {
-            deleteProject(project.id);
+  const deleteProject = useCallback(
+    async(projectId: string): Promise<void> => {
+      setShowLoadingIndicator(true);
+
+      await projectService.delete(projectId);
+      await load();
+    },
+    [
+      projectService,
+      load,
+    ]
+  );
+
+  const requestToDeleteProject = useCallback(
+    (project: GetAllResultItem): void => {
+      Alert.alert(
+        localization.get("projectList.deleteConfirmation.title"),
+        localization.get("projectList.deleteConfirmation.message", { projectName: project.name }),
+        [
+          {
+            text: localization.get("projectList.deleteConfirmation.cancel"),
+            style: "cancel",
           },
-        },
-      ]
-    );
-  };
+          {
+            text: localization.get("projectList.deleteConfirmation.delete"),
+            onPress: (): void => {
+              deleteProject(project.id);
+            },
+          },
+        ]
+      );
+    },
+    [
+      deleteProject,
+      localization,
+    ]
+  );
 
-  const deleteProject = async(projectId: string): Promise<void> => {
-    setShowLoadingIndicator(true);
+  const play = useCallback(
+    async(project: GetAllResultItem): Promise<void> => {
+      // TODO: Business logic service
+      const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
 
-    await projectService.delete(projectId);
-    await load();
-  };
+      if (lastSessionId) {
+        const session = await sessionService.get(lastSessionId);
+
+        if (session.state !== SessionState.Finished) {
+          await sessionService.finish({
+            sessionId: lastSessionId,
+            avgSpeed: 0,
+            distance: 0,
+            maxSpeed: 0,
+            date: undefined,
+          });
+        }
+
+        await settingsService.set(
+          SettingKey.LastSessionId,
+          null
+        );
+      }
+
+      await activeProjectService.reset();
+      // --
+
+      navigation.navigate(
+        Routes.Home,
+        {
+          projectId: project.id,
+        }
+      );
+    },
+    [
+      settingsService,
+      activeProjectService,
+      sessionService,
+      navigation,
+    ]
+  );
+
+  const playHandler = useCallback(
+    async(project: GetAllResultItem): Promise<void> => {
+      if (
+        activeProjectService.session
+        && activeProjectService.session.state !== SessionState.Finished
+      ) {
+        Alert.alert(
+          localization.get("projectList.activeSessionWarning.title"),
+          localization.get(
+            "projectList.activeSessionWarning.message",
+            {
+              activeProjectName: activeProjectService.project?.name,
+              newProjectName: project.name,
+            }
+          ),
+          [
+            {
+              text: localization.get("projectList.activeSessionWarning.no"),
+              style: "cancel",
+            },
+            {
+              text: localization.get("projectList.activeSessionWarning.yes"),
+              onPress: (): Promise<void> => {
+                return play(project);
+              },
+            },
+          ]
+        );
+      } else {
+        return play(project);
+      }
+    },
+    [
+      activeProjectService,
+      localization,
+      play,
+    ]
+  );
+
+  const renderItem = useCallback(
+    ({ item: x }: ListRenderItemInfo<GetAllResultItem>): React.ReactElement => {
+      const projectName = x.name;
+      const projectCode = x.id.substring(0, 5);
+
+      return (
+        <View
+          key={x.id}
+          style={projectListPageStyles.tableRow}
+        >
+          <View
+            style={[
+              projectListPageStyles.tableCell,
+              projectListPageStyles.projectNameCol,
+            ]}
+          >
+            <Text>
+              {x.name}
+            </Text>
+          </View>
+          <View
+            style={projectListPageStyles.tableCell}
+          >
+            <Button
+              variant="primary"
+              style={projectListPageStyles.button}
+              accessibilityLabel={localization.get(
+                "projectList.accessibility.run",
+                {
+                  projectName,
+                  projectCode,
+                }
+              )}
+              onPress={(): Promise<void> => {
+                return playHandler(x);
+              }}
+            >
+              <Icon
+                name="play"
+                variant="primary-contrast"
+                style={projectListPageStyles.buttonIcon}
+              />
+            </Button>
+          </View>
+          <View
+            style={projectListPageStyles.tableCell}
+          >
+            <Button
+              variant="secondary"
+              style={projectListPageStyles.button}
+              accessibilityLabel={localization.get(
+                "projectList.accessibility.edit",
+                {
+                  projectName,
+                  projectCode,
+                }
+              )}
+              onPress={(): void => {
+                navigation.navigate(
+                  Routes.Project,
+                  {
+                    projectId: x.id,
+                  }
+                );
+              }}
+            >
+              <Icon
+                name="edit"
+                variant="secondary-contrast"
+                style={projectListPageStyles.buttonIcon}
+              />
+            </Button>
+          </View>
+          <View
+            style={projectListPageStyles.tableCell}
+          >
+            <Button
+              variant="danger"
+              style={projectListPageStyles.button}
+              accessibilityLabel={localization.get(
+                "projectList.accessibility.delete",
+                {
+                  projectName,
+                  projectCode,
+                }
+              )}
+              onPress={(): void => {
+                requestToDeleteProject(x);
+              }}
+            >
+              <Icon
+                name="delete"
+                variant="danger-contrast"
+                style={projectListPageStyles.buttonIcon}
+              />
+            </Button>
+          </View>
+        </View>
+      );
+    },
+    [
+      localization,
+      navigation,
+      requestToDeleteProject,
+      playHandler,
+    ]
+  );
+
+  const keyExtractor = useCallback(
+    (item: GetAllResultItem): string => {
+      return item.id;
+    },
+    []
+  );
 
   useFocusEffect(
     useCallback(
       (): void => {
         load();
       },
-      []
+      [
+        load,
+      ]
     )
   );
 
@@ -81,141 +297,39 @@ export function ProjectListPage(): JSX.Element {
   }
 
   return (
-    <ScrollView style={styles.contentView}>
-      <View>
-        <View style={styles.table}>
-          {
-            list.map((x: GetAllResultItem, index: number): JSX.Element => {
-              const projectName = x.name;
-              const projectCode = x.id.substring(0, 5);
-
-              return (
-                <View
-                  key={x.id}
-                  style={[
-                    styles.tableRow,
-                    index !== list.length - 1
-                      ? projectListPageStyles.tableRow
-                      : undefined,
-                  ]}
+    <View
+      style={projectListPageStyles.contentView}
+    >
+      <View
+        style={projectListPageStyles.table}
+      >
+        <FlatList
+          data={list}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          ItemSeparatorComponent={TableRowSeparator}
+        />
+        {
+          list.length === 0
+            && (
+              <View>
+                <Text
+                  style={projectListPageStyles.noProjects}
                 >
-                  <View
-                    style={[
-                      styles.tableCell,
-                      projectListPageStyles.projectNameCol,
-                    ]}
-                  >
-                    <Text>
-                      {x.name}
-                    </Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Button
-                      variant="primary"
-                      style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.run", { projectName, projectCode })}
-                      onPress={async(): Promise<void> => {
-                        // TODO: Business logic service
-                        const lastSessionId = await settingsService.get(SettingKey.LastSessionId);
-
-                        if (lastSessionId) {
-                          const session = await sessionService.get(lastSessionId);
-
-                          if (session.state !== SessionState.Finished) {
-                            await sessionService.finish({
-                              sessionId: lastSessionId,
-                              avgSpeed: 0,
-                              distance: 0,
-                              maxSpeed: 0,
-                              date: undefined,
-                            });
-                          }
-
-                          await settingsService.set(
-                            SettingKey.LastSessionId,
-                            null
-                          );
-                        }
-
-                        await activeProjectService.reset();
-                        // --
-
-                        navigation.navigate(
-                          Routes.Home,
-                          {
-                            projectId: x.id,
-                          }
-                        );
-                      }}
-                    >
-                      <Icon
-                        name="play"
-                        variant="primary-contrast"
-                        style={projectListPageStyles.buttonIcon}
-                      />
-                    </Button>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Button
-                      variant="secondary"
-                      style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.edit", { projectName, projectCode })}
-                      onPress={(): void => {
-                        navigation.navigate(
-                          Routes.Project,
-                          {
-                            projectId: x.id,
-                          }
-                        );
-                      }}
-                    >
-                      <Icon
-                        name="edit"
-                        variant="secondary-contrast"
-                        style={projectListPageStyles.buttonIcon}
-                      />
-                    </Button>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Button
-                      variant="danger"
-                      style={projectListPageStyles.button}
-                      accessibilityLabel={localization.get("projectList.accessibility.delete", { projectName, projectCode })}
-                      onPress={(): void => {
-                        requestToDeleteProject(x);
-                      }}
-                    >
-                      <Icon
-                        name="delete"
-                        variant="danger-contrast"
-                        style={projectListPageStyles.buttonIcon}
-                      />
-                    </Button>
-                  </View>
-                </View>
-              );
-            })
-          }
-          {
-            list.length === 0
-              && (
-                <View>
-                  <Text style={projectListPageStyles.noProjects}>
-                    {localization.get("projectList.noProjects")}
-                  </Text>
-                  <Button
-                    title={localization.get("projectList.createProject")}
-                    variant="primary"
-                    style={styles.mt16}
-                    onPress={(): void => {
-                      navigation.navigate(Routes.Project);
-                    }}
-                  />
-                </View>
-              )
-          }
-        </View>
+                  {localization.get("projectList.noProjects")}
+                </Text>
+                <Button
+                  title={localization.get("projectList.createProject")}
+                  variant="primary"
+                  style={projectListPageStyles.createProjectButton}
+                  onPress={(): void => {
+                    navigation.navigate(Routes.Project);
+                  }}
+                />
+              </View>
+            )
+        }
       </View>
-    </ScrollView>
+    </View>
   );
 }

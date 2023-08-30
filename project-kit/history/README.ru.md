@@ -6,6 +6,9 @@
 
 Записи, которые были сделаны в процессе работы над проектом:
 
+* https://vk.com/aleksey.developer?w=wall-96983816_260 - Google ругает сам себя
+* https://vk.com/aleksey.developer?w=wall-96983816_257 - 900+ пикселей импорта
+* https://vk.com/aleksey.developer?w=wall-96983816_256 - Программирование - создание миров
 * https://vk.com/aleksey.developer?w=wall-96983816_248 - Анонс Multi-duper Stopwatch
 * https://vk.com/aleksey.developer?w=wall-96983816_247 - Приходится проверять сочетания цветов :)
 * https://vk.com/aleksey.developer?w=wall-96983816_244 - Проблема чтения значений приватных свойств в Gradle

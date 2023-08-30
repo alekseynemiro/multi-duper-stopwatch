@@ -3,12 +3,12 @@ import { Modal, View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { TextInputField } from "@components/TextInputField";
-import { useLocalization } from "@utils/LocalizationUtils";
+import { useLocalizationService } from "@config";
 import { SessionNameModalProps } from "./SessionNameModalProps";
 import { sessionNameModalStyles } from "./SessionNameModalStyles";
 
 export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModalProps): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
 
   const [sessionName, setSessionName] = useState<string | undefined>();
 
@@ -20,7 +20,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={show}
     >

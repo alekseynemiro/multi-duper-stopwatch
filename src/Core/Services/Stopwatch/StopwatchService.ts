@@ -19,21 +19,13 @@ export class StopwatchService implements IStopwatchService {
 
   private _elapsed: number = 0;
 
+  private _totalElapsed: number = 0;
+
   private _tickListeners: Array<StopwatchTickEvent> = [];
 
-  private _start: number = 0;
+  private _start: number | undefined = undefined;
 
-  private _snapped = 0;
-
-  private _offset: number | undefined = undefined;
-
-  public get elapsed(): number {
-    return this._elapsed;
-  }
-
-  public get hasOffset(): boolean {
-    return this._offset !== undefined;
-  }
+  private _timerHandlerIsRunning: number = 0;
 
   public get isRunning(): boolean {
     return this._id !== undefined;
@@ -49,14 +41,15 @@ export class StopwatchService implements IStopwatchService {
     this.timerHandler = this.timerHandler.bind(this);
   }
 
-  public set(elapsed: number): void {
+  public set(value: number): void {
     this._loggerService.debug(
       StopwatchService.name,
       this.set.name,
-      elapsed
+      value
     );
 
-    this._elapsed = elapsed;
+    this._elapsed = 0;
+    this._totalElapsed = value;
   }
 
   public start(): void {
@@ -64,15 +57,65 @@ export class StopwatchService implements IStopwatchService {
       StopwatchService.name,
       this.start.name,
       "interval",
-      this._interval
+      this._interval,
     );
 
+    this.startWithDate(this._dateTimeService.now);
+  }
+
+  public startWithDate(date: Date): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.startWithDate.name,
+      "time",
+      date.getTime(),
+      "interval",
+      this._interval,
+    );
+
+    this._timerHandlerIsRunning = 1;
+
     if (this._id) {
+      const now = this._dateTimeService.now.getTime();
+
+      this._elapsed = 0;
+      this._totalElapsed += now - (this._start ?? 0);
+
       clearInterval(this._id);
     }
 
+    const time = date.getTime();
+    this._start = time;
+
     this._id = setInterval(this.timerHandler, this._interval);
-    this._start = this._dateTimeService.now.getTime();
+    this._timerHandlerIsRunning = 0;
+  }
+
+  public startAndSetTotal(date: Date, total: number): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.startAndSetTotal.name,
+      "time",
+      date.getTime(),
+      "total",
+      total,
+      "interval",
+      this._interval,
+    );
+
+    this._timerHandlerIsRunning = 1;
+
+    if (this._id) {
+      this._elapsed = 0;
+      clearInterval(this._id);
+    }
+
+    this._totalElapsed = total;
+
+    this._start = date.getTime();
+
+    this._id = setInterval(this.timerHandler, this._interval);
+    this._timerHandlerIsRunning = 0;
   }
 
   public stop(): void {
@@ -80,16 +123,72 @@ export class StopwatchService implements IStopwatchService {
       StopwatchService.name,
       this.stop.name,
       "id",
-      this._id,
-      "elapsed",
-      this._elapsed
+      this._id
     );
+
+    this.stopWithDate(this._dateTimeService.now);
+  }
+
+  public stopWithDate(date: Date): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.stop.name,
+      "time",
+      date.getTime(),
+      "id",
+      this._id,
+      "start time",
+      this._start,
+      "elapsed",
+      this._elapsed,
+      "total",
+      this._totalElapsed
+    );
+
+    this._timerHandlerIsRunning = 1;
 
     if (this._id) {
       clearInterval(this._id);
     }
 
+    const time = date.getTime();
+
+    this._elapsed = 0;
+    this._totalElapsed += time - (this._start ?? 0);
+
     this._id = undefined;
+    this._timerHandlerIsRunning = 0;
+
+    this.onTick();
+  }
+
+  public stopAndSetTotal(total: number): void {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.stopAndSetTotal.name,
+      "should total",
+      total,
+      "currently elapsed",
+      this._elapsed,
+      "currently total",
+      this._totalElapsed,
+      "id",
+      this._id
+    );
+
+    this._timerHandlerIsRunning = 1;
+
+    if (this._id) {
+      clearInterval(this._id);
+    }
+
+    this._elapsed = 0;
+    this._totalElapsed = total;
+
+    this._id = undefined;
+    this._timerHandlerIsRunning = 0;
+
+    this.onTick();
   }
 
   public reset(): void {
@@ -97,45 +196,44 @@ export class StopwatchService implements IStopwatchService {
       StopwatchService.name,
       this.reset.name,
       "elapsed",
-      this._elapsed
+      this._elapsed,
+      "total",
+      this._totalElapsed
     );
 
+    this._totalElapsed = 0;
     this._elapsed = 0;
-    this._snapped = 0;
-    this._start = this._dateTimeService.now.getTime();
-  }
-
-  public snap(): void {
-    this._loggerService.debug(
-      StopwatchService.name,
-      this.snap.name,
-      this._elapsed
-    );
-
-    this._snapped = this._elapsed;
-  }
-
-  public setOffset(): void {
-    this._loggerService.debug(
-      StopwatchService.name,
-      this.setOffset.name,
-      this._snapped
-    );
-
-    this._offset = this._snapped;
+    this._start = undefined;
 
     this.onTick();
   }
 
-  public clearOffset(): void {
+  public tick(): void {
     this._loggerService.debug(
       StopwatchService.name,
-      this.clearOffset.name
+      this.tick.name,
+      "id",
+      this._id,
+      "elapsed",
+      this._elapsed,
+      "total",
+      this._totalElapsed
     );
 
-    this._offset = undefined;
-
     this.onTick();
+  }
+
+  public getElapsed(): number {
+    this._loggerService.debug(
+      StopwatchService.name,
+      this.getElapsed.name,
+      "elapsed",
+      this._elapsed,
+      "total",
+      this._totalElapsed
+    );
+
+    return this._totalElapsed + this._elapsed;
   }
 
   public addTickListener(callback: StopwatchTickEvent): void {
@@ -163,35 +261,28 @@ export class StopwatchService implements IStopwatchService {
   }
 
   private timerHandler(): void {
-    const now = this._dateTimeService.now;
-    this._elapsed = this._elapsed + (now.getTime() - this._start);
-    this._start = now.getTime();
+    if (this._timerHandlerIsRunning === 1) {
+      return;
+    }
 
-    this.onTick();
+    this._timerHandlerIsRunning = 1;
+
+    try {
+      if (this._start !== undefined) {
+        const now = this._dateTimeService.now.getTime();
+        this._elapsed = now - this._start;
+      }
+
+      this.onTick();
+    } finally {
+      this._timerHandlerIsRunning = 0;
+    }
   }
 
   private onTick(): void {
-    const elapsed = this._elapsed - (this._offset ?? 0);
-    const milliseconds = Math.floor((elapsed % 1000) / 10); // <-- round to hundredths for display convenience
-    const seconds = Math.floor((elapsed / 1000) % 60);
-    const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
-    const hours = Math.floor((elapsed / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
-
+    const elapsed = this._totalElapsed + this._elapsed;
     const eventArgs: StopwatchTickEventArgs = {
       ticks: elapsed,
-      timeSpan: {
-        milliseconds,
-        seconds,
-        minutes,
-        hours,
-        days,
-        displayValue: (days > 0 ? days.toString() + "." : "")
-          + String(hours).padStart(2, "0") + ":"
-          + String(minutes).padStart(2, "0") + ":"
-          + String(seconds).padStart(2, "0") + "."
-          + String(milliseconds).padStart(2, "0"),
-      },
     };
 
     for (const listener of this._tickListeners) {

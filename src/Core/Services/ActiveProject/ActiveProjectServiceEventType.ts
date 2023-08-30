@@ -4,4 +4,7 @@ export type ActiveProjectServiceEventType =
 | "session-paused"
 | "session-finished"
 | "project-loaded"
-| "activity-updated";
+| "activity-updated"
+| "activity-logged"
+| "activity-list-updated"
+| "stopwatch-tick";

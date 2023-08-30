@@ -1,10 +1,10 @@
+import { ServiceIdentifier } from "@config";
+import { IDatabaseService } from "@data/IDatabaseService";
+import { InitialMigration } from "@data/Migrations/20230614_1550_InitialMigration";
+import { IMigrationRunner } from "@data/Migrations/IMigrationRunner";
+import { ILoggerService } from "@services/Logger";
 import { inject, injectable } from "inversify";
 import { DataSource } from "typeorm";
-import { ServiceIdentifier } from "../../../Config";
-import { ILoggerService } from "../../../Core/Services/Logger";
-import { IDatabaseService } from "../../IDatabaseService";
-import { InitialMigration } from "../20230614_1550_InitialMigration";
-import { IMigrationRunner } from "../IMigrationRunner";
 
 @injectable()
 export class MigrationRunner implements IMigrationRunner {

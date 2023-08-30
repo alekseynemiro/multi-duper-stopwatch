@@ -1,3 +1,3 @@
 import { ActiveProjectServiceEventArgs } from "./ActiveProjectServiceEventArgs";
 
-export type ActiveProjectServiceEvent = { (e: ActiveProjectServiceEventArgs): void };
+export type ActiveProjectServiceEvent<T extends Object = Record<string, any>> = { (e: ActiveProjectServiceEventArgs<T>): void };

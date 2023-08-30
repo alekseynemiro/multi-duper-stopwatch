@@ -1,35 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Text, useWindowDimensions } from "react-native";
-import { ServiceIdentifier, serviceProvider } from "@config";
-import { IStopwatchService, StopwatchTickEventArgs } from "@services/Stopwatch";
+import { useActiveProjectService } from "@config";
+import { ActiveProjectStopwatchTickEventArgs } from "@services/ActiveProject";
 import { TimeSpan } from "@types";
 import { getTimeSpan } from "@utils/TimeUtils";
+import { ElapsedTimeProps } from "./ElapsedTimeProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
 
-const stopwatchService = serviceProvider.get<IStopwatchService>(ServiceIdentifier.StopwatchService);
-
-export function ElapsedTime(): JSX.Element {
+export function ElapsedTime(props: ElapsedTimeProps): JSX.Element {
   const { width, height } = useWindowDimensions();
+  const activeProjectService = useActiveProjectService();
+
+  const {
+    currentActivity,
+    showCurrentActivity,
+  } = props;
 
   const [elapsed, setElapsed] = useState<TimeSpan>(
-    getTimeSpan(stopwatchService.elapsed)
+    getTimeSpan(0)
   );
 
   const isLandscape = width > height;
 
   useEffect(
     (): { (): void } => {
-      const tickHandler = (e: StopwatchTickEventArgs): void => {
-        setElapsed(e.timeSpan);
+      const tickHandler = (e: ActiveProjectStopwatchTickEventArgs): void => {
+        if (showCurrentActivity) {
+          setElapsed(getTimeSpan(e.activity ?? 0));
+        } else {
+          setElapsed(getTimeSpan(e.total));
+        }
       };
 
-      stopwatchService.addTickListener(tickHandler);
+      const stopwatchTickSubscription = activeProjectService.addEventListener(
+        "stopwatch-tick",
+        tickHandler
+      );
 
       return (): void => {
-        stopwatchService.removeTickListener(tickHandler);
+        stopwatchTickSubscription.remove();
       };
     },
-    []
+    [
+      currentActivity,
+      showCurrentActivity,
+      activeProjectService,
+    ]
   );
 
   return (

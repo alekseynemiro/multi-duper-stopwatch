@@ -7,17 +7,15 @@ export const aboutPageStyles = StyleSheet.create({
   },
   version: {
     alignItems: "center",
-    marginVertical: 16,
   },
   author: {
     alignItems: "center",
-    marginVertical: 16,
+    marginBottom: 16,
   },
   social: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
   },
   socialButton: {
     width: 48,
@@ -33,7 +31,6 @@ export const aboutPageStyles = StyleSheet.create({
     color: colors.dangerContrast,
   },
   feedback: {
-    marginVertical: 16,
   },
   feedbackRow: {
     marginVertical: 4,
@@ -51,5 +48,22 @@ export const aboutPageStyles = StyleSheet.create({
   },
   thanks: {
     alignItems: "center",
+  },
+  licenses: {
+    alignItems: "center",
+  },
+  licensesText: {
+    ...styles.textSmall,
+    ...styles.textCenter,
+  },
+  licensesButton: {
+    marginVertical: 8,
+  },
+  licensesButtonTitle: {
+    ...styles.textSmall,
+  },
+  copyright: {
+    ...styles.textSmall,
+    marginVertical: 8,
   },
 });

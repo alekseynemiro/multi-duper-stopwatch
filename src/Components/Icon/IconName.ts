@@ -26,4 +26,7 @@ export type IconName =
   | "comments"
   | "vk"
   | "home-page"
-  | "star";
+  | "star"
+  | "add"
+  | "cancel"
+  | "replace";

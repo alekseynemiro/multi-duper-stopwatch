@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import DeviceInfo from "react-native-device-info";
+import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Icon } from "@components/Icon";
 import { Link } from "@components/Link";
+import { useLocalizationService } from "@config";
 import AppIcon from "@images/AppIcon.png";
-import { useLocalization } from "@utils/LocalizationUtils";
 import { aboutPageStyles } from "./AboutPageStyles";
+import { LicensesModal } from "./Components";
 
 export function AboutPage(): JSX.Element {
-  const localization = useLocalization();
+  const localization = useLocalizationService();
+  const utmSource = "ru.nemiro.apps.multiduperstopwatch";
+
+  const [showLicensesModal, setShowLicensesModal] = useState<boolean>(false);
 
   return (
     <ScrollView
@@ -42,7 +47,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://aleksey.nemiro.ru");
+            Linking.openURL(`https://aleksey.nemiro.ru?utm_source=${utmSource}`);
           }}
         >
           <Icon
@@ -53,7 +58,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://vk.com/aleksey.nemiro");
+            Linking.openURL(`https://vk.com/aleksey.nemiro?utm_source=${utmSource}`);
           }}
         >
           <Icon
@@ -64,7 +69,7 @@ export function AboutPage(): JSX.Element {
         <TouchableOpacity
           style={aboutPageStyles.socialButton}
           onPress={(): void => {
-            Linking.openURL("https://github.com/alekseynemiro");
+            Linking.openURL(`https://github.com/alekseynemiro?utm_source=${utmSource}`);
           }}
         >
           <Icon
@@ -161,6 +166,36 @@ export function AboutPage(): JSX.Element {
           {localization.get("about.thankYou")}
         </Text>
       </View>
+      <HorizontalLine />
+      <View
+        style={aboutPageStyles.licenses}
+      >
+        <Text
+          style={aboutPageStyles.licensesText}
+        >
+          {localization.get("about.license")}
+        </Text>
+        <Text
+          style={aboutPageStyles.copyright}
+        >
+          Copyright © 2023 Aleksey Nemiro
+        </Text>
+        <Button
+          variant="light"
+          title={localization.get("about.details")}
+          style={aboutPageStyles.licensesButton}
+          titleStyle={aboutPageStyles.licensesButtonTitle}
+          onPress={(): void => setShowLicensesModal(true)}
+        />
+      </View>
+      {
+        showLicensesModal
+        && (
+          <LicensesModal
+            onClose={(): void => setShowLicensesModal(false)}
+          />
+        )
+      }
     </ScrollView>
   );
 }

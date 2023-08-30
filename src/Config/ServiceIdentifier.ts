@@ -15,5 +15,6 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("QueueService")
   .add("JsonService")
   .add("LocalStorageService")
+  .add("SessionStorageService")
   .add("LocalizationService")
   .build();

@@ -10,11 +10,11 @@ export class Activity {
 
   @Column({
     type: "int",
-    nullable: false,
+    nullable: true,
     enum: ColorPalette,
     name: "Color",
   })
-  public color!: ColorPalette;
+  public color: ColorPalette | null = null;
 
   @Column({
     name: "Name",

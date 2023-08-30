@@ -1,28 +1,37 @@
 import { NativeEventSubscription } from "react-native";
 import { ServiceIdentifier } from "@config";
 import { SessionState, SettingKey } from "@data";
-import { Activity, ActivityStatus, Project } from "@dto/ActiveProject";
+import {
+  Activity,
+  ActivityLoggedResult,
+  ActivityStatus,
+  CanRecoveryResult,
+  Project,
+} from "@dto/ActiveProject";
 import { GetResultActivity } from "@dto/Projects";
 import { GetResult as Session } from "@dto/Sessions";
 import { IDateTimeService } from "@services/DateTime";
+import { IGuidService } from "@services/Guid";
 import { ILoggerService } from "@services/Logger";
 import { IProjectService } from "@services/Projects";
 import { IQueueService } from "@services/Queue";
 import { ISessionService } from "@services/Sessions";
 import { ISettingsService } from "@services/Settings";
-import { IStopwatchService } from "@services/Stopwatch";
-import { ILocalStorageService } from "@services/Storage";
+import { ILocalStorageService, ISessionStorageService } from "@services/Storage";
+import { SessionStorageKeys } from "@types";
 import { inject, injectable } from "inversify";
 import { ActiveProjectFinishResult } from "./ActiveProjectFinishResult";
 import { ActiveProjectServiceEvent } from "./ActiveProjectServiceEvent";
 import { ActiveProjectServiceEventType } from "./ActiveProjectServiceEventType";
+import { ActiveProjectStopwatch } from "./ActiveProjectStopwatch";
+import { ActiveProjectStopwatchTickEvent } from "./ActiveProjectStopwatchTickEvent";
 import { IActiveProjectService } from "./IActiveProjectService";
 
 type LocalStorageKeys =
   | "sessionId"
   | "projectId"
   | "activityId"
-  | "date"
+  | "time"
   | "shouldPause"
   | "shouldFinish"
   | "shouldToggleCurrentActivity"
@@ -37,15 +46,19 @@ export class ActiveProjectService implements IActiveProjectService {
 
   private readonly _sessionService: ISessionService;
 
-  private readonly _stopwatchService: IStopwatchService;
-
   private readonly _dateTimeService: IDateTimeService;
 
   private readonly _queueService: IQueueService;
 
   private readonly _localStorageService: ILocalStorageService;
 
+  private readonly _sessionStorageService: ISessionStorageService;
+
   private readonly _loggerService: ILoggerService;
+
+  private readonly _stopwatch: ActiveProjectStopwatch;
+
+  private readonly _guidService: IGuidService;
 
   private _project: Project | undefined;
 
@@ -77,20 +90,179 @@ export class ActiveProjectService implements IActiveProjectService {
     @inject(ServiceIdentifier.SettingsService) settingsService: ISettingsService,
     @inject(ServiceIdentifier.ProjectService) projectService: IProjectService,
     @inject(ServiceIdentifier.SessionService) sessionService: ISessionService,
-    @inject(ServiceIdentifier.StopwatchService) stopwatchService: IStopwatchService,
     @inject(ServiceIdentifier.DateTimeService) dateTimeService: IDateTimeService,
     @inject(ServiceIdentifier.QueueService) queueService: IQueueService,
     @inject(ServiceIdentifier.LocalStorageService) localStorageService: ILocalStorageService,
+    @inject(ServiceIdentifier.SessionStorageService) sessionStorageService: ISessionStorageService,
+    @inject(ServiceIdentifier.GuidService) guidService: IGuidService,
     @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
   ) {
     this._settingsService = settingsService;
     this._projectService = projectService;
     this._sessionService = sessionService;
-    this._stopwatchService = stopwatchService;
     this._dateTimeService = dateTimeService;
     this._queueService = queueService;
     this._localStorageService = localStorageService;
+    this._sessionStorageService = sessionStorageService;
+    this._guidService = guidService;
     this._loggerService = loggerService;
+
+    this._stopwatch = new ActiveProjectStopwatch(
+      dateTimeService,
+      loggerService
+    );
+  }
+
+  public async canRecovery(): Promise<CanRecoveryResult | undefined> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.canRecovery.name
+    );
+
+    const shouldReset = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldReset");
+    const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
+    const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
+    const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
+
+    if ([
+      shouldReset,
+      shouldPause,
+      shouldFinish,
+      shouldToggleCurrentActivity,
+    ].includes(1)) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.canRecovery.name,
+        "Unable to recover because there is an unfinished activity."
+      );
+
+      return undefined;
+    }
+
+    const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
+
+    if (lastSessionId) {
+      const session = await this._sessionService.get(lastSessionId);
+
+      if (session.state === SessionState.Run) {
+        this._loggerService.debug(
+          ActiveProjectService.name,
+          this.canRecovery.name,
+          `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`
+        );
+
+        const project = await this._projectService.get(session.projectId);
+        const activity = project.activities?.find(
+          (x: GetResultActivity): boolean => {
+            return x.id === session.activityId;
+          }
+        );
+
+        if (!activity) {
+          this._loggerService.debug(
+            ActiveProjectService.name,
+            this.canRecovery.name,
+            `Unable to recover because activity #${session.activityId} was not found in project #${session.projectId}.`
+          );
+
+          return undefined;
+        }
+
+        return {
+          activityColor: activity.color,
+          activityName: activity.name,
+          activityStartDate: session.activityStartDate,
+          now: this._dateTimeService.now,
+        };
+      }
+    }
+
+    return undefined;
+  }
+
+  public async recovery(date: Date): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.recovery.name,
+      "time",
+      date.getTime()
+    );
+
+    const shouldReset = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldReset");
+    const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
+    const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
+    const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
+
+    if ([
+      shouldReset,
+      shouldPause,
+      shouldFinish,
+      shouldToggleCurrentActivity,
+    ].includes(1)) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        "Unable to recover because there is an unfinished activity."
+      );
+
+      return;
+    }
+
+    const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
+
+    if (!lastSessionId) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        "Unable to recover because the last session ID is missing."
+      );
+
+      return;
+    }
+
+    const session = await this._sessionService.get(lastSessionId);
+
+    if (session.state !== SessionState.Run) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        `Unable to recover because the last session #${lastSessionId} is in the status ${SessionState[session.state]}.`
+      );
+
+      return;
+    }
+
+    const project = await this._projectService.get(session.projectId);
+    const activity = project.activities?.find(
+      (x: GetResultActivity): boolean => {
+        return x.id === session.activityId;
+      }
+    );
+
+    if (!activity) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.recovery.name,
+        `Unable to recover because activity #${session.activityId} was not found in project #${session.projectId}.`
+      );
+
+      return;
+    }
+
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.recovery.name,
+      `The last session #${lastSessionId} is in the status ${SessionState[session.state]}.`,
+      `Should be paused with time ${date.getTime()}).`
+    );
+
+    await this._sessionService.pause({
+      sessionId: session.id,
+      date,
+      avgSpeed: 0,
+      distance: 0,
+      maxSpeed: 0,
+    });
   }
 
   public async checkForCrash(): Promise<void> {
@@ -104,7 +276,7 @@ export class ActiveProjectService implements IActiveProjectService {
     const shouldPause = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldPause");
     const shouldFinish = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldFinish");
     const shouldToggleCurrentActivity = await this._localStorageService.getItem<LocalStorageKeys, number>("shouldToggleCurrentActivity");
-    const time = await this._localStorageService.getItem<LocalStorageKeys, number>("date");
+    const time = await this._localStorageService.getItem<LocalStorageKeys, number>("time");
     const date = time ? new Date(time) : undefined;
 
     if (shouldFinish) {
@@ -217,10 +389,33 @@ export class ActiveProjectService implements IActiveProjectService {
       this.useLastSessionId.name
     );
 
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
     const lastSessionId = await this._settingsService.get(SettingKey.LastSessionId);
 
     if (lastSessionId) {
       await this.setSessionId(lastSessionId);
+    }
+  }
+
+  public async useLastProjectId(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.useLastProjectId.name
+    );
+
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
+    const lastProjectId = await this._settingsService.get(SettingKey.LastProjectId);
+
+    if (lastProjectId) {
+      await this.setProjectId(lastProjectId);
     }
   }
 
@@ -229,6 +424,11 @@ export class ActiveProjectService implements IActiveProjectService {
       ActiveProjectService.name,
       this.useSessionId.name
     );
+
+    this._session = undefined;
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
 
     return this.setSessionId(sessionId);
   }
@@ -239,125 +439,214 @@ export class ActiveProjectService implements IActiveProjectService {
       this.useProjectId.name
     );
 
+    this._project = undefined;
+    this._activities = undefined;
+    this._currentActivityId = undefined;
+
     return this.setProjectId(projectId);
   }
 
-  public async setCurrentActivity(activityId: string, isRunning: boolean): Promise<void> {
-    const date = this._dateTimeService.now;
-
+  public async toggleActivity(activityId: string): Promise<void> {
     this._loggerService.debug(
       ActiveProjectService.name,
-      this.setCurrentActivity.name,
+      this.toggleActivity.name,
       "activityId",
-      activityId,
-      "isRunning",
-      isRunning,
-      "time",
-      date.getTime()
+      activityId
     );
 
     if (!this._project) {
       throw new Error("Project is required. Please use `setProjectId` to set project.");
     }
 
-    this._currentActivityId = activityId;
+    const activity = this.activities?.find(
+      (x: Activity): boolean => {
+        return x.id === activityId;
+      }
+    );
+
+    if (!activity) {
+      throw new Error(`Activity ${activityId} not found.`);
+    }
 
     if (!this._session) {
-      this._stopwatchService.start();
+      const startTime = this._stopwatch.startNewSession();
 
+      // TODO: queue
       const session = await this._sessionService.create({
         projectId: this._project.id,
         activityId,
-        date,
+        date: new Date(startTime),
       });
+
+      this._currentActivityId = activityId;
 
       await this._settingsService.set(
         SettingKey.LastSessionId,
         session.id
       );
 
-      await this.setSessionId(session.id);
+      this.onActivityUpdate(
+        activityId,
+        ActivityStatus.Running
+      );
 
-      this.on("session-started");
-      this.onActivityUpdate(activityId, ActivityStatus.Running);
+      await this.setSessionId(session.id);
 
       if (this._session) {
         // To fix "Property 'state' does not exist on type 'never'" o_O
         (this._session as Session).state = SessionState.Run;
       }
-    } else {
-      if (isRunning) {
-        this._stopwatchService.snap();
 
-        if (this._stopwatchService.hasOffset) {
-          this._stopwatchService.setOffset();
-        }
+      this.on("session-started");
 
-        this._stopwatchService.start();
-        this.onActivityUpdate(activityId, ActivityStatus.Running);
+      return;
+    } // return
 
-        if (this._session) {
-          this._session.state = SessionState.Run;
-        }
+    if (![SessionState.Run, SessionState.Paused].includes(this._session.state)) {
+      throw new Error(`Unable to toggle activity because session has status ${SessionState[this._session.state]}.`);
+    }
+
+    let time = 0;
+    let shouldBeRunning = false;
+
+    if (activity.id === this._currentActivityId) {
+      if (this._session.state === SessionState.Run) {
+        time = this._stopwatch.stop();
+
+        this.onActivityUpdate(
+          activityId,
+          ActivityStatus.Paused
+        );
+
+        this._session.state = SessionState.Paused;
+
+        this.on("session-paused");
       } else {
-        this._stopwatchService.stop();
-        this.onActivityUpdate(activityId, ActivityStatus.Paused);
+        time = this._stopwatch.startNewActivity();
 
-        if (this._session) {
-          this._session.state = SessionState.Paused;
-        }
+        this.onActivityUpdate(
+          activityId,
+          ActivityStatus.Running
+        );
+
+        this._session.state = SessionState.Run;
+        this._session.activityId = activityId;
+
+        this.on("session-started");
+
+        shouldBeRunning = true;
       }
+    } else {
+      time = this._stopwatch.startNewActivity();
 
-      const sessionId = this._session.id;
+      this.onActivityUpdate(
+        activityId,
+        ActivityStatus.Running
+      );
 
-      this._queueService.push(
-        async(): Promise<void> => {
-          const toggleResult = await this._sessionService.toggle({
-            sessionId,
-            activityId,
-            avgSpeed: 0,
-            distance: 0,
-            maxSpeed: 0,
-            date,
-          });
+      this._session.state = SessionState.Run;
+      this._session.activityId = activityId;
 
-          if (toggleResult.isRunning !== isRunning) {
-            throw new Error("The activity status is different than expected.");
-          }
+      this.on("session-started");
 
-          await this._settingsService.set(
-            SettingKey.LastSessionId,
-            sessionId
+      shouldBeRunning = true;
+    }
+
+    this._currentActivityId = activityId;
+
+    const sessionId = this._session.id;
+
+    this._queueService.push(
+      async(): Promise<void> => {
+        const toggleResult = await this._sessionService.toggle({
+          sessionId,
+          activityId,
+          avgSpeed: 0,
+          distance: 0,
+          maxSpeed: 0,
+          date: new Date(time),
+        });
+
+        if (toggleResult.isRunning !== shouldBeRunning) {
+          throw new Error("The activity status is different than expected.");
+        }
+
+        await this._settingsService.set(
+          SettingKey.LastSessionId,
+          sessionId
+        );
+
+        if (toggleResult.details) {
+          this.on<ActivityLoggedResult>(
+            "activity-logged",
+            {
+              id: toggleResult.details.id,
+              activityId: toggleResult.details.activityId,
+              activityColor: toggleResult.details.activityColor,
+              activityName: toggleResult.details.activityName,
+              avgSpeed: toggleResult.details.avgSpeed,
+              distance: toggleResult.details.distance,
+              elapsedTime: toggleResult.details.elapsedTime,
+              finishDate: toggleResult.details.finishDate,
+              maxSpeed: toggleResult.details.maxSpeed,
+              startDate: toggleResult.details.startDate,
+            }
+          );
+
+          this._stopwatch.setTotalElapsed(
+            toggleResult.details.sessionElapsedTime
           );
         }
-      );
-    }
+      }
+    );
   }
 
   public async toggleCurrentActivity(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.toggleCurrentActivity.name,
+      "activityId",
+      this._currentActivityId
+    );
+
     try {
-      await Promise.all([
-        this._localStorageService.setItem<LocalStorageKeys>("shouldToggleCurrentActivity", 1),
-        this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session?.id),
-      ]);
-
-      const date = await this.updateDateAndStop();
-
-      this._loggerService.debug(
-        ActiveProjectService.name,
-        this.toggleCurrentActivity.name,
-        "time",
-        date.getTime(),
-        "activityId",
-        this._currentActivityId
-      );
-
       if (!this._session) {
         throw new Error("Session is required.");
       }
 
       if (!this._currentActivityId) {
         throw new Error("There is no active activity. Please use `setCurrentActivity` to set activity.");
+      }
+
+      let time = 0;
+      let shouldBeRunning = false;
+
+      if (this._session.state === SessionState.Run) {
+        time = this._stopwatch.stop();
+
+        this.onActivityUpdate(
+          this._currentActivityId,
+          ActivityStatus.Paused
+        );
+
+        this._session.state = SessionState.Paused;
+        this._session.activityId = this._currentActivityId;
+
+        this.on("session-paused");
+      } else {
+        time = this._stopwatch.startNewActivity();
+
+        this.onActivityUpdate(
+          this._currentActivityId,
+          ActivityStatus.Running
+        );
+
+        this._session.state = SessionState.Run;
+        this._session.activityId = this._currentActivityId;
+
+        this.on("session-started");
+
+        shouldBeRunning = true;
       }
 
       const currentActivity = this.activities?.find(
@@ -370,28 +659,14 @@ export class ActiveProjectService implements IActiveProjectService {
         throw new Error(`Activity #${this._currentActivityId} not found.`);
       }
 
-      if (currentActivity.status === ActivityStatus.Running) {
-        this.onActivityUpdate(
-          this._currentActivityId,
-          ActivityStatus.Paused
-        );
-      } else {
-        this._stopwatchService.snap();
-
-        if (this._stopwatchService.hasOffset) {
-          this._stopwatchService.setOffset();
-        }
-
-        this._stopwatchService.start();
-        this.onActivityUpdate(
-          this._currentActivityId,
-          ActivityStatus.Running
-        );
-      }
+      await Promise.all([
+        this.updateTime(time),
+        this._localStorageService.setItem<LocalStorageKeys>("shouldToggleCurrentActivity", 1),
+        this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session.id),
+      ]);
 
       const sessionId = this._session.id;
       const activityId = this._currentActivityId;
-      const isRunning = currentActivity.status === ActivityStatus.Running;
 
       this._queueService.push(
         async(): Promise<void> => {
@@ -401,16 +676,16 @@ export class ActiveProjectService implements IActiveProjectService {
             avgSpeed: 0,
             distance: 0,
             maxSpeed: 0,
-            date,
+            date: new Date(time),
           });
 
           await Promise.all([
+            this.removeTime(),
             this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
             this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
-            this.removeDate(),
           ]);
 
-          if (toggleResult.isRunning !== isRunning) {
+          if (toggleResult.isRunning !== shouldBeRunning) {
             throw new Error("The activity status is different than expected.");
           }
 
@@ -426,8 +701,31 @@ export class ActiveProjectService implements IActiveProjectService {
             SettingKey.LastSessionId,
             sessionId
           );
+
+          if (toggleResult.details) {
+            this.on<ActivityLoggedResult>(
+              "activity-logged",
+              {
+                id: toggleResult.details.id,
+                activityId: toggleResult.details.activityId,
+                activityColor: toggleResult.details.activityColor,
+                activityName: toggleResult.details.activityName,
+                avgSpeed: toggleResult.details.avgSpeed,
+                distance: toggleResult.details.distance,
+                elapsedTime: toggleResult.details.elapsedTime,
+                finishDate: toggleResult.details.finishDate,
+                maxSpeed: toggleResult.details.maxSpeed,
+                startDate: toggleResult.details.startDate,
+              },
+            );
+
+            this._stopwatch.setTotalElapsed(
+              toggleResult.details.sessionElapsedTime
+            );
+          }
         }
       );
+
     } catch (error) {
       await Promise.all([
         this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
@@ -439,31 +737,30 @@ export class ActiveProjectService implements IActiveProjectService {
   }
 
   public async pause(): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.pause.name
+    );
+
     try {
-      await Promise.all([
-        this._localStorageService.setItem<LocalStorageKeys>("shouldPause", 1),
-        this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session?.id),
-      ]);
-
-      const date = await this.updateDateAndStop();
-
-      this._loggerService.debug(
-        ActiveProjectService.name,
-        this.pause.name,
-        "time",
-        date.getTime()
-      );
+      const time = this._stopwatch.stop();
 
       if (!this._session) {
         throw new Error("Session is required.");
       }
 
-      await this._sessionService.pause({
+      await Promise.all([
+        this.updateTime(time),
+        this._localStorageService.setItem<LocalStorageKeys>("shouldPause", 1),
+        this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session.id),
+      ]);
+
+      const pauseResult = await this._sessionService.pause({
         sessionId: this._session.id,
         avgSpeed: 0,
         distance: 0,
         maxSpeed: 0,
-        date,
+        date: new Date(time),
       });
 
       await this._settingsService.set(
@@ -480,99 +777,148 @@ export class ActiveProjectService implements IActiveProjectService {
           activityId: this._currentActivityId,
         }
       );
+
+      if (pauseResult) {
+        this._session.activityId = pauseResult.activityId;
+
+        this.on<ActivityLoggedResult>(
+          "activity-logged",
+          {
+            id: pauseResult.id,
+            activityId: pauseResult.activityId,
+            activityColor: pauseResult.activityColor,
+            activityName: pauseResult.activityName,
+            avgSpeed: pauseResult.avgSpeed,
+            distance: pauseResult.distance,
+            elapsedTime: pauseResult.elapsedTime,
+            finishDate: pauseResult.finishDate,
+            maxSpeed: pauseResult.maxSpeed,
+            startDate: pauseResult.startDate,
+          },
+        );
+
+        this._stopwatch.setTotalElapsed(pauseResult.sessionElapsedTime);
+      }
     } finally {
       await Promise.all([
+        this.removeTime(),
         this._localStorageService.removeItem<LocalStorageKeys>("shouldPause"),
         this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
-        this.removeDate(),
       ]);
     }
   }
 
   public async finish(): Promise<ActiveProjectFinishResult> {
-    const isRunning = this._stopwatchService.isRunning;
-    const date = await this.updateDateAndStop();
-
     this._loggerService.debug(
       ActiveProjectService.name,
       this.finish.name,
-      "time",
-      date.getTime(),
       "isRunning",
-      isRunning
+      this._stopwatch.isRunning
     );
+
+    const time = this._stopwatch.stop();
+
+    if (!this._session) {
+      throw new Error("Session is required.");
+    }
+
+    const sessionId = this._session.id;
+    const currentActivityId = this._currentActivityId;
 
     return {
       cancel: async(): Promise<void> => {
         try {
-          await this._localStorageService.setItem<LocalStorageKeys>("shouldPause", 1);
-
           this._loggerService.debug(
             ActiveProjectService.name,
             this.finish.name,
             "cancel"
           );
 
-          if (!this._session) {
-            throw new Error("Session is required.");
-          }
+          await Promise.all([
+            this.updateTime(time),
+            this._localStorageService.setItem<LocalStorageKeys>("shouldPause", 1),
+          ]);
 
-          await this._sessionService.pause({
-            sessionId: this._session.id,
+          const pauseResult = await this._sessionService.pause({
+            sessionId,
             avgSpeed: 0,
             distance: 0,
             maxSpeed: 0,
-            date,
+            date: new Date(time),
           });
 
           await this._settingsService.set(
             SettingKey.LastSessionId,
-            this._session.id
+            sessionId
           );
 
-          this._session.state = SessionState.Paused;
-
-          if (this._currentActivityId) {
+          if (this._currentActivityId && this._currentActivityId === currentActivityId) {
             this.onActivityUpdate(
-              this._currentActivityId,
+              currentActivityId,
               ActivityStatus.Paused
             );
+          }
+
+          if (this._session?.id === sessionId) {
+            this._session.state = SessionState.Paused;
           }
 
           this.on(
             "session-paused",
             {
-              sessionId: this._session.id,
-              activityId: this._currentActivityId,
+              sessionId,
+              activityId: currentActivityId,
             }
           );
+
+          if (pauseResult) {
+            this.on<ActivityLoggedResult>(
+              "activity-logged",
+              {
+                id: pauseResult.id,
+                activityId: pauseResult.activityId,
+                activityColor: pauseResult.activityColor,
+                activityName: pauseResult.activityName,
+                avgSpeed: pauseResult.avgSpeed,
+                distance: pauseResult.distance,
+                elapsedTime: pauseResult.elapsedTime,
+                finishDate: pauseResult.finishDate,
+                maxSpeed: pauseResult.maxSpeed,
+                startDate: pauseResult.startDate,
+              },
+            );
+          }
         } finally {
-          await this._localStorageService.removeItem<LocalStorageKeys>("shouldPause");
+          await Promise.all([
+            this.removeTime(),
+            this._localStorageService.removeItem<LocalStorageKeys>("shouldPause"),
+          ]);
         }
       },
       confirm: async(sessionName: string | undefined): Promise<void> => {
         try {
-          await Promise.all([
-            this._localStorageService.setItem<LocalStorageKeys>("shouldFinish", 1),
-            this._localStorageService.setItem<LocalStorageKeys>("sessionId", this._session?.id),
-          ]);
-
           this._loggerService.debug(
             ActiveProjectService.name,
             this.finish.name,
             "confirm"
           );
 
+          await Promise.all([
+            this._localStorageService.setItem<LocalStorageKeys>("shouldFinish", 1),
+            this._localStorageService.setItem<LocalStorageKeys>("sessionId", sessionId),
+          ]);
+
           if (!this._session) {
             return;
           }
 
+          // TODO: result
           await this._sessionService.finish({
             sessionId: this._session.id,
             avgSpeed: 0,
             distance: 0,
             maxSpeed: 0,
-            date,
+            date: new Date(time),
           });
 
           if (sessionName) {
@@ -601,7 +947,7 @@ export class ActiveProjectService implements IActiveProjectService {
           await Promise.all([
             this._localStorageService.removeItem<LocalStorageKeys>("shouldFinish"),
             this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
-            this.removeDate(),
+            this.removeTime(),
           ]);
         }
       },
@@ -609,16 +955,18 @@ export class ActiveProjectService implements IActiveProjectService {
   }
 
   public async reset(): Promise<void> {
-    try {
-      await Promise.all([
-        this._localStorageService.setItem<LocalStorageKeys>("shouldReset", 1),
-        this.updateDateAndStop(),
-      ]);
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.reset.name
+    );
 
-      this._loggerService.debug(
-        ActiveProjectService.name,
-        this.reset.name
-      );
+    try {
+      const time = this._stopwatch.stop();
+
+      await Promise.all([
+        this.updateTime(time),
+        this._localStorageService.setItem<LocalStorageKeys>("shouldReset", 1),
+      ]);
 
       this._project = undefined;
       this._activities = undefined;
@@ -629,17 +977,17 @@ export class ActiveProjectService implements IActiveProjectService {
         this._localStorageService.removeItem<LocalStorageKeys>("projectId"),
         this._localStorageService.removeItem<LocalStorageKeys>("sessionId"),
         this._localStorageService.removeItem<LocalStorageKeys>("activityId"),
-        this._localStorageService.removeItem<LocalStorageKeys>("date"),
         this._localStorageService.removeItem<LocalStorageKeys>("shouldPause"),
         this._localStorageService.removeItem<LocalStorageKeys>("shouldToggleCurrentActivity"),
       ]);
 
-      this._stopwatchService.clearOffset();
-      this._stopwatchService.reset();
+      this._sessionStorageService.removeItem<SessionStorageKeys>("activeProject.stopwatchMode");
+
+      this._stopwatch.reset();
     } finally {
       await Promise.all([
+        this.removeTime(),
         this._localStorageService.removeItem<LocalStorageKeys>("shouldReset"),
-        this.removeDate(),
       ]);
     }
   }
@@ -655,7 +1003,7 @@ export class ActiveProjectService implements IActiveProjectService {
     if (this._session?.state === SessionState.Run) {
       await Promise.all([
         this._localStorageService.setItem<LocalStorageKeys>(
-          "date",
+          "time",
           result.getTime()
         ),
         this._localStorageService.setItem<LocalStorageKeys>(
@@ -666,12 +1014,197 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  public addEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): NativeEventSubscription {
+  public tick(): void {
+    this._stopwatch.tick();
+  }
+
+  public subtract(value: number): void {
+    this._stopwatch.subtract(value);
+  }
+
+  public async updateActivity(activity: Activity): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.updateActivity.name,
+      activity
+    );
+
+    if (!activity) {
+      throw new Error("`activity` is required.");
+    }
+
+    if (!this._project) {
+      throw new Error("Project is required.");
+    }
+
+    if (!this._activities) {
+      throw new Error("Activities is required.");
+    }
+
+    const activityId = activity.id || this._guidService.newGuid();
+
+    if (activity.id) {
+      await this._projectService.updateActivity({
+        activityId,
+        activityColor: activity.color,
+        activityName: activity.name,
+        projectId: this._project.id,
+      });
+
+      const existingActivity = this._activities.find(
+        (x: Activity): boolean => {
+          return x.id === activity.id;
+        }
+      );
+
+      if (!existingActivity) {
+        throw new Error(`Activity #${activity.id} not found.`);
+      }
+
+      existingActivity.color = activity.color;
+      existingActivity.name = activity.name;
+    } else {
+      await this._projectService.addActivity({
+        activityId,
+        activityColor: activity.color,
+        activityName: activity.name,
+        projectId: this._project.id,
+      });
+
+      this._activities.push({
+        color: activity.color,
+        id: activityId,
+        name: activity.name,
+        status: ActivityStatus.Idle,
+      });
+    }
+
+    this.on("activity-list-updated");
+  }
+
+  public async deleteActivity(activityId: string): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.deleteActivity.name,
+      activityId
+    );
+
+    if (!activityId) {
+      throw new Error("`activityId` is required.");
+    }
+
+    if (!this._project) {
+      throw new Error("Project is required.");
+    }
+
+    if (!this._activities) {
+      throw new Error("Activities is required.");
+    }
+
+    if (this._activities.length === 1) {
+      throw new Error("Unable to delete last activity. The project must have at least one activity.");
+    }
+
+    if (this._session && this._session.activityId === activityId) {
+      const sessionActivity = this._activities.find(
+        (x: Activity): boolean => {
+          return x.id === activityId;
+        }
+      );
+
+      if (!sessionActivity) {
+        throw new Error(`Activity #${activityId} not found.`);
+      }
+
+      const newActivity = this._activities.filter(
+        (x: Activity): boolean => {
+          return x.id !== activityId;
+        }
+      )[0];
+
+      const time = this._stopwatch.stop();
+      const pauseResult = await this._sessionService.pauseAndSetActivity({
+        sessionId: this._session.id,
+        newActivityId: newActivity.id,
+        date: new Date(time),
+        avgSpeed: 0,
+        distance: 0,
+        maxSpeed: 0,
+      });
+
+      this._session.state = SessionState.Paused;
+
+      this.onActivityUpdate(
+        sessionActivity.id,
+        ActivityStatus.Idle
+      );
+
+      this.onActivityUpdate(
+        newActivity.id,
+        ActivityStatus.Idle
+      );
+
+      this.on(
+        "session-paused",
+        {
+          sessionId: this._session.id,
+          activityId: sessionActivity.id,
+        }
+      );
+
+      if (pauseResult) {
+        this._session.activityId = pauseResult.activityId;
+
+        this.on<ActivityLoggedResult>(
+          "activity-logged",
+          {
+            id: pauseResult.id,
+            activityId: pauseResult.activityId,
+            activityColor: pauseResult.activityColor,
+            activityName: pauseResult.activityName,
+            avgSpeed: pauseResult.avgSpeed,
+            distance: pauseResult.distance,
+            elapsedTime: pauseResult.elapsedTime,
+            finishDate: pauseResult.finishDate,
+            maxSpeed: pauseResult.maxSpeed,
+            startDate: pauseResult.startDate,
+          },
+        );
+
+        this._stopwatch.setTotalElapsed(pauseResult.sessionElapsedTime);
+      }
+    }
+
+    await this._projectService.deleteActivity({
+      activityId,
+      projectId: this._project.id,
+    });
+
+    const index = this._activities.findIndex(
+      (x: Activity): boolean => {
+        return x.id === activityId;
+      }
+    );
+
+    if (index !== -1) {
+      this._activities.splice(index, 1);
+      this.on("activity-list-updated");
+    }
+  }
+
+  public addEventListener<TEventArgs extends Object = Record<string, any>>(
+    type: ActiveProjectServiceEventType,
+    callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent
+  ): NativeEventSubscription {
     this._loggerService.debug(
       ActiveProjectService.name,
       this.addEventListener.name,
       type
     );
+
+    if (type === "stopwatch-tick") {
+      return this._stopwatch.addTickListener(callback as ActiveProjectStopwatchTickEvent);
+    }
 
     const eventType = this._listeners.get(type);
 
@@ -679,7 +1212,7 @@ export class ActiveProjectService implements IActiveProjectService {
       type,
       [
         ...eventType ?? [],
-        callback,
+        callback as ActiveProjectServiceEvent<Record<string, any>>,
       ]
     );
 
@@ -690,15 +1223,23 @@ export class ActiveProjectService implements IActiveProjectService {
     };
   }
 
-  public removeEventListener(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent): void {
+  public removeEventListener<TEventArgs extends Object = Record<string, any>>(
+    type: ActiveProjectServiceEventType,
+    callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent
+  ): void {
     this._loggerService.debug(
       ActiveProjectService.name,
       this.removeEventListener.name,
       type
     );
 
+    if (type === "stopwatch-tick") {
+      this._stopwatch.removeTickListener(callback as ActiveProjectStopwatchTickEvent);
+      return;
+    }
+
     const eventType = this._listeners.get(type) ?? [];
-    const index = eventType?.indexOf(callback);
+    const index = eventType?.indexOf(callback as ActiveProjectServiceEvent<Record<string, any>>);
 
     if (index === -1) {
       throw new Error("Listener not found.");
@@ -732,6 +1273,11 @@ export class ActiveProjectService implements IActiveProjectService {
       }
     ) ?? [];
 
+    await this._settingsService.set(
+      SettingKey.LastProjectId,
+      project.id
+    );
+
     this.on("project-loaded");
   }
 
@@ -758,16 +1304,21 @@ export class ActiveProjectService implements IActiveProjectService {
       );
 
       if (!activity) {
-        throw new Error(`Activity #${session.activityId} not found.`);
+        // to prevent the application from being unable to run
+        this._loggerService.warn(
+          ActiveProjectService.name,
+          this.setSessionId.name,
+          `Activity #${session.activityId} not found.`
+        );
       }
     }
 
-    this._stopwatchService.set(session.elapsedTime);
+    this._stopwatch.setTotalElapsed(session.elapsedTime);
 
     this.on("session-loaded");
   }
 
-  private on<TEventArgs extends Object>(type: ActiveProjectServiceEventType, args?: TEventArgs): void {
+  private on<TEventArgs extends Object | undefined>(type: ActiveProjectServiceEventType, args?: TEventArgs): void {
     this._loggerService.debug(
       ActiveProjectService.name,
       this.on.name,
@@ -786,7 +1337,10 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
-  private onActivityUpdate(activityId: string, status: ActivityStatus): void {
+  private onActivityUpdate(
+    activityId: string,
+    status: ActivityStatus
+  ): Activity {
     this._loggerService.debug(
       ActiveProjectService.name,
       this.onActivityUpdate.name,
@@ -796,9 +1350,11 @@ export class ActiveProjectService implements IActiveProjectService {
       ActivityStatus[status]
     );
 
-    const activity = this._activities?.find((x: Activity): boolean => {
-      return x.id === activityId;
-    });
+    const activity = this._activities?.find(
+      (x: Activity): boolean => {
+        return x.id === activityId;
+      }
+    );
 
     if (!activity) {
       throw new Error(`Activity #${activityId} not found.`);
@@ -813,23 +1369,19 @@ export class ActiveProjectService implements IActiveProjectService {
         status,
       }
     );
+
+    return activity;
   }
 
-  private async updateDateAndStop(): Promise<Date> {
-    const result = this._dateTimeService.now;
-
-    this._stopwatchService.stop();
-
+  private async updateTime(time: number): Promise<void> {
     await this._localStorageService.setItem<LocalStorageKeys>(
-      "date",
-      result.getTime()
+      "time",
+      time
     );
-
-    return result;
   }
 
-  private removeDate(): Promise<void> {
-    return this._localStorageService.removeItem<LocalStorageKeys>("date");
+  private removeTime(): Promise<void> {
+    return this._localStorageService.removeItem<LocalStorageKeys>("time");
   }
 
 }
