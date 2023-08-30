@@ -193,7 +193,8 @@
     "licensesModal": {
       "license": "The Multi-duper Stopwatch software is licensed under the MIT license.",
       "showLicense": "Show",
-      "thirdParty": "This software uses the following third-party components:"
+      "thirdParty": "This software uses the following third-party components:",
+      "contactMe": "If you have any questions, please feel free to contact:"
     }
   },
   "dateTimeFormatter": {

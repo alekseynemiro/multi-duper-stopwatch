@@ -223,7 +223,7 @@ export function LicensesModal({ onClose }: LicensesModalProps): JSX.Element {
           <View style={licensesModalStyles.row}>
             <View style={licensesModalStyles.textCol}>
               <Text style={licensesModalStyles.textSmall}>
-                If you have any questions, please feel free to contact:
+                {localization.get("about.licensesModal.contactMe")}
               </Text>
               <Link
                 text={["aleksey.nemiro", "gmail.com"].join("@")}

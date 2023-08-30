@@ -176,13 +176,13 @@ export function AboutPage(): JSX.Element {
           {localization.get("about.license")}
         </Text>
         <Text
-          style={aboutPageStyles.licensesText}
+          style={aboutPageStyles.copyright}
         >
           Copyright © 2023 Aleksey Nemiro
         </Text>
         <Button
           variant="light"
-          title="Details"
+          title={localization.get("about.details")}
           style={aboutPageStyles.licensesButton}
           titleStyle={aboutPageStyles.licensesButtonTitle}
           onPress={(): void => setShowLicensesModal(true)}
