@@ -2,7 +2,7 @@
 
 ## v1.1 (August 30, 2023)
 
-This release contains major improvements and fixes.
+This release contains important fixes and improvements.
 
 ### Added
 
