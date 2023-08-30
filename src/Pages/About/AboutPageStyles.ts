@@ -54,11 +54,16 @@ export const aboutPageStyles = StyleSheet.create({
   },
   licensesText: {
     ...styles.textSmall,
+    ...styles.textCenter,
   },
   licensesButton: {
     marginVertical: 8,
   },
   licensesButtonTitle: {
     ...styles.textSmall,
+  },
+  copyright: {
+    ...styles.textSmall,
+    marginVertical: 8,
   },
 });

@@ -125,6 +125,7 @@ export type LocalizationKey =
   | "about.licensesModal.license"
   | "about.licensesModal.showLicense"
   | "about.licensesModal.thirdParty"
+  | "about.licensesModal.contactMe"
   | "dateTimeFormatter.at"
   | "selectColor.title"
   | "selectColor.close"
