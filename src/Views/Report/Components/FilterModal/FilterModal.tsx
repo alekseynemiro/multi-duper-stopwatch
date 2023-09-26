@@ -145,7 +145,7 @@ export function FilterModal(props: FilterModalProps): JSX.Element {
             <Button
               variant="primary"
               title={localization.get("report.filterModal.ok")}
-              style={filterModalStyles.button}
+              style={filterModalStyles.buttonOk}
               onPress={(): void => {
                 onSave(selectedActivities);
               }}
@@ -153,7 +153,7 @@ export function FilterModal(props: FilterModalProps): JSX.Element {
             <Button
               variant="secondary"
               title={localization.get("report.filterModal.cancel")}
-              style={filterModalStyles.button}
+              style={filterModalStyles.buttonCancel}
               onPress={onCancel}
             />
           </View>

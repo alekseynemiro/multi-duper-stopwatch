@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { styles } from "@styles";
+import { spaceBetweenButtons, styles } from "@styles";
 
 export const projectEditorPageStyles = StyleSheet.create({
   container: {
@@ -35,7 +35,7 @@ export const projectEditorPageStyles = StyleSheet.create({
     justifyContent: "flex-start",
     marginHorizontal: 0,
   },
-  footerButton: {
-    marginRight: 10,
+  footerButtonSave: {
+    marginRight: spaceBetweenButtons,
   },
 });

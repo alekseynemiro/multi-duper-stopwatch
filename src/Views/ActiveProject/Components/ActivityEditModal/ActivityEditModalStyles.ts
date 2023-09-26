@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, defaultFontSize } from "@styles";
+import { colors, defaultFontSize, spaceBetweenButtons } from "@styles";
 
 export const activityEditModalStyles = StyleSheet.create({
   centeredView: {
@@ -37,9 +37,12 @@ export const activityEditModalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
   },
-  button: {
+  buttonSave: {
     minWidth: 75,
-    marginRight: 10,
+    marginRight: spaceBetweenButtons,
+  },
+  buttonCancel: {
+    minWidth: 75,
   },
   formRow: {
     flexDirection: "row",

@@ -41,7 +41,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
             <Button
               variant="primary"
               title={localization.get("activeProject.sessionNameModal.ok")}
-              style={sessionNameModalStyles.button}
+              style={sessionNameModalStyles.buttonOk}
               onPress={(): void => {
                 onConfirm({
                   sessionName,
@@ -51,7 +51,7 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
             <Button
               variant="secondary"
               title={localization.get("activeProject.sessionNameModal.cancel")}
-              style={sessionNameModalStyles.button}
+              style={sessionNameModalStyles.buttonCancel}
               onPress={onCancel}
             />
           </View>

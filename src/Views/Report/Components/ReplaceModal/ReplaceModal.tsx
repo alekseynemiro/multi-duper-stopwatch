@@ -132,7 +132,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
               disabled={!selectedActivityId}
               variant="primary"
               title={localization.get("report.replaceModal.replace")}
-              style={replaceModalStyles.button}
+              style={replaceModalStyles.buttonReplace}
               onPress={(): void => {
                 onReplace(reportItem.id, selectedActivityId!);
               }}
@@ -140,7 +140,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
             <Button
               variant="secondary"
               title={localization.get("report.replaceModal.cancel")}
-              style={replaceModalStyles.button}
+              style={replaceModalStyles.buttonCancel}
               onPress={onCancel}
             />
           </View>

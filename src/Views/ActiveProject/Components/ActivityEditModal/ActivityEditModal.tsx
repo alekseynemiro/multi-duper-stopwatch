@@ -127,13 +127,13 @@ export function ActivityEditModal(props: ActivityEditModalProps): JSX.Element {
                       <Button
                         variant="primary"
                         title={localization.get("activeProject.activityEditModal.save")}
-                        style={activityEditModalStyles.button}
+                        style={activityEditModalStyles.buttonSave}
                         onPress={handleSubmit}
                       />
                       <Button
                         variant="secondary"
                         title={localization.get("activeProject.activityEditModal.cancel")}
-                        style={activityEditModalStyles.button}
+                        style={activityEditModalStyles.buttonCancel}
                         onPress={onCancel}
                       />
                     </View>

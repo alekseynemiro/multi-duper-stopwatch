@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, styles } from "@styles";
+import { colors, spaceBetweenButtons, styles } from "@styles";
 
 export const filterModalStyles = StyleSheet.create({
   centeredView: {
@@ -40,9 +40,12 @@ export const filterModalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  button: {
+  buttonOk: {
     minWidth: 75,
-    marginRight: 10,
+    marginRight: spaceBetweenButtons,
+  },
+  buttonCancel: {
+    minWidth: 75,
   },
   tableRow: {
     alignSelf: "stretch",

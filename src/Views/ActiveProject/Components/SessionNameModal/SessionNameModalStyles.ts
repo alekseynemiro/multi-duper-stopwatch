@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors } from "@styles";
+import { colors, spaceBetweenButtons } from "@styles";
 
 export const sessionNameModalStyles = StyleSheet.create({
   centeredView: {
@@ -38,8 +38,11 @@ export const sessionNameModalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  button: {
+  buttonOk: {
     minWidth: 75,
-    marginRight: 10,
+    marginRight: spaceBetweenButtons,
+  },
+  buttonCancel: {
+    minWidth: 75,
   },
 });
