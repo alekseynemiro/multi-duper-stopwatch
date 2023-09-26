@@ -60,26 +60,50 @@ export function ProjectListPage(): JSX.Element {
 
   const requestToDeleteProject = useCallback(
     (project: GetAllResultItem): void => {
-      Alert.alert(
-        localization.get("projectList.deleteConfirmation.title"),
-        localization.get("projectList.deleteConfirmation.message", { projectName: project.name }),
-        [
-          {
-            text: localization.get("projectList.deleteConfirmation.cancel"),
-            style: "cancel",
-          },
-          {
-            text: localization.get("projectList.deleteConfirmation.delete"),
-            onPress: (): void => {
-              deleteProject(project.id);
+      if (
+        activeProjectService.project?.id === project.id
+        && activeProjectService.session
+        && [SessionState.Paused, SessionState.Run].includes(activeProjectService.session.state)
+      ) {
+        Alert.alert(
+          localization.get("projectList.deleteConfirmation.title"),
+          localization.get("projectList.deleteConfirmation.activeProjectMessage", { projectName: project.name }),
+          [
+            {
+              text: localization.get("projectList.deleteConfirmation.cancel"),
+              style: "cancel",
             },
-          },
-        ]
-      );
+            {
+              text: localization.get("projectList.deleteConfirmation.delete"),
+              onPress: (): void => {
+                deleteProject(project.id);
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert(
+          localization.get("projectList.deleteConfirmation.title"),
+          localization.get("projectList.deleteConfirmation.message", { projectName: project.name }),
+          [
+            {
+              text: localization.get("projectList.deleteConfirmation.cancel"),
+              style: "cancel",
+            },
+            {
+              text: localization.get("projectList.deleteConfirmation.delete"),
+              onPress: (): void => {
+                deleteProject(project.id);
+              },
+            },
+          ]
+        );
+      }
     },
     [
       deleteProject,
       localization,
+      activeProjectService,
     ]
   );
 
