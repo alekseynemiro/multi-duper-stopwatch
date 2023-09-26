@@ -45,6 +45,7 @@ export type LocalizationKey =
   | "activeProject.activityDeleteConfirmation.delete"
   | "projectList.deleteConfirmation.title"
   | "projectList.deleteConfirmation.message"
+  | "projectList.deleteConfirmation.activeProjectMessage"
   | "projectList.deleteConfirmation.cancel"
   | "projectList.deleteConfirmation.delete"
   | "projectList.activeSessionWarning.title"

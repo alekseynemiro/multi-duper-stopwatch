@@ -1255,6 +1255,19 @@ export class ActiveProjectService implements IActiveProjectService {
       projectId
     );
 
+    const projectAvailableToRun = await this._projectService.isAvailableToRun(projectId);
+
+    if (!projectAvailableToRun) {
+      this._loggerService.debug(
+        ActiveProjectService.name,
+        this.setProjectId.name,
+        projectId,
+        "The project cannot be used."
+      );
+
+      return;
+    }
+
     const project = await this._projectService.get(projectId);
 
     this._project = {

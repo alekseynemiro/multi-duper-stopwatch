@@ -98,6 +98,19 @@ export function HomePage(): JSX.Element {
           await activeProjectService.useLastProjectId();
         }
 
+        if (projectId && !activeProjectService.project) {
+          navigation.navigate(
+            Routes.Home,
+            {
+              projectId: undefined,
+              sessionId: undefined,
+            }
+          );
+
+          setProjectId(undefined);
+          setSessionId(undefined);
+        }
+
         if (activeProjectService.session?.state === SessionState.Finished) {
           navigation.navigate(
             Routes.Home,

@@ -1,10 +1,11 @@
-import { ServiceIdentifier } from "@config";
+import { ServiceIdentifier, serviceProvider } from "@config";
 import {
   Activity,
   ActivityInProject,
   IDatabaseService,
   Project,
   SessionState,
+  SettingKey,
 } from "@data";
 import {
   AddActivityRequest,
@@ -17,9 +18,11 @@ import {
   UpdateActivityRequest,
   UpdateProjectRequest,
 } from "@dto/Projects";
+import { IActiveProjectService } from "@services/ActiveProject";
 import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
 import { ILoggerService } from "@services/Logger";
+import { ISettingsService } from "@services/Settings";
 import { inject, injectable } from "inversify";
 import { In, Not } from "typeorm";
 import { IProjectService } from "./IProjectService";
@@ -34,17 +37,21 @@ export class ProjectService implements IProjectService {
 
   private readonly _guidService: IGuidService;
 
+  private readonly _settingsService: ISettingsService;
+
   private readonly _loggerService: ILoggerService;
 
   constructor(
     @inject(ServiceIdentifier.DatabaseService) databaseService: IDatabaseService,
     @inject(ServiceIdentifier.DateTimeService) dateTimeService: IDateTimeService,
     @inject(ServiceIdentifier.GuidService) guidService: IGuidService,
+    @inject(ServiceIdentifier.SettingsService) settingsService: ISettingsService,
     @inject(ServiceIdentifier.LoggerService) loggerService: ILoggerService
   ) {
     this._databaseService = databaseService;
     this._dateTimeService = dateTimeService;
     this._guidService = guidService;
+    this._settingsService = settingsService;
     this._loggerService = loggerService;
   }
 
@@ -195,6 +202,9 @@ export class ProjectService implements IProjectService {
 
     return this._databaseService.execute(
       async (): Promise<void> => {
+        // cyclic dependency prevents constructor use
+        const activeProjectService = serviceProvider.get<IActiveProjectService>(ServiceIdentifier.ActiveProjectService);
+
         const project = await this._databaseService.projects()
           .findOneOrFail({
             where: {
@@ -255,6 +265,22 @@ export class ProjectService implements IProjectService {
           }
 
           await this._databaseService.activities().save(activities);
+
+          if (id === activeProjectService.project?.id) {
+            if (
+              activeProjectService.session
+              && [SessionState.Paused, SessionState.Run].includes(activeProjectService.session.state)
+            ) {
+              const finishResult = await activeProjectService.finish();
+              await finishResult.confirm(undefined);
+            } else {
+              await Promise.all([
+                activeProjectService.reset(),
+                this._settingsService.set(SettingKey.LastSessionId, null),
+                this._settingsService.set(SettingKey.LastProjectId, null),
+              ]);
+            }
+          }
         }
       },
       `${ProjectService.name}.${this.delete.name}`
@@ -380,6 +406,28 @@ export class ProjectService implements IProjectService {
         }
       },
       `${ProjectService.name}.${this.update.name}`
+    );
+  }
+
+  public async isAvailableToRun(id: ProjectId): Promise<boolean> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.isAvailableToRun.name,
+      id
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<boolean> => {
+        const project = await this._databaseService.projects()
+          .findOneOrFail({
+            where: { id },
+            relations: {
+              activitiesInProjects: true,
+            },
+          });
+
+        return !project.isDeleted;
+      }
     );
   }
 

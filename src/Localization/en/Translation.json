@@ -124,7 +124,8 @@
     },
     "deleteConfirmation": {
       "title": "Confirmation",
-      "message": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
+      "message": "Are you sure you want to delete project \"{{projectName}}\"?\n\nIt will be impossible to restore the project after deletion.",
+      "activeProjectMessage": "You have an active session running for the project \"{{projectName}}\".\n\nIf you delete this project, the session will be automatically finished.\n\nAre you sure you want to delete project \"{{projectName}}\"?\n\nIt will be impossible to restore the project after deletion.",
       "cancel": "Cancel",
       "delete": "Delete"
     },
