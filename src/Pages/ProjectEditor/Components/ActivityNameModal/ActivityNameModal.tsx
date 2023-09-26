@@ -51,6 +51,7 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
               <Button
                 variant="secondary"
                 title={localization.get("projectEditor.activityNameModal.cancel")}
+                style={activityNameModalStyles.buttonWithMarginLeft}
                 onPress={onCancel}
               />
           </View>
