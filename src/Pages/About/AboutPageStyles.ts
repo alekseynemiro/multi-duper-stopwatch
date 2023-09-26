@@ -51,6 +51,7 @@ export const aboutPageStyles = StyleSheet.create({
   },
   licenses: {
     alignItems: "center",
+    marginBottom: 24,
   },
   licensesText: {
     ...styles.textSmall,
