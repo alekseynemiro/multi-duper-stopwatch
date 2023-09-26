@@ -40,9 +40,12 @@ export const replaceModalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  button: {
+  buttonReplace: {
     minWidth: 75,
     marginRight: spaceBetweenButtons,
+  },
+  buttonCancel: {
+    minWidth: 75,
   },
   tableRow: {
     alignSelf: "stretch",
