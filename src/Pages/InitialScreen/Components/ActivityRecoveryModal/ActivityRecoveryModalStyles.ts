@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, styles } from "@styles";
+import { colors, spaceBetweenButtons, styles } from "@styles";
 
 export const activityRecoveryModalStyles = StyleSheet.create({
   centeredView: {
@@ -39,7 +39,7 @@ export const activityRecoveryModalStyles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    marginLeft: 10,
+    marginLeft: spaceBetweenButtons,
   },
   activity: {
     flexDirection: "row",

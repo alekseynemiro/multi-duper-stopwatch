@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, styles } from "@styles";
+import { colors, spaceBetweenButtons, styles } from "@styles";
 
 export const replaceModalStyles = StyleSheet.create({
   centeredView: {
@@ -42,7 +42,7 @@ export const replaceModalStyles = StyleSheet.create({
   },
   button: {
     minWidth: 75,
-    marginRight: 10,
+    marginRight: spaceBetweenButtons,
   },
   tableRow: {
     alignSelf: "stretch",
