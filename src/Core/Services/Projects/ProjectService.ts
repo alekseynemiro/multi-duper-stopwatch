@@ -383,6 +383,28 @@ export class ProjectService implements IProjectService {
     );
   }
 
+  public async isAvailableToRun(id: ProjectId): Promise<boolean> {
+    this._loggerService.debug(
+      ProjectService.name,
+      this.isAvailableToRun.name,
+      id
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<boolean> => {
+        const project = await this._databaseService.projects()
+          .findOneOrFail({
+            where: { id },
+            relations: {
+              activitiesInProjects: true,
+            },
+          });
+
+        return !project.isDeleted;
+      }
+    );
+  }
+
   public addActivity(request: AddActivityRequest): Promise<void> {
     this._loggerService.debug(
       ProjectService.name,
