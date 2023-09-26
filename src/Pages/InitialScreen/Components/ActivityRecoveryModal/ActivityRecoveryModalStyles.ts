@@ -38,7 +38,9 @@ export const activityRecoveryModalStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  button: {
+  buttonYes: {
+  },
+  buttonNo: {
     marginLeft: spaceBetweenButtons,
   },
   activity: {

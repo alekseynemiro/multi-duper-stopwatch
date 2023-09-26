@@ -77,13 +77,13 @@ export function ActivityRecoveryModal(props: ActivityRecoveryModalProps): JSX.El
             <Button
               variant="primary"
               title={localization.get("initialScreen.activityRecoveryModal.yes")}
-              style={activityRecoveryModalStyles.button}
+              style={activityRecoveryModalStyles.buttonYes}
               onPress={onRecovery}
             />
             <Button
               variant="secondary"
               title={localization.get("initialScreen.activityRecoveryModal.no")}
-              style={activityRecoveryModalStyles.button}
+              style={activityRecoveryModalStyles.buttonNo}
               onPress={onCancel}
             />
           </View>
