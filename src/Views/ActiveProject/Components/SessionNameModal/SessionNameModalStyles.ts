@@ -38,8 +38,11 @@ export const sessionNameModalStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  button: {
+  buttonOk: {
     minWidth: 75,
     marginRight: spaceBetweenButtons,
+  },
+  buttonCancel: {
+    minWidth: 75,
   },
 });
