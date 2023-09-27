@@ -1,9 +1,10 @@
 import React from "react";
-import { Linking, Modal, Text, View } from "react-native";
+import { Linking, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Link } from "@components/Link";
+import { Modal } from "@components/Modal";
 import { useLocalizationService } from "@config";
 import { LicensesModalProps } from "./LicensesModalProps";
 import { licensesModalStyles } from "./LicensesModalStyles";
@@ -153,96 +154,92 @@ export function LicensesModal({ onClose }: LicensesModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={true}
+      show={true}
+      size="lg"
+      title={localization.get("about.licensesModal.title")}
     >
-      <View style={licensesModalStyles.centeredView}>
-        <View style={licensesModalStyles.modalView}>
-          <View style={licensesModalStyles.row}>
-            <View style={licensesModalStyles.textCol}>
-              <Text>
-                {localization.get("about.licensesModal.license")}
-              </Text>
-            </View>
-            <View style={licensesModalStyles.buttonCol}>
-              <Button
-                variant="light"
-                title={localization.get("about.licensesModal.showLicense")}
-                onPress={openUrl(`https://raw.githubusercontent.com/alekseynemiro/multi-duper-stopwatch/master/LICENSE?utm_source=${utmSource}`)}
-              />
-            </View>
-          </View>
-          <HorizontalLine />
-          <View style={licensesModalStyles.row}>
-            <View style={licensesModalStyles.textCol}>
-              <Text>
-                {localization.get("about.licensesModal.thirdParty")}
-              </Text>
-            </View>
-          </View>
-          <HorizontalLine />
-          <ScrollView>
-            {
-              packages.map(
-                (x: PackageType): JSX.Element => {
-                  return (
-                    <View
-                      key={x.name}
-                      style={licensesModalStyles.row}
-                    >
-                      <View style={licensesModalStyles.textCol}>
-                        <Text>
-                          {x.name}
-                        </Text>
-                        {
-                          x.url
-                          && (
-                            <Link
-                              text={x.url!}
-                              url={x.url!}
-                              style={licensesModalStyles.url}
-                            />
-                          )
-                        }
-                      </View>
-                      <View style={licensesModalStyles.buttonCol}>
-                        <Button
-                          variant="light"
-                          title={x.license}
-                          onPress={openUrl(x.licenseUrl)}
-                        />
-                      </View>
-                    </View>
-                  );
-                }
-              )
-            }
-          </ScrollView>
-          <HorizontalLine />
-          <View style={licensesModalStyles.row}>
-            <View style={licensesModalStyles.textCol}>
-              <Text style={licensesModalStyles.textSmall}>
-                {localization.get("about.licensesModal.contactMe")}
-              </Text>
-              <Link
-                text={["aleksey.nemiro", "gmail.com"].join("@")}
-                url={"mailto:" + ["aleksey.nemiro", "gmail.com"].join("@") + "?Subject=Multi-duper%20Stopwatch"}
-                style={licensesModalStyles.textSmall}
-              />
-            </View>
-          </View>
-          <HorizontalLine />
-          <View
-            style={licensesModalStyles.footer}
-          >
-            <Button
-              variant="primary"
-              title={localization.get("projectEditor.activityNameModal.ok")}
-              onPress={onClose}
-            />
-          </View>
+      <View style={licensesModalStyles.row}>
+        <View style={licensesModalStyles.textCol}>
+          <Text>
+            {localization.get("about.licensesModal.license")}
+          </Text>
         </View>
+        <View style={licensesModalStyles.buttonCol}>
+          <Button
+            variant="light"
+            title={localization.get("about.licensesModal.showLicense")}
+            onPress={openUrl(`https://raw.githubusercontent.com/alekseynemiro/multi-duper-stopwatch/master/LICENSE?utm_source=${utmSource}`)}
+          />
+        </View>
+      </View>
+      <HorizontalLine />
+      <View style={licensesModalStyles.row}>
+        <View style={licensesModalStyles.textCol}>
+          <Text>
+            {localization.get("about.licensesModal.thirdParty")}
+          </Text>
+        </View>
+      </View>
+      <HorizontalLine />
+      <ScrollView>
+        {
+          packages.map(
+            (x: PackageType): JSX.Element => {
+              return (
+                <View
+                  key={x.name}
+                  style={licensesModalStyles.row}
+                >
+                  <View style={licensesModalStyles.textCol}>
+                    <Text>
+                      {x.name}
+                    </Text>
+                    {
+                      x.url
+                      && (
+                        <Link
+                          text={x.url!}
+                          url={x.url!}
+                          style={licensesModalStyles.url}
+                        />
+                      )
+                    }
+                  </View>
+                  <View style={licensesModalStyles.buttonCol}>
+                    <Button
+                      variant="light"
+                      title={x.license}
+                      onPress={openUrl(x.licenseUrl)}
+                    />
+                  </View>
+                </View>
+              );
+            }
+          )
+        }
+      </ScrollView>
+      <HorizontalLine />
+      <View style={licensesModalStyles.row}>
+        <View style={licensesModalStyles.textCol}>
+          <Text style={licensesModalStyles.textSmall}>
+            {localization.get("about.licensesModal.contactMe")}
+          </Text>
+          <Link
+            text={["aleksey.nemiro", "gmail.com"].join("@")}
+            url={"mailto:" + ["aleksey.nemiro", "gmail.com"].join("@") + "?Subject=Multi-duper%20Stopwatch"}
+            style={licensesModalStyles.textSmall}
+          />
+        </View>
+      </View>
+      <HorizontalLine />
+      <View
+        style={licensesModalStyles.footer}
+      >
+        <Button
+          variant="primary"
+          title={localization.get("projectEditor.activityNameModal.ok")}
+          onPress={onClose}
+        />
       </View>
     </Modal>
   );
