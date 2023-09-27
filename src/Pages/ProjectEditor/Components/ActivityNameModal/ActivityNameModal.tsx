@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Modal, View } from "react-native";
+import { View } from "react-native";
 import { Button } from "@components/Button";
 import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { Modal } from "@components/Modal";
 import { TextInputField } from "@components/TextInputField";
 import { useLocalizationService } from "@config";
 import { ActivityNameModalProps } from "./ActivityNameModalProps";
@@ -21,41 +22,35 @@ export function ActivityNameModal(props: ActivityNameModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={true}
+      show={true}
     >
-      <View style={activityNameModalStyles.centeredView}>
-        <View style={activityNameModalStyles.modalView}>
-          <FormRow>
-            <TextInputField
-              label={localization.get("projectEditor.activityNameModal.activityName")}
-              value={newActivityName}
-              onChangeText={setNewActivityName}
-            />
-          </FormRow>
-          <HorizontalLine />
-          <View
-            style={activityNameModalStyles.footer}
-          >
-            <Button
-                variant="primary"
-                title={localization.get("projectEditor.activityNameModal.ok")}
-                onPress={(): void => {
-                  onSet({
-                    activityCode: activityCode as string,
-                    activityName: newActivityName,
-                  });
-                }}
-              />
-              <Button
-                variant="secondary"
-                title={localization.get("projectEditor.activityNameModal.cancel")}
-                style={activityNameModalStyles.buttonWithMarginLeft}
-                onPress={onCancel}
-              />
-          </View>
-        </View>
+      <FormRow>
+        <TextInputField
+          label={localization.get("projectEditor.activityNameModal.activityName")}
+          value={newActivityName}
+          onChangeText={setNewActivityName}
+        />
+      </FormRow>
+      <HorizontalLine />
+      <View
+        style={activityNameModalStyles.footer}
+      >
+        <Button
+            variant="primary"
+            title={localization.get("projectEditor.activityNameModal.ok")}
+            onPress={(): void => {
+              onSet({
+                activityCode: activityCode as string,
+                activityName: newActivityName,
+              });
+            }}
+          />
+          <Button
+            variant="secondary"
+            title={localization.get("projectEditor.activityNameModal.cancel")}
+            style={activityNameModalStyles.buttonWithMarginLeft}
+            onPress={onCancel}
+          />
       </View>
     </Modal>
   );
