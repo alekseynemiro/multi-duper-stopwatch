@@ -131,4 +131,5 @@ export type LocalizationKey =
   | "dateTimeFormatter.at"
   | "selectColor.title"
   | "selectColor.close"
+  | "popupMenu.cancel"
 ;

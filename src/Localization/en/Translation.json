@@ -262,5 +262,8 @@
       "color47": "Very dark gray",
       "color48": "Black"
     }
+  },
+  "popupMenu": {
+    "cancel": "Cancel"
   }
 }
