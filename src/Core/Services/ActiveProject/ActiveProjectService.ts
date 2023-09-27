@@ -547,6 +547,18 @@ export class ActiveProjectService implements IActiveProjectService {
       this._session.state = SessionState.Run;
       this._session.activityId = activityId;
 
+      const currentActivity = this._currentActivityId
+      ? this.activities?.find(
+        (x: Activity): boolean => {
+          return x.id === this._currentActivityId;
+        }
+      )
+      : undefined;
+
+      if (currentActivity) {
+        currentActivity.status = ActivityStatus.Idle;
+      }
+
       this.on("session-started");
 
       shouldBeRunning = true;
