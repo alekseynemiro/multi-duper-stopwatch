@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ListRenderItemInfo, Modal, Text, TouchableOpacity, View } from "react-native";
+import { ListRenderItemInfo, Text, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Button } from "@components/Button";
 import { CheckBox } from "@components/CheckBox";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { Modal } from "@components/Modal";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
@@ -110,54 +111,42 @@ export function FilterModal(props: FilterModalProps): JSX.Element {
     ]
   );
 
-  if (!show) {
-    return (
-      <></>
-    );
-  }
-
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={show}
+      show={show}
     >
-      <View style={filterModalStyles.centeredView}>
-        <View style={filterModalStyles.modalView}>
-          <FlatList<ActivityModel>
-            style={filterModalStyles.activities}
-            data={
-              activities.sort(
-                (a: ActivityModel, b: ActivityModel): number => {
-                  return a.name.localeCompare(b.name);
-                }
-              )
+      <FlatList<ActivityModel>
+        style={filterModalStyles.activities}
+        data={
+          activities.sort(
+            (a: ActivityModel, b: ActivityModel): number => {
+              return a.name.localeCompare(b.name);
             }
-            extraData={selectedActivities}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ItemSeparatorComponent={TableRowSeparator}
-          />
-          <View style={filterModalStyles.row}>
-            <HorizontalLine size="sm" />
-          </View>
-          <View style={filterModalStyles.footer}>
-            <Button
-              variant="primary"
-              title={localization.get("report.filterModal.ok")}
-              style={filterModalStyles.buttonOk}
-              onPress={(): void => {
-                onSave(selectedActivities);
-              }}
-            />
-            <Button
-              variant="secondary"
-              title={localization.get("report.filterModal.cancel")}
-              style={filterModalStyles.buttonCancel}
-              onPress={onCancel}
-            />
-          </View>
-        </View>
+          )
+        }
+        extraData={selectedActivities}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ItemSeparatorComponent={TableRowSeparator}
+      />
+      <View style={filterModalStyles.row}>
+        <HorizontalLine size="sm" />
+      </View>
+      <View style={filterModalStyles.footer}>
+        <Button
+          variant="primary"
+          title={localization.get("report.filterModal.ok")}
+          style={filterModalStyles.buttonOk}
+          onPress={(): void => {
+            onSave(selectedActivities);
+          }}
+        />
+        <Button
+          variant="secondary"
+          title={localization.get("report.filterModal.cancel")}
+          style={filterModalStyles.buttonCancel}
+          onPress={onCancel}
+        />
       </View>
     </Modal>
   );
