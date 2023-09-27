@@ -15,6 +15,7 @@ const text = "#3f3f3f";
 const headerText = "#666666";
 const link = primary;
 const error = danger;
+const overlay = "rgba(0, 0, 0, 0.5)";
 
 export const colors = {
   transparent,
@@ -30,6 +31,7 @@ export const colors = {
   light,
 
   background,
+  overlay,
 
   border,
   borderLight,
