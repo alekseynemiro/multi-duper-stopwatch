@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AlertProvider } from "@components/Alert";
 import { AppHeader } from "@components/AppHeader";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Routes, ServiceIdentifier, serviceProvider } from "@config";
@@ -175,6 +176,7 @@ export function App(): JSX.Element {
           />
         </Drawer.Navigator>
       </NavigationContainer>
+      <AlertProvider />
     </GestureHandlerRootView>
   );
 }
