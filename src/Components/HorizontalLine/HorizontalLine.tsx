@@ -6,6 +6,7 @@ import { horizontalLineStyles } from "./HorizontalLineStyles";
 export function HorizontalLine(props: HorizontalLineProps): JSX.Element {
   const {
     size,
+    style,
   } = props;
 
   return (
@@ -13,6 +14,7 @@ export function HorizontalLine(props: HorizontalLineProps): JSX.Element {
       style={[
         horizontalLineStyles.default,
         horizontalLineStyles[size ?? "md"],
+        style,
       ]}
     />
   );

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { FlatList, ListRenderItemInfo, Text, View } from "react-native";
-import { Alert } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
@@ -8,6 +7,7 @@ import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
   Routes,
   useActiveProjectService,
+  useAlertService,
   useLocalizationService,
   useProjectService,
   useSessionService,
@@ -26,6 +26,7 @@ export function ProjectListPage(): JSX.Element {
   const sessionService = useSessionService();
   const settingsService = useSettingsService();
   const activeProjectService = useActiveProjectService();
+  const alertService = useAlertService();
 
   // TODO: Use view model instead of DTO
   const [list, setList] = useState<Array<GetAllResultItem>>([]);
@@ -65,16 +66,17 @@ export function ProjectListPage(): JSX.Element {
         && activeProjectService.session
         && [SessionState.Paused, SessionState.Run].includes(activeProjectService.session.state)
       ) {
-        Alert.alert(
+        alertService.show(
           localization.get("projectList.deleteConfirmation.title"),
           localization.get("projectList.deleteConfirmation.activeProjectMessage", { projectName: project.name }),
           [
             {
               text: localization.get("projectList.deleteConfirmation.cancel"),
-              style: "cancel",
+              variant: "secondary",
             },
             {
               text: localization.get("projectList.deleteConfirmation.delete"),
+              variant: "danger",
               onPress: (): void => {
                 deleteProject(project.id);
               },
@@ -82,16 +84,17 @@ export function ProjectListPage(): JSX.Element {
           ]
         );
       } else {
-        Alert.alert(
+        alertService.show(
           localization.get("projectList.deleteConfirmation.title"),
           localization.get("projectList.deleteConfirmation.message", { projectName: project.name }),
           [
             {
               text: localization.get("projectList.deleteConfirmation.cancel"),
-              style: "cancel",
+              variant: "secondary",
             },
             {
               text: localization.get("projectList.deleteConfirmation.delete"),
+              variant: "danger",
               onPress: (): void => {
                 deleteProject(project.id);
               },
@@ -104,6 +107,7 @@ export function ProjectListPage(): JSX.Element {
       deleteProject,
       localization,
       activeProjectService,
+      alertService,
     ]
   );
 
@@ -155,7 +159,7 @@ export function ProjectListPage(): JSX.Element {
         activeProjectService.session
         && activeProjectService.session.state !== SessionState.Finished
       ) {
-        Alert.alert(
+        alertService.show(
           localization.get("projectList.activeSessionWarning.title"),
           localization.get(
             "projectList.activeSessionWarning.message",
@@ -167,10 +171,11 @@ export function ProjectListPage(): JSX.Element {
           [
             {
               text: localization.get("projectList.activeSessionWarning.no"),
-              style: "cancel",
+              variant: "secondary",
             },
             {
               text: localization.get("projectList.activeSessionWarning.yes"),
+              variant: "primary",
               onPress: (): Promise<void> => {
                 return play(project);
               },
@@ -184,6 +189,7 @@ export function ProjectListPage(): JSX.Element {
     [
       activeProjectService,
       localization,
+      alertService,
       play,
     ]
   );

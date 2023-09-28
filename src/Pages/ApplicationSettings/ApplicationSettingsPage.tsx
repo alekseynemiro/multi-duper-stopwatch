@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
-import { Alert, NativeModules, View } from "react-native";
+import { NativeModules, View } from "react-native";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { FormRow } from "@components/FormRow";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Label } from "@components/Label";
 import {
+  useAlertService,
   useLocalizationService,
   useSettingsService,
 } from "@config";
@@ -17,6 +18,7 @@ import { applicationSettingsPageStyles } from "./ApplicationSettingsPageStyles";
 export function ApplicationSettingsPage(): JSX.Element {
   const localization = useLocalizationService();
   const settings = useSettingsService();
+  const alertService = useAlertService();
 
   const [language, setLanguage] = useState<string>("en");
   const [showLoadingIndicator, setShowLoadingIndicator] = useState<boolean>(true);
@@ -41,13 +43,13 @@ export function ApplicationSettingsPage(): JSX.Element {
         language
       );
 
-      Alert.alert(
+      alertService.show(
         localization.get("applicationSettings.warningTitle"),
         localization.get("applicationSettings.warningMessage"),
         [
           {
             text: localization.get("applicationSettings.ok"),
-            style: "cancel",
+            variant: "primary",
           },
         ]
       );
@@ -56,6 +58,7 @@ export function ApplicationSettingsPage(): JSX.Element {
       language,
       localization,
       settings,
+      alertService,
     ]
   );
 

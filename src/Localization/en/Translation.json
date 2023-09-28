@@ -192,6 +192,7 @@
     "license": "The software is supplied under the terms of the MIT License.",
     "details": "Details",
     "licensesModal": {
+      "title": "License information",
       "license": "The Multi-duper Stopwatch software is licensed under the MIT license.",
       "showLicense": "Show",
       "thirdParty": "This software uses the following third-party components:",
@@ -261,5 +262,8 @@
       "color47": "Very dark gray",
       "color48": "Black"
     }
+  },
+  "popupMenu": {
+    "cancel": "Cancel"
   }
 }

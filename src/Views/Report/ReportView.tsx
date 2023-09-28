@@ -9,7 +9,6 @@ import
     useState,
   } from "react";
 import {
-  Alert,
   FlatList,
   ListRenderItemInfo,
   ScrollView,
@@ -22,6 +21,7 @@ import { Icon } from "@components/Icon";
 import { PluralFormatter } from "@components/PluralFormatter";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
+  useAlertService,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -69,6 +69,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
   const sessionLogService = useSessionLogService();
   const sessionStorageService = useSessionStorageService();
   const loggerService = useLoggerService();
+  const alertService = useAlertService();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reportViewItemPopupMenuRef = useRef<ReportViewItemPopupMenuMethods>();
@@ -759,7 +760,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error(`Log entry #${id} not found.`);
       }
 
-      Alert.alert(
+      alertService.show(
         localization.get("report.reportItemDeleteConfirmation.title"),
         localization.get(
           "report.reportItemDeleteConfirmation.message",
@@ -771,10 +772,11 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         [
           {
             text: localization.get("report.reportItemDeleteConfirmation.cancel"),
-            style: "cancel",
+            variant: "secondary",
           },
           {
             text: localization.get("report.reportItemDeleteConfirmation.delete"),
+            variant: "danger",
             onPress: (): Promise<void> => {
               return deleteItem(id);
             },
@@ -785,6 +787,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     [
       state,
       localization,
+      alertService,
       deleteItem,
     ]
   );

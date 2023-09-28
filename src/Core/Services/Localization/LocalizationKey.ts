@@ -123,6 +123,7 @@ export type LocalizationKey =
   | "about.thankYou"
   | "about.license"
   | "about.details"
+  | "about.licensesModal.title"
   | "about.licensesModal.license"
   | "about.licensesModal.showLicense"
   | "about.licensesModal.thirdParty"
@@ -130,4 +131,5 @@ export type LocalizationKey =
   | "dateTimeFormatter.at"
   | "selectColor.title"
   | "selectColor.close"
+  | "popupMenu.cancel"
 ;

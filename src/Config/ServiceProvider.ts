@@ -4,6 +4,8 @@ import { IDatabaseService } from "@data/IDatabaseService";
 import { MigrationRunner } from "@data/Migrations/MigrationRunner";
 import { IActiveProjectService } from "@services/ActiveProject";
 import { ActiveProjectService } from "@services/ActiveProject/ActiveProjectService";
+import { IAlertService } from "@services/Alert";
+import { AlertService } from "@services/Alert/AlertService";
 import { IDateTimeService } from "@services/DateTime";
 import { DateTimeService } from "@services/DateTime/DateTimeService";
 import { IGuidService } from "@services/Guid";
@@ -49,5 +51,6 @@ serviceProvider.bind<IJsonService>(ServiceIdentifier.JsonService).to(JsonService
 serviceProvider.bind<ILocalStorageService>(ServiceIdentifier.LocalStorageService).to(LocalStorageService).inSingletonScope();
 serviceProvider.bind<ISessionStorageService>(ServiceIdentifier.SessionStorageService).to(SessionStorageService).inSingletonScope();
 serviceProvider.bind<ILocalizationService>(ServiceIdentifier.LocalizationService).to(LocalizationService).inSingletonScope();
+serviceProvider.bind<IAlertService>(ServiceIdentifier.AlertService).to(AlertService).inSingletonScope();
 
 export { serviceProvider };

@@ -17,4 +17,5 @@ export const ServiceIdentifier = strictNamesFactory()
   .add("LocalStorageService")
   .add("SessionStorageService")
   .add("LocalizationService")
+  .add("AlertService")
   .build();

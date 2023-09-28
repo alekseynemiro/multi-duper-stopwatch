@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Modal, View } from "react-native";
+import { View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { Modal } from "@components/Modal";
 import { TextInputField } from "@components/TextInputField";
 import { useLocalizationService } from "@config";
 import { SessionNameModalProps } from "./SessionNameModalProps";
@@ -20,42 +21,36 @@ export function SessionNameModal({ show, onConfirm, onCancel }: SessionNameModal
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={show}
+      show={show}
     >
-      <View style={sessionNameModalStyles.centeredView}>
-        <View style={sessionNameModalStyles.modalView}>
-          <View style={sessionNameModalStyles.row}>
-            <TextInputField
-              label={localization.get("activeProject.sessionNameModal.sessionName")}
-              accessibilityHint={localization.get("activeProject.sessionNameModal.accessibility.sessionName")}
-              value={sessionName}
-              onChangeText={setSessionName}
-            />
-          </View>
-          <View style={sessionNameModalStyles.row}>
-            <HorizontalLine size="sm" />
-          </View>
-          <View style={sessionNameModalStyles.footer}>
-            <Button
-              variant="primary"
-              title={localization.get("activeProject.sessionNameModal.ok")}
-              style={sessionNameModalStyles.buttonOk}
-              onPress={(): void => {
-                onConfirm({
-                  sessionName,
-                });
-              }}
-            />
-            <Button
-              variant="secondary"
-              title={localization.get("activeProject.sessionNameModal.cancel")}
-              style={sessionNameModalStyles.buttonCancel}
-              onPress={onCancel}
-            />
-          </View>
-        </View>
+      <View style={sessionNameModalStyles.row}>
+        <TextInputField
+          label={localization.get("activeProject.sessionNameModal.sessionName")}
+          accessibilityHint={localization.get("activeProject.sessionNameModal.accessibility.sessionName")}
+          value={sessionName}
+          onChangeText={setSessionName}
+        />
+      </View>
+      <View style={sessionNameModalStyles.row}>
+        <HorizontalLine size="sm" />
+      </View>
+      <View style={sessionNameModalStyles.footer}>
+        <Button
+          variant="primary"
+          title={localization.get("activeProject.sessionNameModal.ok")}
+          style={sessionNameModalStyles.buttonOk}
+          onPress={(): void => {
+            onConfirm({
+              sessionName,
+            });
+          }}
+        />
+        <Button
+          variant="secondary"
+          title={localization.get("activeProject.sessionNameModal.cancel")}
+          style={sessionNameModalStyles.buttonCancel}
+          onPress={onCancel}
+        />
       </View>
     </Modal>
   );

@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { ListRenderItemInfo, Modal, Text, TouchableOpacity, View } from "react-native";
+import { ListRenderItemInfo, Text, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { Modal } from "@components/Modal";
 import { Radio } from "@components/Radio";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import { useLocalizationService } from "@config";
@@ -87,65 +88,59 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={true}
+      show={true}
     >
-      <View style={replaceModalStyles.centeredView}>
-        <View style={replaceModalStyles.modalView}>
-        <View style={replaceModalStyles.row}>
-          <Text>
-            {localization.get(
-              "report.replaceModal.helpMessage",
-              {
-                activityName: reportItem.name,
-                elapsedTime: getTimeSpan(reportItem.elapsedTime).displayValue,
-              }
-            )}
-          </Text>
-        </View>
-          <FlatList<ActivityModel>
-            style={replaceModalStyles.activities}
-            data={
-              activities
-                .filter(
-                  (x: ActivityModel): boolean => {
-                    return x.id !== reportItem.activityId;
-                  }
-                )
-                .sort(
-                  (a: ActivityModel, b: ActivityModel): number => {
-                    return a.name.localeCompare(b.name);
-                  }
-                )
+      <View style={replaceModalStyles.row}>
+        <Text>
+          {localization.get(
+            "report.replaceModal.helpMessage",
+            {
+              activityName: reportItem.name,
+              elapsedTime: getTimeSpan(reportItem.elapsedTime).displayValue,
             }
-            extraData={selectedActivityId}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ItemSeparatorComponent={TableRowSeparator}
-          />
-          <View style={replaceModalStyles.row}>
-            <HorizontalLine size="sm" />
-          </View>
-          <View style={replaceModalStyles.footer}>
-            <Button
-              disabled={!selectedActivityId}
-              variant="primary"
-              title={localization.get("report.replaceModal.replace")}
-              style={replaceModalStyles.buttonReplace}
-              onPress={(): void => {
-                onReplace(reportItem.id, selectedActivityId!);
-              }}
-            />
-            <Button
-              variant="secondary"
-              title={localization.get("report.replaceModal.cancel")}
-              style={replaceModalStyles.buttonCancel}
-              onPress={onCancel}
-            />
-          </View>
-        </View>
+          )}
+        </Text>
       </View>
+        <FlatList<ActivityModel>
+          style={replaceModalStyles.activities}
+          data={
+            activities
+              .filter(
+                (x: ActivityModel): boolean => {
+                  return x.id !== reportItem.activityId;
+                }
+              )
+              .sort(
+                (a: ActivityModel, b: ActivityModel): number => {
+                  return a.name.localeCompare(b.name);
+                }
+              )
+          }
+          extraData={selectedActivityId}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={TableRowSeparator}
+        />
+        <View style={replaceModalStyles.row}>
+          <HorizontalLine size="sm" />
+        </View>
+        <View style={replaceModalStyles.footer}>
+          <Button
+            disabled={!selectedActivityId}
+            variant="primary"
+            title={localization.get("report.replaceModal.replace")}
+            style={replaceModalStyles.buttonReplace}
+            onPress={(): void => {
+              onReplace(reportItem.id, selectedActivityId!);
+            }}
+          />
+          <Button
+            variant="secondary"
+            title={localization.get("report.replaceModal.cancel")}
+            style={replaceModalStyles.buttonCancel}
+            onPress={onCancel}
+          />
+        </View>
     </Modal>
   );
 }

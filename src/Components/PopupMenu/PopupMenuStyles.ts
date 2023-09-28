@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
-export const activityPopupMenuStyles = StyleSheet.create({
+export const popupMenuStyles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: colors.overlay,
     width: "100%",
     height: "100%",
     position: "absolute",
