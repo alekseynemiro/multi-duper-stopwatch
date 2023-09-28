@@ -1,4 +1,5 @@
 import { IActiveProjectService } from "@services/ActiveProject";
+import { IAlertService } from "@services/Alert";
 import { IDateTimeService } from "@services/DateTime";
 import { IGuidService } from "@services/Guid";
 import { ILocalizationService } from "@services/Localization";
@@ -57,4 +58,8 @@ export const useSettingsService = (): ISettingsService => {
 
 export const useQueueService = (): IQueueService => {
   return serviceProvider.get<IQueueService>(ServiceIdentifier.QueueService);
+};
+
+export const useAlertService = (): IAlertService => {
+  return serviceProvider.get<IAlertService>(ServiceIdentifier.AlertService);
 };
