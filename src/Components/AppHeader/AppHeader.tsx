@@ -44,6 +44,8 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
         )
       }
       <Text
+        lineBreakMode="tail"
+        numberOfLines={1}
         style={appHeaderStyles.title}
       >
         {props.options.title ?? props.route.name}
