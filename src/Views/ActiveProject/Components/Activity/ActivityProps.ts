@@ -1,6 +1,7 @@
 import { LayoutChangeEvent } from "react-native";
 import { ColorPalette } from "@data";
 import { ActivityStatus } from "@dto/ActiveProject";
+import { ActivityStylesType } from "./ActivityStylesType";
 
 export type ActivityProps = {
 
@@ -11,6 +12,8 @@ export type ActivityProps = {
   color: ColorPalette | null;
 
   status: ActivityStatus;
+
+  styles?: ActivityStylesType;
 
   onPress(activityId: string): void;
 
