@@ -96,6 +96,11 @@ export function LicensesModal({ onClose }: LicensesModalProps): JSX.Element {
       licenseUrl: "https://raw.githubusercontent.com/oblador/react-native-vector-icons/1453dcba99e48c460dec860c0242136efb66a5eb/LICENSE",
     },
     {
+      name: "Redux",
+      license: "MIT",
+      licenseUrl: "https://github.com/reduxjs/redux/blob/8a0c958fb47b899a6959863f6a5a245b0c3a6f86/LICENSE.md",
+    },
+    {
       name: "fluentvalidation-ts",
       license: "Apache 2.0",
       licenseUrl: "https://raw.githubusercontent.com/AlexJPotter/fluentvalidation-ts/9211f43667a5657c7a6af38526c776852a1a0f3e/License.txt",
