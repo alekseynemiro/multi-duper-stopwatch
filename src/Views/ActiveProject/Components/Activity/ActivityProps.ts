@@ -1,3 +1,4 @@
+import { LayoutChangeEvent } from "react-native";
 import { ColorPalette } from "@data";
 import { ActivityStatus } from "@dto/ActiveProject";
 
@@ -14,5 +15,7 @@ export type ActivityProps = {
   onPress(activityId: string): void;
 
   onLongPress(activityId: string): void;
+
+  onLayout?(event: LayoutChangeEvent): void;
 
 };

@@ -16,6 +16,7 @@ export function Activity(props: ActivityProps): JSX.Element {
     status,
     onPress,
     onLongPress,
+    onLayout,
   } = props;
 
   const textColor = {
@@ -43,6 +44,7 @@ export function Activity(props: ActivityProps): JSX.Element {
       onLongPress={(): void => {
         onLongPress(id);
       }}
+      onLayout={onLayout}
     >
       <View
         style={[
