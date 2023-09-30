@@ -1,6 +1,6 @@
 import { ActivityStatus } from "@dto/ActiveProject";
 
-export type HorizontalListLayoutActivityPressEventArgs = {
+export type ListLayoutActivityPressEventArgs = {
 
   activityId: string;
 

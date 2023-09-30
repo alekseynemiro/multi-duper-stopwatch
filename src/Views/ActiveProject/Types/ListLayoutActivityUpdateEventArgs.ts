@@ -1,6 +1,6 @@
 import { ColorPalette } from "@data";
 
-export type HorizontalListLayoutActivityUpdateEventArgs = {
+export type ListLayoutActivityUpdateEventArgs = {
 
   activityId: string;
 
