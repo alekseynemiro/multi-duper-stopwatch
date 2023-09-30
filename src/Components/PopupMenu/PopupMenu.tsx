@@ -11,6 +11,7 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
   const {
     children,
     backdrop,
+    style,
     onCancel,
   } = props;
 
@@ -29,7 +30,12 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
             backdrop ?? true ? popupMenuStyles.backdrop : undefined,
           ]}
         >
-          <View style={popupMenuStyles.modalView}>
+          <View
+            style={[
+              popupMenuStyles.modalView,
+              style,
+            ]}
+          >
             {
               React.Children.map(
                 children,
