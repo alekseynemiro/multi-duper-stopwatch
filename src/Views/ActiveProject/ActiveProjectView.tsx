@@ -1,25 +1,31 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import {
+  AppState,
   useActiveProjectService,
   useLocalizationService,
   useLoggerService,
 } from "@config";
+import { LayoutMode } from "@data";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
-  HorizontalListLayoutActivityDeleteEventArgs,
-  HorizontalListLayoutActivityPressEventArgs,
-  HorizontalListLayoutActivityUpdateEventArgs,
   SessionNameModal,
   SessionNameModalEventArgs,
   StopwatchDisplay,
+  TilesListLayout,
 } from "./Components";
+import {
+  ListLayoutActivityDeleteEventArgs,
+  ListLayoutActivityPressEventArgs,
+  ListLayoutActivityUpdateEventArgs,
+} from "./Types";
 
 export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
@@ -28,6 +34,7 @@ export function ActiveProjectView(): JSX.Element {
   const localization = useLocalizationService();
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
+  const layoutMode = useSelector((x: AppState): LayoutMode => x.header.layoutMode);
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -37,6 +44,7 @@ export function ActiveProjectView(): JSX.Element {
   const [currentActivity, setCurrentActivity] = useState<ActivityModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const currentActivityPredicate = useCallback(
     (x: ActivityModel): boolean => {
@@ -106,7 +114,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const toggle = useCallback(
-    async({ activityId, activityStatus }: HorizontalListLayoutActivityPressEventArgs): Promise<void> => {
+    async({ activityId, activityStatus }: ListLayoutActivityPressEventArgs): Promise<void> => {
       loggerService.debug(
         ActiveProjectView.name,
         "toggle",
@@ -291,7 +299,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const activityUpdate = useCallback(
-    async(e: HorizontalListLayoutActivityUpdateEventArgs): Promise<void> => {
+    async(e: ListLayoutActivityUpdateEventArgs): Promise<void> => {
       return activeProjectService.updateActivity({
         color: e.activityColor,
         id: e.activityId,
@@ -305,7 +313,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const activityDelete = useCallback(
-    async(e: HorizontalListLayoutActivityDeleteEventArgs): Promise<void> => {
+    async(e: ListLayoutActivityDeleteEventArgs): Promise<void> => {
       return activeProjectService.deleteActivity(e.activityId);
     },
     [
@@ -323,6 +331,13 @@ export function ActiveProjectView(): JSX.Element {
       activeProjectService,
       currentActivityPredicate,
     ]
+  );
+
+  const handleForceUpdate = useCallback(
+    (): void => {
+      setForceUpdate(true);
+    },
+    []
   );
 
   useEffect(
@@ -350,6 +365,23 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): void => {
+      if (forceUpdate) {
+        // delay is required for the layout to update
+        setTimeout(
+          (): void => {
+            setForceUpdate(false);
+          },
+          1000
+        );
+      }
+    },
+    [
+      forceUpdate,
+    ]
+  );
+
   if (
     !mounted.current
     && !loaded.current
@@ -363,7 +395,7 @@ export function ActiveProjectView(): JSX.Element {
     );
   }
 
-  if (showLoadingIndicator) {
+  if (showLoadingIndicator || forceUpdate) {
     return (
       <ContentLoadIndicator />
     );
@@ -383,12 +415,29 @@ export function ActiveProjectView(): JSX.Element {
       <View
         style={activeProjectViewStyles.activitiesContainer}
       >
-        <HorizontalListLayout
-          activities={activities}
-          onActivityPress={toggle}
-          onActivityUpdate={activityUpdate}
-          onActivityDelete={activityDelete}
-        />
+        {
+          layoutMode === LayoutMode.Default
+          && (
+            <HorizontalListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
+            />
+          )
+        }
+        {
+          layoutMode === LayoutMode.Tiles
+          && (
+            <TilesListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
+              onForceUpdate={handleForceUpdate}
+            />
+          )
+        }
       </View>
       <View
         style={activeProjectViewStyles.footer}
