@@ -13,6 +13,7 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
 
   const {
     onAddActivity,
+    onLayout,
   } = props;
 
   useEffect(
@@ -55,6 +56,7 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
         setShowHint(false);
         onAddActivity();
       }}
+      onLayout={onLayout}
     >
       {
         showHint
