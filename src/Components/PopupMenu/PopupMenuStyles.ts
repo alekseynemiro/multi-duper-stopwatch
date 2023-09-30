@@ -2,11 +2,13 @@ import { StyleSheet } from "react-native";
 import { colors } from "@styles";
 
 export const popupMenuStyles = StyleSheet.create({
+  backdrop: {
+    backgroundColor: colors.overlay,
+  },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.overlay,
     width: "100%",
     height: "100%",
     position: "absolute",

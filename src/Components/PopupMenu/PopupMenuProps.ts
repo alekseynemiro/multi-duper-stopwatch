@@ -5,6 +5,8 @@ export type PopupMenuProps = {
 
   children: Array<ReactElement<PopupMenuItemProps>>;
 
+  backdrop?: boolean;
+
   onCancel(): void;
 
 };

@@ -10,6 +10,7 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
 
   const {
     children,
+    backdrop,
     onCancel,
   } = props;
 
@@ -22,7 +23,12 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
       <TouchableWithoutFeedback
         onPress={onCancel}
       >
-        <View style={popupMenuStyles.centeredView}>
+        <View
+          style={[
+            popupMenuStyles.centeredView,
+            backdrop ?? true ? popupMenuStyles.backdrop : undefined,
+          ]}
+        >
           <View style={popupMenuStyles.modalView}>
             {
               React.Children.map(
