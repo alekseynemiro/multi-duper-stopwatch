@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import {
   AccessibilityState,
   AccessibilityValue,
+  LayoutChangeEvent,
   StyleProp,
   TextStyle,
   ViewStyle,
@@ -58,5 +59,7 @@ export type ButtonProps = {
   onPress?(): void;
 
   onLongPress?(): void;
+
+  onLayout?(event: LayoutChangeEvent): void;
 
 };
