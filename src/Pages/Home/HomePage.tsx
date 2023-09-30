@@ -7,6 +7,8 @@ import { Button } from "@components/Button";
 import {
   Routes,
   useActiveProjectService,
+  useAppDispatch,
+  useAppHeaderActions,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -29,6 +31,8 @@ export function HomePage(): JSX.Element {
   const projectService = useProjectService();
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
+  const appDispatch = useAppDispatch();
+  const { showConfigButton, hideConfigButton } = useAppHeaderActions();
 
   const reportViewRef = useRef<ReportViewProps>();
 
@@ -315,6 +319,21 @@ export function HomePage(): JSX.Element {
       sessionId,
       reportViewLoadHandler,
       reportViewItemDeleteHandler,
+    ]
+  );
+
+  useEffect(
+    (): { (): void } => {
+      appDispatch(showConfigButton());
+
+      return (): void => {
+        appDispatch(hideConfigButton());
+      };
+    },
+    [
+      appDispatch,
+      hideConfigButton,
+      showConfigButton,
     ]
   );
 
