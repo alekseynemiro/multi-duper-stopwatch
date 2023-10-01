@@ -30,6 +30,17 @@ export const activityStyles = StyleSheet.create({
 });
 
 export const addActivityStyles = StyleSheet.create({
+  addActivityButtonHint: {
+    borderColor: colors.danger,
+    backgroundColor: colors.danger,
+  },
+  addActivityButtonTextHint: {
+    color: colors.dangerContrast,
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+  },
   addActivityButton: {
     backgroundColor: colors.white,
     marginHorizontal: 0,
