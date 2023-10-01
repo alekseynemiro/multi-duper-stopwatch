@@ -19,4 +19,6 @@ export const iconMap = new Map<IconName, string>()
   .set("home-page", "house-user")
   .set("add", "plus")
   .set("cancel", "window-close")
-  .set("replace", "exchange-alt");
+  .set("replace", "exchange-alt")
+  .set("layout-tiles", "th")
+;

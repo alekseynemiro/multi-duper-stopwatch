@@ -29,4 +29,5 @@ export type IconName =
   | "star"
   | "add"
   | "cancel"
-  | "replace";
+  | "replace"
+  | "layout-tiles";
