@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Provider } from "react-redux";
 import { AlertProvider } from "@components/Alert";
 import { AppHeader } from "@components/AppHeader";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
-import { Routes, ServiceIdentifier, serviceProvider } from "@config";
+import { appStore, Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner, SessionState } from "@data";
 import { AboutPage } from "@pages/About";
 import { ApplicationSettingsPage } from "@pages/ApplicationSettings";
@@ -106,77 +107,79 @@ export function App(): JSX.Element {
   }
 
   return (
-    <GestureHandlerRootView
-      style={styles.fullFlex}
-    >
-      <NavigationContainer
-        theme={AppTheme}
+    <Provider store={appStore}>
+      <GestureHandlerRootView
+        style={styles.fullFlex}
       >
-        <Drawer.Navigator
-          initialRouteName={Routes.Init}
-          drawerContent={AppNavigation}
-          backBehavior="history"
-          screenOptions={{
-            header: appHeader,
-            unmountOnBlur: true,
-          }}
+        <NavigationContainer
+          theme={AppTheme}
         >
-          <Drawer.Screen
-            name={Routes.Init}
-            component={InitialScreenPage}
-            options={{
-              headerShown: false,
+          <Drawer.Navigator
+            initialRouteName={Routes.Init}
+            drawerContent={AppNavigation}
+            backBehavior="history"
+            screenOptions={{
+              header: appHeader,
+              unmountOnBlur: true,
             }}
-          />
-          <Drawer.Screen
-            name={Routes.Home}
-            component={HomePage}
-            options={{
-              title: localizationService.get("menu.home"),
-            }}
-          />
-          <Drawer.Screen
-            name={Routes.ProjectList}
-            component={ProjectListPage}
-            options={{
-              title: localizationService.get("menu.projectList"),
-            }}
-          />
-          <Drawer.Screen
-            name={Routes.Project}
-            component={ProjectEditorPage}
-          />
-          <Drawer.Screen
-            name={Routes.Report}
-            component={ReportPage}
-            options={{
-              title: localizationService.get("report.pageTitle"),
-            }}
-          />
-          <Drawer.Screen
-            name={Routes.ReportList}
-            component={ReportListPage}
-            options={{
-              title: localizationService.get("menu.reports"),
-            }}
-          />
-          <Drawer.Screen
-            name={Routes.ApplicationSettings}
-            component={ApplicationSettingsPage}
-            options={{
-              title: localizationService.get("menu.applicationSettings"),
-            }}
-          />
-          <Drawer.Screen
-            name={Routes.About}
-            component={AboutPage}
-            options={{
-              title: localizationService.get("menu.about"),
-            }}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
-      <AlertProvider />
-    </GestureHandlerRootView>
+          >
+            <Drawer.Screen
+              name={Routes.Init}
+              component={InitialScreenPage}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.Home}
+              component={HomePage}
+              options={{
+                title: localizationService.get("menu.home"),
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.ProjectList}
+              component={ProjectListPage}
+              options={{
+                title: localizationService.get("menu.projectList"),
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.Project}
+              component={ProjectEditorPage}
+            />
+            <Drawer.Screen
+              name={Routes.Report}
+              component={ReportPage}
+              options={{
+                title: localizationService.get("report.pageTitle"),
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.ReportList}
+              component={ReportListPage}
+              options={{
+                title: localizationService.get("menu.reports"),
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.ApplicationSettings}
+              component={ApplicationSettingsPage}
+              options={{
+                title: localizationService.get("menu.applicationSettings"),
+              }}
+            />
+            <Drawer.Screen
+              name={Routes.About}
+              component={AboutPage}
+              options={{
+                title: localizationService.get("menu.about"),
+              }}
+            />
+          </Drawer.Navigator>
+        </NavigationContainer>
+        <AlertProvider />
+      </GestureHandlerRootView>
+    </Provider>
   );
 }

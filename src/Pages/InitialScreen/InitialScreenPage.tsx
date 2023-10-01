@@ -1,7 +1,14 @@
 import { useCallback, useState } from "react";
 import React, { View } from "react-native";
 import { ActivityIndicator } from "@components/ActivityIndicator";
-import { Routes, useActiveProjectService } from "@config";
+import {
+  Routes,
+  useActiveProjectService,
+  useAppDispatch,
+  useAppHeaderActions,
+  useSettingsService,
+} from "@config";
+import { LayoutMode, SettingKey } from "@data";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@utils/NavigationUtils";
 import { ActivityRecoveryModal, RecoveryModel } from "./Components";
@@ -10,6 +17,14 @@ import { initialScreenPageStyles } from "./InitialScreenPageStyles";
 export function InitialScreenPage(): JSX.Element {
   const navigation = useNavigation();
   const activeProjectService = useActiveProjectService();
+  const settings = useSettingsService();
+  const appDispatch = useAppDispatch();
+
+  const {
+    setLayoutModeToDefault,
+    setLayoutModeToStack,
+    setLayoutModeToTiles,
+  } = useAppHeaderActions();
 
   const [activityRecoveryModel, setActivityRecoveryModel] = useState<RecoveryModel | undefined>(undefined);
 
@@ -66,6 +81,22 @@ export function InitialScreenPage(): JSX.Element {
 
   const load = useCallback(
     async(): Promise<void> => {
+      const layoutMode = await settings.get(SettingKey.LayoutMode) ?? LayoutMode.Default;
+
+      switch (layoutMode) {
+        case LayoutMode.Stack: {
+          appDispatch(setLayoutModeToStack());
+          break;
+        }
+        case LayoutMode.Tiles: {
+          appDispatch(setLayoutModeToTiles());
+          break;
+        }
+        default: {
+          appDispatch(setLayoutModeToDefault());
+        }
+      }
+
       const canRecovery = await activeProjectService.canRecovery();
 
       if (canRecovery) {
@@ -80,8 +111,13 @@ export function InitialScreenPage(): JSX.Element {
       }
     },
     [
-      activeProjectService,
+      appDispatch,
       cancelRecovery,
+      activeProjectService,
+      setLayoutModeToDefault,
+      setLayoutModeToStack,
+      setLayoutModeToTiles,
+      settings,
     ]
   );
 

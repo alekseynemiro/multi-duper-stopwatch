@@ -12,8 +12,15 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
   const [showHint, setShowHint] = useState<boolean>(false);
 
   const {
+    styles,
     onAddActivity,
+    onLayout,
   } = props;
+
+  const mergedStyles = {
+    ...addActivityStyles,
+    ...styles,
+  };
 
   useEffect(
     (): void => {
@@ -40,10 +47,10 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
     <Button
       variant="light"
       style={[
-        addActivityStyles.addActivityButton,
-        showHint && addActivityStyles.addActivityButtonHint,
+        mergedStyles.addActivityButton,
+        showHint && mergedStyles.addActivityButtonHint,
       ]}
-      childWrapperStyle={addActivityStyles.addActivityButtonChildContainer}
+      childWrapperStyle={mergedStyles.addActivityButtonChildContainer}
       onPress={(): void => {
         setShowHint(true);
       }}
@@ -55,13 +62,14 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
         setShowHint(false);
         onAddActivity();
       }}
+      onLayout={onLayout}
     >
       {
         showHint
           &&
           (
             <Text
-              style={addActivityStyles.addActivityButtonTextHint}
+              style={mergedStyles.addActivityButtonTextHint}
             >
               {localization.get("activeProject.addActivity.hold")}
             </Text>
@@ -70,10 +78,10 @@ export function AddActivity(props: AddActivityProps): JSX.Element {
             <>
               <Icon
                 name="add"
-                style={addActivityStyles.addActivityButtonIcon}
+                style={mergedStyles.addActivityButtonIcon}
               />
               <Text
-                style={addActivityStyles.addActivityButtonText}
+                style={mergedStyles.addActivityButtonText}
               >
                 {localization.get("activeProject.addActivity.add")}
               </Text>

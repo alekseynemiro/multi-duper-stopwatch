@@ -14,8 +14,10 @@ export function Activity(props: ActivityProps): JSX.Element {
     name,
     color,
     status,
+    styles,
     onPress,
     onLongPress,
+    onLayout,
   } = props;
 
   const textColor = {
@@ -24,10 +26,15 @@ export function Activity(props: ActivityProps): JSX.Element {
       : colors.text,
   };
 
+  const mergedStyles = {
+    ...activityStyles,
+    ...styles,
+  };
+
   return (
     <Button
       style={[
-        activityStyles.buttonContainer,
+        mergedStyles.buttonContainer,
         {
           backgroundColor: color
             ? getColorCode(color)
@@ -35,7 +42,7 @@ export function Activity(props: ActivityProps): JSX.Element {
         },
       ]}
       childWrapperStyle={[
-        activityStyles.button,
+        mergedStyles.button,
       ]}
       onPress={(): void => {
         onPress(id);
@@ -43,10 +50,11 @@ export function Activity(props: ActivityProps): JSX.Element {
       onLongPress={(): void => {
         onLongPress(id);
       }}
+      onLayout={onLayout}
     >
       <View
         style={[
-          activityStyles.iconContainer,
+          mergedStyles.iconContainer,
         ]}
       >
         {
@@ -76,14 +84,14 @@ export function Activity(props: ActivityProps): JSX.Element {
       </View>
       <Text
         style={[
-          activityStyles.title,
+          mergedStyles.title,
           textColor,
         ]}
       >
         {name}
       </Text>
       <View
-        style={activityStyles.padding}
+        style={mergedStyles.padding}
       />
     </Button>
   );

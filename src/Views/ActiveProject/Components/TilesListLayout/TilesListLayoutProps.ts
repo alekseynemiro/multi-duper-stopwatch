@@ -3,7 +3,7 @@ import { ListLayoutActivityDeleteEventArgs } from "../../Types/ListLayoutActivit
 import { ListLayoutActivityPressEventArgs } from "../../Types/ListLayoutActivityPressEventArgs";
 import { ListLayoutActivityUpdateEventArgs } from "../../Types/ListLayoutActivityUpdateEventArgs";
 
-export type HorizontalListLayoutProps = {
+export type TilesListLayoutProps = {
 
   activities: Array<ActivityModel> | undefined;
 
@@ -12,5 +12,7 @@ export type HorizontalListLayoutProps = {
   onActivityUpdate(e: ListLayoutActivityUpdateEventArgs): void;
 
   onActivityDelete(e: ListLayoutActivityDeleteEventArgs): Promise<void>;
+
+  onForceUpdate(): void;
 
 };

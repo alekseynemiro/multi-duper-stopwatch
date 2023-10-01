@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { PopupMenuItemProps } from "./PopupMenuItemProps";
@@ -9,6 +9,7 @@ export function PopupMenuItem(props: PopupMenuItemProps): JSX.Element {
   const {
     icon,
     text,
+    checked,
     disabled,
     onPress,
     onLongPress,
@@ -18,7 +19,13 @@ export function PopupMenuItem(props: PopupMenuItemProps): JSX.Element {
     <Button
       disabled={disabled}
       variant="light"
-      childWrapperStyle={popupMenuItemStyles.buttonChildContainer}
+      style={popupMenuItemStyles.button}
+      childWrapperStyle={[
+        popupMenuItemStyles.buttonChildContainer,
+        checked
+          ? popupMenuItemStyles.buttonChildContainerWithCheckedIcon
+          : undefined,
+      ]}
       onPress={onPress}
       onLongPress={onLongPress}
     >
@@ -26,7 +33,24 @@ export function PopupMenuItem(props: PopupMenuItemProps): JSX.Element {
         name={icon}
         style={popupMenuItemStyles.buttonIcon}
       />
-      <Text>{text}</Text>
+      <Text
+        style={popupMenuItemStyles.text}
+      >
+        {text}
+      </Text>
+      {
+        checked
+        && (
+          <View
+            style={popupMenuItemStyles.checkedIconContainer}
+          >
+            <Icon
+              name="menu-item-checked"
+              style={popupMenuItemStyles.checkedIcon}
+            />
+          </View>
+        )
+      }
     </Button>
   );
 }

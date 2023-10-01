@@ -3,7 +3,7 @@ import { ListLayoutActivityDeleteEventArgs } from "../../Types/ListLayoutActivit
 import { ListLayoutActivityPressEventArgs } from "../../Types/ListLayoutActivityPressEventArgs";
 import { ListLayoutActivityUpdateEventArgs } from "../../Types/ListLayoutActivityUpdateEventArgs";
 
-export type HorizontalListLayoutProps = {
+export type VerticalListLayoutProps = {
 
   activities: Array<ActivityModel> | undefined;
 

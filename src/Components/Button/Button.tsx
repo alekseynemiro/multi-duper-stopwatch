@@ -20,6 +20,7 @@ export function Button(props: ButtonProps): JSX.Element {
     importantForAccessibility,
     onPress,
     onLongPress,
+    onLayout,
   } = props;
 
   return (
@@ -47,6 +48,7 @@ export function Button(props: ButtonProps): JSX.Element {
           onLongPress && onLongPress();
         }
       }}
+      onLayout={onLayout}
     >
       {
         title
