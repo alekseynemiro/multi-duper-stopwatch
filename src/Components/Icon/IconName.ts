@@ -32,4 +32,5 @@ export type IconName =
   | "replace"
   | "layout-tiles"
   | "layout-stack"
+  | "layout-default"
 ;

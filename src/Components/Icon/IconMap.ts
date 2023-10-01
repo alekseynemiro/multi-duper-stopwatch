@@ -22,4 +22,5 @@ export const iconMap = new Map<IconName, string>()
   .set("replace", "exchange-alt")
   .set("layout-tiles", "square-full")
   .set("layout-stack", "bars")
+  .set("layout-default", "box")
 ;
