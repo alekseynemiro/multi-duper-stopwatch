@@ -24,4 +24,5 @@ export const iconMap = new Map<IconName, string>()
   .set("layout-tiles", "square-full")
   .set("layout-stack", "bars")
   .set("layout-default", "box")
+  .set("menu-item-checked", "dot-circle")
 ;

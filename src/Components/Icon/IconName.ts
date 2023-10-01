@@ -34,4 +34,5 @@ export type IconName =
   | "layout-tiles"
   | "layout-stack"
   | "layout-default"
+  | "menu-item-checked"
 ;
