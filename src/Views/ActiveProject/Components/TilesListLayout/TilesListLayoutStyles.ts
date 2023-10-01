@@ -23,7 +23,7 @@ export const activityStyles = StyleSheet.create({
     paddingHorizontal: 8,
     flexDirection: "row",
     alignItems: "center",
-    columnGap: 0,
+    columnGap: 4,
     minWidth: 48,
     minHeight: 48,
   },
