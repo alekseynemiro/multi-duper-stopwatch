@@ -10,6 +10,8 @@ export type PopupMenuProps = {
 
   style?: StyleProp<ViewStyle> | undefined;
 
+  cancelTitle?: string | undefined;
+
   onCancel(): void;
 
 };

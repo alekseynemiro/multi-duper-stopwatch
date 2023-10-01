@@ -12,6 +12,7 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
     children,
     backdrop,
     style,
+    cancelTitle,
     onCancel,
   } = props;
 
@@ -46,7 +47,7 @@ export function PopupMenu(props: PopupMenuProps): JSX.Element {
             }
             <PopupMenuItem
               icon="cancel"
-              text={localization.get("popupMenu.cancel")}
+              text={cancelTitle ?? localization.get("popupMenu.cancel")}
               onPress={onCancel}
             />
           </View>
