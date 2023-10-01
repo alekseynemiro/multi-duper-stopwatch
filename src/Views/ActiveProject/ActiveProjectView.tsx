@@ -20,6 +20,7 @@ import {
   SessionNameModalEventArgs,
   StopwatchDisplay,
   TilesListLayout,
+  VerticalListLayout,
 } from "./Components";
 import {
   ListLayoutActivityDeleteEventArgs,
@@ -435,6 +436,17 @@ export function ActiveProjectView(): JSX.Element {
               onActivityUpdate={activityUpdate}
               onActivityDelete={activityDelete}
               onForceUpdate={handleForceUpdate}
+            />
+          )
+        }
+        {
+          layoutMode === LayoutMode.Stack
+          && (
+            <VerticalListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
             />
           )
         }
