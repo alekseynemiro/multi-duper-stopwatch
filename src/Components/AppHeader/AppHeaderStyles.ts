@@ -33,8 +33,20 @@ export const appHeaderStyles = StyleSheet.create({
     width: 28,
   },
   title: {
+    flex: 1,
     fontSize: 24,
     fontWeight: "600",
     color: colors.headerText,
+  },
+  config: {
+    alignItems: "flex-end",
+  },
+  configButton: {
+    minWidth: 48,
+  },
+  configMenu: {
+    position: "absolute",
+    top: 52,
+    right: 0,
   },
 });
