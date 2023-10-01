@@ -6,3 +6,4 @@ export * from "./HorizontalListLayout";
 export * from "./SessionNameModal";
 export * from "./StopwatchDisplay";
 export * from "./TilesListLayout";
+export * from "./VerticalListLayout";
