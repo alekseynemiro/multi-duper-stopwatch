@@ -20,6 +20,6 @@ export const iconMap = new Map<IconName, string>()
   .set("add", "plus")
   .set("cancel", "window-close")
   .set("replace", "exchange-alt")
-  .set("layout-tiles", "th")
+  .set("layout-tiles", "square-full")
   .set("layout-stack", "bars")
 ;
