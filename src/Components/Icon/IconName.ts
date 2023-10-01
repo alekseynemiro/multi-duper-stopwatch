@@ -30,6 +30,7 @@ export type IconName =
   | "add"
   | "cancel"
   | "replace"
+  | "layout"
   | "layout-tiles"
   | "layout-stack"
   | "layout-default"
