@@ -6,6 +6,8 @@ export type PopupMenuItemProps = {
 
   text: string;
 
+  checked?: boolean;
+
   disabled?: boolean;
 
   onPress?(): void;
