@@ -6,12 +6,15 @@ export type AppHeaderState = {
 
   showConfigButton: boolean;
 
+  showConfigModal: boolean;
+
   layoutMode: LayoutMode;
 
 };
 
 const headerInitialState: AppHeaderState = {
   showConfigButton: false,
+  showConfigModal: false,
   layoutMode: LayoutMode.Default,
 };
 
@@ -24,6 +27,12 @@ const headerSlice = createSlice({
     },
     hideConfigButton: (state: AppHeaderState): void => {
       state.showConfigButton = false;
+    },
+    showConfigModal: (state: AppHeaderState): void => {
+      state.showConfigModal = true;
+    },
+    hideConfigModal: (state: AppHeaderState): void => {
+      state.showConfigModal = false;
     },
     setLayoutModeToDefault: (state: AppHeaderState): void => {
       state.layoutMode = LayoutMode.Default;

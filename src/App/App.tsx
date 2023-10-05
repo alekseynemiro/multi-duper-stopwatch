@@ -3,7 +3,6 @@ import { AppState, AppStateStatus } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { AlertProvider } from "@components/Alert";
-import { AppHeader } from "@components/AppHeader";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { appStore, Routes, ServiceIdentifier, serviceProvider } from "@config";
 import { IMigrationRunner, SessionState } from "@data";
@@ -21,7 +20,7 @@ import { IActiveProjectService } from "@services/ActiveProject";
 import { ILocalizationService } from "@services/Localization";
 import { ILoggerService } from "@services/Logger";
 import { AppTheme, styles } from "@styles";
-import { AppNavigation } from "./AppNavigation";
+import { AppHeader, AppNavigation } from "./Components";
 
 const Drawer = createDrawerNavigator();
 

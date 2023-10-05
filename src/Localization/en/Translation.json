@@ -14,12 +14,6 @@
     "accessibility": {
       "menu": "Menu",
       "back": "Go back"
-    },
-    "layoutMenu": {
-      "default": "Default",
-      "tiles": "Tiles",
-      "stack": "Stack",
-      "close": "Close"
     }
   },
   "menu": {
@@ -82,6 +76,16 @@
       "message": "Are you sure you want to delete activity {{activityName}}?\n\nIt will be impossible to restore the activity after deletion.",
       "cancel": "Cancel",
       "delete": "Delete"
+    },
+    "projectSettingsModal": {
+      "layout": {
+        "title": "Layout",
+        "default": "Default",
+        "tiles": "Tiles",
+        "stack": "Stack"
+      },
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "report": {
