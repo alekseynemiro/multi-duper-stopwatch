@@ -182,6 +182,31 @@ export function HomePage(): JSX.Element {
     ]
   );
 
+  const scrollBeginHandler = useCallback(
+    (): void => {
+      appDispatch(hideConfigButton());
+    },
+    [
+      hideConfigButton,
+      appDispatch,
+    ]
+  );
+
+  const scrollEndHandler = useCallback(
+    (index: number): void => {
+      if (index === 0) {
+        appDispatch(showConfigButton());
+      } else {
+        appDispatch(hideConfigButton());
+      }
+    },
+    [
+      showConfigButton,
+      hideConfigButton,
+      appDispatch,
+    ]
+  );
+
   useEffect(
     (): { (): void } => {
       const sessionStartedSubscription = activeProjectService.addEventListener(
@@ -400,6 +425,8 @@ export function HomePage(): JSX.Element {
       renderItem={({ item }: CarouselRenderItemInfo<JSX.Element>) => {
         return item;
       }}
+      onScrollEnd={scrollEndHandler}
+      onScrollBegin={scrollBeginHandler}
     />
   );
 }
