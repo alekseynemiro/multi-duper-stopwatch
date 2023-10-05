@@ -16,6 +16,7 @@ import { ActiveProjectFinishResult } from "@services/ActiveProject";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
+  ProjectSettingsModal,
   SessionNameModal,
   SessionNameModalEventArgs,
   StopwatchDisplay,
@@ -36,6 +37,7 @@ export function ActiveProjectView(): JSX.Element {
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
   const layoutMode = useSelector((x: AppState): LayoutMode => x.header.layoutMode);
+  const showConfigModal = useSelector((x: AppState): boolean => x.header.showConfigModal);
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -490,6 +492,12 @@ export function ActiveProjectView(): JSX.Element {
         onConfirm={finishConfirm}
         onCancel={finishCancel}
       />
+      {
+        showConfigModal
+        && (
+          <ProjectSettingsModal />
+        )
+      }
     </View>
   );
 }
