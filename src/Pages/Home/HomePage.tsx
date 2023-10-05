@@ -182,16 +182,6 @@ export function HomePage(): JSX.Element {
     ]
   );
 
-  const scrollBeginHandler = useCallback(
-    (): void => {
-      appDispatch(hideConfigButton());
-    },
-    [
-      hideConfigButton,
-      appDispatch,
-    ]
-  );
-
   const scrollEndHandler = useCallback(
     (index: number): void => {
       if (index === 0) {
@@ -426,7 +416,6 @@ export function HomePage(): JSX.Element {
         return item;
       }}
       onScrollEnd={scrollEndHandler}
-      onScrollBegin={scrollBeginHandler}
     />
   );
 }
