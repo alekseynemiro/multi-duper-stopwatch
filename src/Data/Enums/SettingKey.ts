@@ -3,4 +3,5 @@ export enum SettingKey {
   LastSessionId = 1,
   LastProjectId = 2,
   LayoutMode = 3,
+  Colorized = 4,
 }

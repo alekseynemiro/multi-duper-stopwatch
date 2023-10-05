@@ -47,6 +47,8 @@ export type LocalizationKey =
   | "activeProject.projectSettingsModal.layout.default"
   | "activeProject.projectSettingsModal.layout.tiles"
   | "activeProject.projectSettingsModal.layout.stack"
+  | "activeProject.projectSettingsModal.style.title"
+  | "activeProject.projectSettingsModal.style.colorized"
   | "activeProject.projectSettingsModal.save"
   | "activeProject.projectSettingsModal.cancel"
   | "projectList.deleteConfirmation.title"

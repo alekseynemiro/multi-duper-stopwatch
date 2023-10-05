@@ -49,4 +49,9 @@ export const appHeaderStyles = StyleSheet.create({
     top: 52,
     right: 0,
   },
+  configButtonIcon: {
+    fontSize: 24,
+    color: colors.headerText,
+    width: 28,
+  },
 });

@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
-import { LayoutMode } from "@data";
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { ColorPalette, LayoutMode } from "@data";
+import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type AppHeaderState = {
+export type AppCommonState = {
 
   showConfigButton: boolean;
 
@@ -10,51 +10,68 @@ export type AppHeaderState = {
 
   layoutMode: LayoutMode;
 
+  colorized: boolean;
+
+  color: ColorPalette | null;
+
 };
 
-const headerInitialState: AppHeaderState = {
+const appCommonInitialState: AppCommonState = {
   showConfigButton: false,
   showConfigModal: false,
   layoutMode: LayoutMode.Default,
+  colorized: false,
+  color: null,
 };
 
-const headerSlice = createSlice({
-  name: "header",
-  initialState: headerInitialState,
+const appCommonSlice = createSlice({
+  name: "common",
+  initialState: appCommonInitialState,
   reducers: {
-    showConfigButton: (state: AppHeaderState): void => {
+    showConfigButton: (state: AppCommonState): void => {
       state.showConfigButton = true;
     },
-    hideConfigButton: (state: AppHeaderState): void => {
+    hideConfigButton: (state: AppCommonState): void => {
       state.showConfigButton = false;
     },
-    showConfigModal: (state: AppHeaderState): void => {
+    showConfigModal: (state: AppCommonState): void => {
       state.showConfigModal = true;
     },
-    hideConfigModal: (state: AppHeaderState): void => {
+    hideConfigModal: (state: AppCommonState): void => {
       state.showConfigModal = false;
     },
-    setLayoutModeToDefault: (state: AppHeaderState): void => {
+    setLayoutModeToDefault: (state: AppCommonState): void => {
       state.layoutMode = LayoutMode.Default;
     },
-    setLayoutModeToTiles: (state: AppHeaderState): void => {
+    setLayoutModeToTiles: (state: AppCommonState): void => {
       state.layoutMode = LayoutMode.Tiles;
     },
-    setLayoutModeToStack: (state: AppHeaderState): void => {
+    setLayoutModeToStack: (state: AppCommonState): void => {
       state.layoutMode = LayoutMode.Stack;
+    },
+    setColor: (state: AppCommonState, action: PayloadAction<ColorPalette>): void => {
+      state.color = action.payload;
+    },
+    resetColor: (state: AppCommonState): void => {
+      state.color = null;
+    },
+    enableColorizedMode: (state: AppCommonState): void => {
+      state.colorized = true;
+    },
+    disableColorizedMode: (state: AppCommonState): void => {
+      state.colorized = false;
     },
   },
 });
 
 export const appStore = configureStore({
   reducer: {
-    header: headerSlice.reducer,
+    common: appCommonSlice.reducer,
   },
 });
 
 export type AppState = ReturnType<typeof appStore.getState>;
 export type AppDispatch = typeof appStore.dispatch;
-export type AppHeaderActions = typeof headerSlice.actions;
+export type AppActions = typeof appCommonSlice.actions;
 export const useAppDispatch = useDispatch;
-export const useAppHeaderActions = (): AppHeaderActions => headerSlice.actions;
-
+export const useAppActions = (): AppActions => appCommonSlice.actions;

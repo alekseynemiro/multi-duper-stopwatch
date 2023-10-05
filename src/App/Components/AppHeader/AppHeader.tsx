@@ -6,27 +6,46 @@ import { Icon } from "@components/Icon";
 import {
   AppState,
   Routes,
+  useAppActions,
   useAppDispatch,
-  useAppHeaderActions,
   useLocalizationService,
 } from "@config";
+import { ColorPalette } from "@data";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
+import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
 import { useRoute } from "@utils/NavigationUtils";
 import { appHeaderStyles } from "./AppHeaderStyles";
 
 export function AppHeader(props: DrawerHeaderProps): JSX.Element {
   const route = useRoute();
   const localization = useLocalizationService();
-  const showConfigButton = useSelector((x: AppState): boolean => x.header.showConfigButton);
+  const showConfigButton = useSelector((x: AppState): boolean => x.common.showConfigButton);
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
+  const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
   const appDispatch = useAppDispatch();
 
   const {
     showConfigModal,
-  } = useAppHeaderActions();
+  } = useAppActions();
+
+  const headerTextColor = colorized && color !== null
+    ? {
+      color: getContrastColorCode(color),
+    }
+    : undefined;
+
+  const headerBackgroundColor = colorized && color !== null
+    ? {
+      backgroundColor: getColorCode(color),
+    }
+    : undefined;
 
   return (
     <View
-      style={appHeaderStyles.container}
+      style={[
+        appHeaderStyles.container,
+        headerBackgroundColor,
+      ]}
     >
       <Button
         variant="transparent"
@@ -36,7 +55,10 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
       >
         <Icon
           name="menu"
-          style={appHeaderStyles.menuIcon}
+          style={[
+            appHeaderStyles.menuIcon,
+            headerTextColor,
+          ]}
         />
       </Button>
       {
@@ -51,7 +73,10 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
           >
             <Icon
               name="back"
-              style={appHeaderStyles.backIcon}
+              style={[
+                appHeaderStyles.backIcon,
+                headerTextColor,
+              ]}
             />
           </Button>
         )
@@ -59,7 +84,10 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
       <Text
         lineBreakMode="tail"
         numberOfLines={1}
-        style={appHeaderStyles.title}
+        style={[
+          appHeaderStyles.title,
+          headerTextColor,
+        ]}
       >
         {props.options.title ?? props.route.name}
       </Text>
@@ -78,6 +106,10 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
             >
               <Icon
                 name="layout"
+                style={[
+                  appHeaderStyles.configButtonIcon,
+                  headerTextColor,
+                ]}
               />
             </Button>
           </View>
