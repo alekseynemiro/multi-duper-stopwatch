@@ -32,3 +32,13 @@ export const getContrastColorCode = (color: ColorPalette): string => {
 
   return colors.palette[index].contrast;
 };
+
+export const getBackdropColorCode = (color: ColorPalette): string => {
+  const index = Object.keys(ColorPalette).findIndex(
+    (x: string): boolean => {
+      return x === color.toString();
+    }
+  );
+
+  return colors.palette[index].backdrop;
+};

@@ -4,8 +4,8 @@ import { ActivityIndicator } from "@components/ActivityIndicator";
 import {
   Routes,
   useActiveProjectService,
+  useAppActions,
   useAppDispatch,
-  useAppHeaderActions,
   useSettingsService,
 } from "@config";
 import { LayoutMode, SettingKey } from "@data";
@@ -24,7 +24,9 @@ export function InitialScreenPage(): JSX.Element {
     setLayoutModeToDefault,
     setLayoutModeToStack,
     setLayoutModeToTiles,
-  } = useAppHeaderActions();
+    enableColorizedMode,
+    disableColorizedMode,
+  } = useAppActions();
 
   const [activityRecoveryModel, setActivityRecoveryModel] = useState<RecoveryModel | undefined>(undefined);
 
@@ -82,6 +84,7 @@ export function InitialScreenPage(): JSX.Element {
   const load = useCallback(
     async(): Promise<void> => {
       const layoutMode = await settings.get(SettingKey.LayoutMode) ?? LayoutMode.Default;
+      const colorized = (await settings.get(SettingKey.Colorized) ?? "0") === "1";
 
       switch (layoutMode) {
         case LayoutMode.Stack: {
@@ -95,6 +98,12 @@ export function InitialScreenPage(): JSX.Element {
         default: {
           appDispatch(setLayoutModeToDefault());
         }
+      }
+
+      if (colorized) {
+        appDispatch(enableColorizedMode());
+      } else {
+        appDispatch(disableColorizedMode());
       }
 
       const canRecovery = await activeProjectService.canRecovery();
@@ -117,6 +126,8 @@ export function InitialScreenPage(): JSX.Element {
       setLayoutModeToDefault,
       setLayoutModeToStack,
       setLayoutModeToTiles,
+      enableColorizedMode,
+      disableColorizedMode,
       settings,
     ]
   );

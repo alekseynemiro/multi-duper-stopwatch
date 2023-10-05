@@ -15,12 +15,15 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { PluralFormatter } from "@components/PluralFormatter";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
+  AppState,
+  Routes,
   useAlertService,
   useLocalizationService,
   useLoggerService,
@@ -29,9 +32,12 @@ import {
   useSessionService,
   useSessionStorageService,
 } from "@config";
+import { ColorPalette } from "@data";
 import { GetResultActivity } from "@dto/Projects";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { SessionStorageKeys } from "@types";
+import { getBackdropColorCode } from "@utils/ColorPaletteUtils";
+import { useRoute } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
   CurrentActivity,
@@ -63,6 +69,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     onReportItemDeleted,
   } = props;
 
+  const route = useRoute();
   const localization = useLocalizationService();
   const projectService = useProjectService();
   const sessionService = useSessionService();
@@ -70,6 +77,10 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
   const sessionStorageService = useSessionStorageService();
   const loggerService = useLoggerService();
   const alertService = useAlertService();
+
+  const isHome = !route.path || route.path === Routes.Home;
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
+  const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reportViewItemPopupMenuRef = useRef<ReportViewItemPopupMenuMethods>();
@@ -499,7 +510,14 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     (): JSX.Element => {
       return (
         <View
-          style={reportViewStyles.tableRowHeader}
+          style={[
+            reportViewStyles.tableRowHeader,
+            isHome && colorized && color !== null
+              ? {
+                backgroundColor: getBackdropColorCode(color),
+              }
+              : undefined,
+          ]}
         >
           <View
             style={reportViewStyles.nameCol}
@@ -528,6 +546,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     },
     [
       localization,
+      colorized,
+      color,
+      isHome,
     ]
   );
 
@@ -955,7 +976,14 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
   return (
     <View
-      style={reportViewStyles.container}
+      style={[
+        reportViewStyles.container,
+        isHome && colorized && color !== null
+          ? {
+            backgroundColor: getBackdropColorCode(color),
+          }
+          : undefined,
+      ]}
     >
       {
         state.outputLogs.length > 0

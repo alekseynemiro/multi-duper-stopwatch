@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Button } from "@components/Button";
+import { CheckBox } from "@components/CheckBox";
 import { HorizontalLine } from "@components/HorizontalLine";
 import { Icon } from "@components/Icon";
 import { Label } from "@components/Label";
@@ -9,8 +10,8 @@ import { Modal } from "@components/Modal";
 import { Radio } from "@components/Radio";
 import {
   AppState,
+  useAppActions,
   useAppDispatch,
-  useAppHeaderActions,
   useLocalizationService,
   useSettingsService,
 } from "@config";
@@ -21,26 +22,43 @@ import { projectSettingsModalStyles } from "./ProjectSettingsModalStyles";
 export function ProjectSettingsModal(): JSX.Element {
   const localization = useLocalizationService();
   const settings = useSettingsService();
-  const layoutMode = useSelector((x: AppState): LayoutMode => x.header.layoutMode);
+  const layoutMode = useSelector((x: AppState): LayoutMode => x.common.layoutMode);
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
   const appDispatch = useAppDispatch();
 
   const [initialLayoutMode] = useState(layoutMode);
+  const [newColorized, setNewColorized] = useState(colorized);
 
   const {
     setLayoutModeToDefault,
     setLayoutModeToStack,
     setLayoutModeToTiles,
+    enableColorizedMode,
+    disableColorizedMode,
     hideConfigModal,
-  } = useAppHeaderActions();
+  } = useAppActions();
 
   const handleSave = useCallback(
-    (): void => {
-      settings.set(SettingKey.LayoutMode, layoutMode);
+    async(): Promise<void> => {
+      await Promise.all([
+        settings.set(SettingKey.LayoutMode, layoutMode),
+        settings.set(SettingKey.Colorized, newColorized ? "1" : "0"),
+      ]);
+
+      if (newColorized) {
+        appDispatch(enableColorizedMode());
+      } else {
+        appDispatch(disableColorizedMode());
+      }
+
       appDispatch(hideConfigModal());
     },
     [
       settings,
       layoutMode,
+      newColorized,
+      enableColorizedMode,
+      disableColorizedMode,
       hideConfigModal,
       appDispatch,
     ]
@@ -104,7 +122,7 @@ export function ProjectSettingsModal(): JSX.Element {
     <Modal
       show={true}
     >
-      <View>
+      <View style={projectSettingsModalStyles.group}>
         <Label bold>
           {localization.get("activeProject.projectSettingsModal.layout.title")}
         </Label>
@@ -149,6 +167,24 @@ export function ProjectSettingsModal(): JSX.Element {
           <Text>
             {localization.get("activeProject.projectSettingsModal.layout.stack")}
           </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={projectSettingsModalStyles.lastGroup}>
+        <Label bold>
+          {localization.get("activeProject.projectSettingsModal.style.title")}
+        </Label>
+        <TouchableOpacity
+          style={projectSettingsModalStyles.formRow}
+          onPress={(): void => {
+            setNewColorized(!newColorized);
+          }}
+        >
+          <CheckBox
+            value={newColorized}
+          />
+          <Label>
+            {localization.get("activeProject.projectSettingsModal.style.colorized")}
+          </Label>
         </TouchableOpacity>
       </View>
       <HorizontalLine size="sm" />

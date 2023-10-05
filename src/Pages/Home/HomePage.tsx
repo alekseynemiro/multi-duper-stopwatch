@@ -7,8 +7,8 @@ import { Button } from "@components/Button";
 import {
   Routes,
   useActiveProjectService,
+  useAppActions,
   useAppDispatch,
-  useAppHeaderActions,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -32,7 +32,11 @@ export function HomePage(): JSX.Element {
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
   const appDispatch = useAppDispatch();
-  const { showConfigButton, hideConfigButton } = useAppHeaderActions();
+  const {
+    resetColor,
+    showConfigButton,
+    hideConfigButton,
+  } = useAppActions();
 
   const reportViewRef = useRef<ReportViewProps>();
 
@@ -179,16 +183,6 @@ export function HomePage(): JSX.Element {
     },
     [
       activeProjectService,
-    ]
-  );
-
-  const scrollBeginHandler = useCallback(
-    (): void => {
-      appDispatch(hideConfigButton());
-    },
-    [
-      hideConfigButton,
-      appDispatch,
     ]
   );
 
@@ -353,12 +347,14 @@ export function HomePage(): JSX.Element {
 
       return (): void => {
         appDispatch(hideConfigButton());
+        appDispatch(resetColor());
       };
     },
     [
       appDispatch,
       hideConfigButton,
       showConfigButton,
+      resetColor,
     ]
   );
 
@@ -426,7 +422,6 @@ export function HomePage(): JSX.Element {
         return item;
       }}
       onScrollEnd={scrollEndHandler}
-      onScrollBegin={scrollBeginHandler}
     />
   );
 }

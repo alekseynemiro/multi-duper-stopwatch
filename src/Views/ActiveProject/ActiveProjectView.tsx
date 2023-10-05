@@ -7,12 +7,15 @@ import { Icon } from "@components/Icon";
 import {
   AppState,
   useActiveProjectService,
+  useAppActions,
+  useAppDispatch,
   useLocalizationService,
   useLoggerService,
 } from "@config";
-import { LayoutMode } from "@data";
+import { ColorPalette, LayoutMode } from "@data";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult } from "@services/ActiveProject";
+import { getBackdropColorCode } from "@utils/ColorPaletteUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
@@ -36,8 +39,11 @@ export function ActiveProjectView(): JSX.Element {
   const localization = useLocalizationService();
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
-  const layoutMode = useSelector((x: AppState): LayoutMode => x.header.layoutMode);
-  const showConfigModal = useSelector((x: AppState): boolean => x.header.showConfigModal);
+  const layoutMode = useSelector((x: AppState): LayoutMode => x.common.layoutMode);
+  const showConfigModal = useSelector((x: AppState): boolean => x.common.showConfigModal);
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
+  const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
+  const appDispatch = useAppDispatch();
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -48,6 +54,11 @@ export function ActiveProjectView(): JSX.Element {
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   const [forceUpdate, setForceUpdate] = useState(false);
+
+  const {
+    setColor,
+    resetColor,
+  } = useAppActions();
 
   const currentActivityPredicate = useCallback(
     (x: ActivityModel): boolean => {
@@ -167,6 +178,14 @@ export function ActiveProjectView(): JSX.Element {
 
         setActivities(newActivities);
         setCurrentActivity(newCurrentActivity);
+
+        if (shouldBeRunning && newCurrentActivity!.color !== null) {
+          appDispatch(setColor(newCurrentActivity!.color));
+        } else {
+          if (newCurrentActivity?.id !== currentActivityId) {
+            appDispatch(resetColor());
+          }
+        }
       };
 
       await Promise.all([
@@ -179,6 +198,9 @@ export function ActiveProjectView(): JSX.Element {
       currentActivity,
       activeProjectService,
       loggerService,
+      setColor,
+      resetColor,
+      appDispatch,
     ]
   );
 
@@ -385,6 +407,34 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): void => {
+      if (loaded.current) {
+        const foundCurrentActivity = activeProjectService.currentActivityId
+        ? activeProjectService.activities
+          ?.find(
+            (x: ActivityModel): boolean => {
+              return x.id === activeProjectService.currentActivityId;
+            }
+          )
+        : undefined;
+
+        if ((foundCurrentActivity?.color ?? null) !== null) {
+          appDispatch(setColor(foundCurrentActivity!.color!));
+        } else {
+          appDispatch(resetColor());
+        }
+      }
+    },
+    [
+      loaded,
+      appDispatch,
+      resetColor,
+      setColor,
+      activeProjectService,
+    ]
+  );
+
   if (
     !mounted.current
     && !loaded.current
@@ -406,7 +456,14 @@ export function ActiveProjectView(): JSX.Element {
 
   return (
     <View
-      style={activeProjectViewStyles.container}
+      style={[
+        activeProjectViewStyles.container,
+        colorized && color !== null
+          ? {
+            backgroundColor: getBackdropColorCode(color),
+          }
+          : undefined,
+      ]}
     >
       <View
         style={activeProjectViewStyles.stopwatchContainer}
