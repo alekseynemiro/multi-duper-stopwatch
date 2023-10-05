@@ -3,7 +3,7 @@ import { colors, styles } from "@styles";
 
 export const reportViewStyles = StyleSheet.create({
   container: {
-    margin: 8,
+    padding: 8,
     flex: 1,
   },
   footer: {
