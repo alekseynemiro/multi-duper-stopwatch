@@ -48,6 +48,7 @@ import {
   ReportViewItemPopupMenuMethods,
   ReportViewItemPopupMenuPressEventArgs,
   ReportViewItemPressEventArgs,
+  SplitModal,
   Total,
 } from "./Components";
 import {
@@ -97,6 +98,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     currentActivity: undefined,
     showFilterModal: false,
     showReplaceModal: false,
+    showSplitModal: false,
     selectedReportItem: undefined,
   });
 
@@ -912,6 +914,60 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     ]
   );
 
+  const split = useCallback(
+    async(reportItemId: string, slice: number): Promise<void> => {
+      const splitResult = await sessionLogService.split(reportItemId, slice);
+
+      let newOutputLogs: Array<ReportItemModel> = [];
+
+      const newLogs = [...state.logs];
+      const index = newLogs.findIndex(
+        (x: ReportItemModel): boolean => {
+          return x.id === reportItemId;
+        }
+      );
+
+      newLogs[index].elapsedTime = splitResult.slice1.elapsedTime;
+      newLogs[index].startDate = splitResult.slice1.startDate;
+      newLogs[index].finishDate = splitResult.slice1.finishDate;
+
+      const newLogEntry = {
+        ...newLogs[index],
+        id: splitResult.slice2.id,
+        elapsedTime: splitResult.slice2.elapsedTime,
+        startDate: splitResult.slice2.startDate,
+        finishDate: splitResult.slice2.finishDate,
+      };
+
+      newLogs.splice(index + 1, 0, newLogEntry);
+
+      if (state.filterByActivities.length > 0) {
+        newOutputLogs = newLogs.filter(
+          (x: ReportItemModel): boolean => {
+            return state.filterByActivities.some(
+              (xx: FilteredActivityModel): boolean => {
+                return xx.id === x.activityId;
+              }
+            );
+          }
+        );
+      } else {
+        newOutputLogs = newLogs;
+      }
+
+      setState({
+        ...state,
+        logs: newLogs,
+        outputLogs: newOutputLogs,
+        showSplitModal: false,
+      });
+    },
+    [
+      state,
+      sessionLogService,
+    ]
+  );
+
   const handleReportItemPopupMenuItemPress = useCallback(
     (e: ReportViewItemPopupMenuPressEventArgs): void => {
       switch (e.action) {
@@ -924,6 +980,18 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
               }
             ),
             showReplaceModal: true,
+          });
+          break;
+        }
+        case "split": {
+          setState({
+            ...state,
+            selectedReportItem: state.logs.find(
+              (x: ReportItemModel): boolean => {
+                return x.id === e.id;
+              }
+            ),
+            showSplitModal: true,
           });
           break;
         }
@@ -1141,6 +1209,22 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
               setState({
                 ...state,
                 showReplaceModal: false,
+              });
+            }}
+          />
+        )
+      }
+
+      {
+        state.showSplitModal
+        && (
+          <SplitModal
+            reportItem={state.selectedReportItem!}
+            onSplit={split}
+            onCancel={(): void => {
+              setState({
+                ...state,
+                showSplitModal: false,
               });
             }}
           />
