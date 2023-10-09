@@ -104,6 +104,7 @@ export type LocalizationKey =
   | "report.filterModal.ok"
   | "report.filterModal.cancel"
   | "report.itemPopupMenu.replace"
+  | "report.itemPopupMenu.split"
   | "report.itemPopupMenu.delete"
   | "report.itemPopupMenu.cancel"
   | "report.reportItemDeleteConfirmation.title"

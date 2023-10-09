@@ -61,6 +61,17 @@ export const ReportViewItemPopupMenu = forwardRef((props: ReportViewItemPopupMen
         }}
       />
       <PopupMenuItem
+        icon="split"
+        text={localization.get("report.itemPopupMenu.split")}
+        onPress={(): void => {
+          close();
+          onPress({
+            action: "split",
+            id: id!,
+          });
+        }}
+      />
+      <PopupMenuItem
         icon="delete"
         text={localization.get("report.itemPopupMenu.delete")}
         onPress={(): void => {
