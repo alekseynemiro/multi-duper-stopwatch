@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, QueryRunner, Repository } from "typeorm";
 import { ServiceIdentifier } from "../Config";
 import { ILoggerService } from "../Core/Services/Logger";
 import {
@@ -86,6 +86,10 @@ export class DatabaseService implements IDatabaseService {
         "completed"
       );
     }
+  }
+
+  public createQueryRunner(): QueryRunner {
+    return this._dataSource.createQueryRunner();
   }
 
 }
