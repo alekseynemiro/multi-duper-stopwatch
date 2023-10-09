@@ -113,6 +113,7 @@
     },
     "itemPopupMenu": {
       "replace": "Заменить",
+      "split": "Разбить",
       "delete": "Удалить",
       "cancel": "Закрыть"
     },
@@ -125,6 +126,11 @@
     "replaceModal": {
       "helpMessage": "Выберите активность, на которую будет заменена запись \"{{activityName}}\" ({{elapsedTime}}).",
       "replace": "Заменить",
+      "cancel": "Отмена"
+    },
+    "splitModal": {
+      "helpMessage": "Выберите размер, на который следует разбить запись об активности \"{{activityName}}\" ({{elapsedTime}}).",
+      "split": "Разделить",
       "cancel": "Отмена"
     }
   },

@@ -27,6 +27,8 @@ export type ReportViewStateModel = {
 
   showReplaceModal: boolean;
 
+  showSplitModal: boolean;
+
   selectedReportItem: ReportItemModel | undefined;
 
 };

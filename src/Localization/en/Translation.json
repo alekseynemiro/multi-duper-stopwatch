@@ -113,6 +113,7 @@
     },
     "itemPopupMenu": {
       "replace": "Replace",
+      "split": "Split",
       "delete": "Delete",
       "cancel": "Cancel"
     },
@@ -125,6 +126,11 @@
     "replaceModal": {
       "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\" ({{elapsedTime}}) with.",
       "replace": "Replace",
+      "cancel": "Cancel"
+    },
+    "splitModal": {
+      "helpMessage": "Select the size to split the \"{{activityName}}\" ({{elapsedTime}}) activity entry into.",
+      "split": "Split",
       "cancel": "Cancel"
     }
   },

@@ -1,6 +1,6 @@
 export type ReportViewItemPopupMenuPressEventArgs = {
 
-  action: "replace" | "delete" | "delete-forced";
+  action: "replace" | "split" | "delete" | "delete-forced";
 
   id?: string | undefined;
 

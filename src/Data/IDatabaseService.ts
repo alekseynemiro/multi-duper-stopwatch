@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { QueryRunner, Repository } from "typeorm";
 import {
   Activity,
   ActivityInProject,
@@ -27,5 +27,7 @@ export interface IDatabaseService {
   close(): Promise<void>;
 
   execute<TResult>(action: { (): Promise<TResult> }, name?: string | undefined): Promise<TResult>;
+
+  createQueryRunner(): QueryRunner;
 
 }
