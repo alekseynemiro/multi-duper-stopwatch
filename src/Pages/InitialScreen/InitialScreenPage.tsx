@@ -84,7 +84,7 @@ export function InitialScreenPage(): JSX.Element {
   const load = useCallback(
     async(): Promise<void> => {
       const layoutMode = await settings.get(SettingKey.LayoutMode) ?? LayoutMode.Default;
-      const colorized = (await settings.get(SettingKey.Colorized) ?? "0") === "1";
+      const colorized = (await settings.get(SettingKey.Colorized) ?? "1") === "1";
 
       switch (layoutMode) {
         case LayoutMode.Stack: {
