@@ -4,7 +4,7 @@ import { PopupMenuItemProps } from "./PopupMenuItemProps";
 
 export type PopupMenuProps = {
 
-  children: Array<ReactElement<PopupMenuItemProps>>;
+  children: Array<ReactElement<PopupMenuItemProps>> | ReactElement<PopupMenuItemProps>;
 
   backdrop?: boolean;
 
