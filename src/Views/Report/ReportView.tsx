@@ -462,7 +462,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error("Popup menu ref is empty.");
       }
 
-      reportViewItemPopupMenuRef.current.open(id);
+      reportViewItemPopupMenuRef.current.open(id!);
     },
     []
   );
