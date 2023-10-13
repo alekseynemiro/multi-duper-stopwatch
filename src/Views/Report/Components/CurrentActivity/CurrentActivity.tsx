@@ -12,6 +12,7 @@ export function CurrentActivity(props: CurrentActivityProps): JSX.Element {
     activityName,
     activityColor,
     onPress,
+    onLongPress,
   } = props;
 
   const color = useMemo(
@@ -32,6 +33,9 @@ export function CurrentActivity(props: CurrentActivityProps): JSX.Element {
       style={reportViewStyles.currentActivityRow}
       onPress={(): void => {
         onPress({ activityId, activityColor });
+      }}
+      onLongPress={(): void => {
+        onLongPress({ activityId, activityColor });
       }}
     >
       <View
