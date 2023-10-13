@@ -8,7 +8,7 @@ import { Modal } from "@components/Modal";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { ActivityModel } from "@views/Report/Models";
 import { FilterModalProps } from "./FilterModalProps";
 import { filterModalStyles } from "./FilterModalStyles";
@@ -74,7 +74,9 @@ export function FilterModal(props: FilterModalProps): JSX.Element {
               style={[
                 filterModalStyles.icon,
                 {
-                  backgroundColor: item.color ? getColorCode(item.color) : colors.white,
+                  backgroundColor: isNotEmptyColor(item.color)
+                    ? getColorCode(item.color!)
+                    : colors.white,
                 },
               ]}
             />

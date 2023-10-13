@@ -4,7 +4,7 @@ import { DurationFormatter } from "@components/DurationFormatter";
 import { useLocalizationService } from "@config";
 import { ColorPalette } from "@data";
 import { colors } from "@styles";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { FilteredActivityModel } from "@views/Report/Models";
 import { reportViewStyles } from "@views/Report/ReportViewStyles";
 import { TotalProps } from "./TotalProps";
@@ -22,8 +22,8 @@ export function Total(props: TotalProps): JSX.Element {
 
   const getColor = useCallback(
     (color: ColorPalette | null): string => {
-      if (color) {
-        return getColorCode(color);
+      if (isNotEmptyColor(color)) {
+        return getColorCode(color!);
       }
 
       return colors.white;

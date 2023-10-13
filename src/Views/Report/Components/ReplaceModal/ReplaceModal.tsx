@@ -8,7 +8,7 @@ import { Radio } from "@components/Radio";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { ActivityModel } from "@views/Report/Models";
 import { ReplaceModalProps } from "./ReplaceModalProps";
@@ -58,7 +58,9 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
               style={[
                 replaceModalStyles.icon,
                 {
-                  backgroundColor: item.color ? getColorCode(item.color) : colors.white,
+                  backgroundColor: isNotEmptyColor(item.color)
+                    ? getColorCode(item.color!)
+                    : colors.white,
                 },
               ]}
             />

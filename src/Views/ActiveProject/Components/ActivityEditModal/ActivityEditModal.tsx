@@ -9,7 +9,7 @@ import { SelectColorModal } from "@components/SelectColorModal";
 import { TextInputField } from "@components/TextInputField";
 import { useLocalizationService } from "@config";
 import { ColorPalette } from "@data";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { Formik } from "formik";
 import { ActivityEditModalProps } from "./ActivityEditModalProps";
 import { activityEditModalStyles } from "./ActivityEditModalStyles";
@@ -97,8 +97,8 @@ export function ActivityEditModal(props: ActivityEditModalProps): JSX.Element {
                       style={[
                         activityEditModalStyles.selectColorButton,
                         {
-                          backgroundColor: values.color
-                            ? getColorCode(values.color)
+                          backgroundColor: isNotEmptyColor(values.color)
+                            ? getColorCode(values.color!)
                             : activityEditModalStyles.selectColorButton.backgroundColor,
                         },
                         touched.name && errors.name ? activityEditModalStyles.selectColorButtonError : undefined,

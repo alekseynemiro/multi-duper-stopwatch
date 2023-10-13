@@ -15,7 +15,7 @@ import {
 import { ColorPalette, LayoutMode } from "@data";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult } from "@services/ActiveProject";
-import { getBackdropColorCode } from "@utils/ColorPaletteUtils";
+import { getBackdropColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
@@ -461,9 +461,9 @@ export function ActiveProjectView(): JSX.Element {
     <View
       style={[
         activeProjectViewStyles.container,
-        colorized && color !== null
+        colorized && isNotEmptyColor(color)
           ? {
-            backgroundColor: getBackdropColorCode(color),
+            backgroundColor: getBackdropColorCode(color!),
           }
           : undefined,
       ]}

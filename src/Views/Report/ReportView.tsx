@@ -39,7 +39,7 @@ import { ColorPalette } from "@data";
 import { GetResultActivity } from "@dto/Projects";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { SessionStorageKeys } from "@types";
-import { getBackdropColorCode } from "@utils/ColorPaletteUtils";
+import { getBackdropColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { useRoute } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
@@ -540,9 +540,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         <View
           style={[
             reportViewStyles.tableRowHeader,
-            isHome && colorized && color !== null
+            isHome && colorized && isNotEmptyColor(color)
               ? {
-                backgroundColor: getBackdropColorCode(color),
+                backgroundColor: getBackdropColorCode(color!),
               }
               : undefined,
           ]}
@@ -1147,9 +1147,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     <View
       style={[
         reportViewStyles.container,
-        isHome && colorized && color !== null
+        isHome && colorized && isNotEmptyColor(color)
           ? {
-            backgroundColor: getBackdropColorCode(color),
+            backgroundColor: getBackdropColorCode(color!),
           }
           : undefined,
       ]}

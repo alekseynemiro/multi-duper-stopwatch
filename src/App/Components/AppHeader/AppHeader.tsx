@@ -12,7 +12,7 @@ import {
 } from "@config";
 import { ColorPalette } from "@data";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
-import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, getContrastColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { useRoute } from "@utils/NavigationUtils";
 import { appHeaderStyles } from "./AppHeaderStyles";
 
@@ -28,15 +28,15 @@ export function AppHeader(props: DrawerHeaderProps): JSX.Element {
     showConfigModal,
   } = useAppActions();
 
-  const headerTextColor = colorized && color !== null
+  const headerTextColor = colorized && isNotEmptyColor(color)
     ? {
-      color: getContrastColorCode(color),
+      color: getContrastColorCode(color!),
     }
     : undefined;
 
-  const headerBackgroundColor = colorized && color !== null
+  const headerBackgroundColor = colorized && isNotEmptyColor(color)
     ? {
-      backgroundColor: getColorCode(color),
+      backgroundColor: getColorCode(color!),
     }
     : undefined;
 

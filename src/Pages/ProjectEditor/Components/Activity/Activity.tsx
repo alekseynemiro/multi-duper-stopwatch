@@ -5,7 +5,7 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { TextInputField } from "@components/TextInputField";
 import { useLocalizationService } from "@config";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { ActivityProps } from "./ActivityProps";
 import { activityStyles } from "./ActivityStyles";
 
@@ -66,8 +66,8 @@ export function Activity(props: ActivityProps): JSX.Element {
           style={[
             activityStyles.selectColorButton,
             {
-              backgroundColor: activityColor
-                ? getColorCode(activityColor)
+              backgroundColor: isNotEmptyColor(activityColor)
+                ? getColorCode(activityColor!)
                 : activityStyles.selectColorButton.backgroundColor,
             },
           ]}
