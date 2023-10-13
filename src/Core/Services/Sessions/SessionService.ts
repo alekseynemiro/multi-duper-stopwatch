@@ -11,6 +11,7 @@ import {
   PauseRequest,
   PauseResult,
   RenameRequest,
+  ReplaceActivityRequest,
   ToggleDetailsResult,
   ToggleRequest,
   ToggleResult,
@@ -541,6 +542,60 @@ export class SessionService implements ISessionService {
         await this._databaseService.sessions().save(session);
 
         return result;
+      }
+    );
+  }
+
+  public replaceActivity(request: ReplaceActivityRequest): Promise<void> {
+    this._loggerService.debug(
+      SessionService.name,
+      this.pauseAndSetActivity.name,
+      "sessionId",
+      request.sessionId,
+      "newActivityId",
+      request.newActivityId
+    );
+
+    return this._databaseService.execute(
+      async(): Promise<void> => {
+        const newActivity = await this._databaseService.activities()
+          .findOneOrFail({
+            where: {
+              id: request.newActivityId,
+            },
+            relations: {
+              activitiesInProjects: true,
+            },
+          });
+
+        const session = await this._databaseService.sessions()
+          .findOneOrFail({
+            where: {
+              id: request.sessionId,
+            },
+            relations: {
+              activity: true,
+              project: true,
+            } as any, // to fix: Type '{ activity: true; }' is not assignable to type 'FindOptionsRelationByString | FindOptionsRelations<Session> | undefined'.
+          });
+
+        if (session.state !== SessionState.Run) {
+          throw new Error(`Session #${session.id} must be running.`);
+        }
+
+        const newActivityInProject = newActivity.activitiesInProjects?.find(
+          (x: ActivityInProject): boolean => {
+            return x.projectId === session.project.id;
+          }
+        );
+
+        if (!newActivityInProject) {
+          throw new Error(`Activity #${request.newActivityId} is not in project #${session.project.id}, for session #${session.id}.`);
+        }
+
+        session.activity = newActivity;
+
+        await this._databaseService.sessions().save(session);
       }
     );
   }

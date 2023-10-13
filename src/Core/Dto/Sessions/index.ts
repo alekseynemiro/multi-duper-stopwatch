@@ -8,6 +8,7 @@ export type { PauseAndSetActivityRequest } from "./PauseAndSetActivityRequest";
 export type { PauseRequest } from "./PauseRequest";
 export type { PauseResult } from "./PauseResult";
 export type { RenameRequest } from "./RenameRequest";
+export type { ReplaceActivityRequest } from "./ReplaceActivityRequest";
 export type { ToggleDetailsResult } from "./ToggleDetailsResult";
 export type { ToggleRequest } from "./ToggleRequest";
 export type { ToggleResult } from "./ToggleResult";
