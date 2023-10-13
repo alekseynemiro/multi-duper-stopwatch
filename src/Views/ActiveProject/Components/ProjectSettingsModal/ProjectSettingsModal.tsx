@@ -181,6 +181,9 @@ export function ProjectSettingsModal(): JSX.Element {
         >
           <CheckBox
             value={newColorized}
+            onValueChange={(value: boolean): void => {
+              setNewColorized(value);
+            }}
           />
           <Label>
             {localization.get("activeProject.projectSettingsModal.style.colorized")}
