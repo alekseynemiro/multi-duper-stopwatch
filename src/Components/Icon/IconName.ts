@@ -29,4 +29,11 @@ export type IconName =
   | "star"
   | "add"
   | "cancel"
-  | "replace";
+  | "replace"
+  | "split"
+  | "layout"
+  | "layout-tiles"
+  | "layout-stack"
+  | "layout-default"
+  | "menu-item-checked"
+;

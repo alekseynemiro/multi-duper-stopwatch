@@ -1,25 +1,36 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import {
+  AppState,
   useActiveProjectService,
+  useAppActions,
+  useAppDispatch,
   useLocalizationService,
   useLoggerService,
 } from "@config";
+import { ColorPalette, LayoutMode } from "@data";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { ActiveProjectFinishResult } from "@services/ActiveProject";
+import { getBackdropColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { activeProjectViewStyles } from "./ActiveProjectViewStyles";
 import {
   HorizontalListLayout,
-  HorizontalListLayoutActivityDeleteEventArgs,
-  HorizontalListLayoutActivityPressEventArgs,
-  HorizontalListLayoutActivityUpdateEventArgs,
+  ProjectSettingsModal,
   SessionNameModal,
   SessionNameModalEventArgs,
   StopwatchDisplay,
+  TilesListLayout,
+  VerticalListLayout,
 } from "./Components";
+import {
+  ListLayoutActivityDeleteEventArgs,
+  ListLayoutActivityPressEventArgs,
+  ListLayoutActivityUpdateEventArgs,
+} from "./Types";
 
 export function ActiveProjectView(): JSX.Element {
   const mounted = useRef(false);
@@ -28,6 +39,11 @@ export function ActiveProjectView(): JSX.Element {
   const localization = useLocalizationService();
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
+  const layoutMode = useSelector((x: AppState): LayoutMode => x.common.layoutMode);
+  const showConfigModal = useSelector((x: AppState): boolean => x.common.showConfigModal);
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
+  const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
+  const appDispatch = useAppDispatch();
 
   const finishActivityRef = useRef<ActiveProjectFinishResult | undefined>(undefined);
   const currentProjectId = useRef<string | undefined>();
@@ -37,6 +53,12 @@ export function ActiveProjectView(): JSX.Element {
   const [currentActivity, setCurrentActivity] = useState<ActivityModel | undefined>(undefined);
   const [showSessionNameModal, setShowSessionNameModal] = useState<boolean>(false);
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  const {
+    setColor,
+    resetColor,
+  } = useAppActions();
 
   const currentActivityPredicate = useCallback(
     (x: ActivityModel): boolean => {
@@ -106,7 +128,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const toggle = useCallback(
-    async({ activityId, activityStatus }: HorizontalListLayoutActivityPressEventArgs): Promise<void> => {
+    async({ activityId, activityStatus }: ListLayoutActivityPressEventArgs): Promise<void> => {
       loggerService.debug(
         ActiveProjectView.name,
         "toggle",
@@ -156,6 +178,14 @@ export function ActiveProjectView(): JSX.Element {
 
         setActivities(newActivities);
         setCurrentActivity(newCurrentActivity);
+
+        if (shouldBeRunning && newCurrentActivity!.color !== null) {
+          appDispatch(setColor(newCurrentActivity!.color));
+        } else {
+          if (newCurrentActivity?.id !== currentActivityId) {
+            appDispatch(resetColor());
+          }
+        }
       };
 
       await Promise.all([
@@ -168,6 +198,9 @@ export function ActiveProjectView(): JSX.Element {
       currentActivity,
       activeProjectService,
       loggerService,
+      setColor,
+      resetColor,
+      appDispatch,
     ]
   );
 
@@ -291,7 +324,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const activityUpdate = useCallback(
-    async(e: HorizontalListLayoutActivityUpdateEventArgs): Promise<void> => {
+    async(e: ListLayoutActivityUpdateEventArgs): Promise<void> => {
       return activeProjectService.updateActivity({
         color: e.activityColor,
         id: e.activityId,
@@ -305,7 +338,7 @@ export function ActiveProjectView(): JSX.Element {
   );
 
   const activityDelete = useCallback(
-    async(e: HorizontalListLayoutActivityDeleteEventArgs): Promise<void> => {
+    async(e: ListLayoutActivityDeleteEventArgs): Promise<void> => {
       return activeProjectService.deleteActivity(e.activityId);
     },
     [
@@ -317,12 +350,22 @@ export function ActiveProjectView(): JSX.Element {
     (): void => {
       const newActivities = [...activeProjectService.activities ?? []];
       setActivities(newActivities);
-      setCurrentActivity(newActivities.find(currentActivityPredicate));
+      setCurrentActivity(newActivities.find(
+        (x: ActivityModel): boolean => {
+          return x.id === activeProjectService.currentActivityId;
+        })
+      );
     },
     [
       activeProjectService,
-      currentActivityPredicate,
     ]
+  );
+
+  const handleForceUpdate = useCallback(
+    (): void => {
+      setForceUpdate(true);
+    },
+    []
   );
 
   useEffect(
@@ -350,6 +393,51 @@ export function ActiveProjectView(): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): void => {
+      if (forceUpdate) {
+        // delay is required for the layout to update
+        setTimeout(
+          (): void => {
+            setForceUpdate(false);
+          },
+          1000
+        );
+      }
+    },
+    [
+      forceUpdate,
+    ]
+  );
+
+  useEffect(
+    (): void => {
+      if (loaded.current) {
+        const foundCurrentActivity = activeProjectService.currentActivityId
+        ? activeProjectService.activities
+          ?.find(
+            (x: ActivityModel): boolean => {
+              return x.id === activeProjectService.currentActivityId;
+            }
+          )
+        : undefined;
+
+        if ((foundCurrentActivity?.color ?? null) !== null) {
+          appDispatch(setColor(foundCurrentActivity!.color!));
+        } else {
+          appDispatch(resetColor());
+        }
+      }
+    },
+    [
+      loaded,
+      appDispatch,
+      resetColor,
+      setColor,
+      activeProjectService,
+    ]
+  );
+
   if (
     !mounted.current
     && !loaded.current
@@ -363,7 +451,7 @@ export function ActiveProjectView(): JSX.Element {
     );
   }
 
-  if (showLoadingIndicator) {
+  if (showLoadingIndicator || forceUpdate) {
     return (
       <ContentLoadIndicator />
     );
@@ -371,7 +459,14 @@ export function ActiveProjectView(): JSX.Element {
 
   return (
     <View
-      style={activeProjectViewStyles.container}
+      style={[
+        activeProjectViewStyles.container,
+        colorized && isNotEmptyColor(color)
+          ? {
+            backgroundColor: getBackdropColorCode(color!),
+          }
+          : undefined,
+      ]}
     >
       <View
         style={activeProjectViewStyles.stopwatchContainer}
@@ -383,12 +478,40 @@ export function ActiveProjectView(): JSX.Element {
       <View
         style={activeProjectViewStyles.activitiesContainer}
       >
-        <HorizontalListLayout
-          activities={activities}
-          onActivityPress={toggle}
-          onActivityUpdate={activityUpdate}
-          onActivityDelete={activityDelete}
-        />
+        {
+          layoutMode === LayoutMode.Default
+          && (
+            <HorizontalListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
+            />
+          )
+        }
+        {
+          layoutMode === LayoutMode.Tiles
+          && (
+            <TilesListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
+              onForceUpdate={handleForceUpdate}
+            />
+          )
+        }
+        {
+          layoutMode === LayoutMode.Stack
+          && (
+            <VerticalListLayout
+              activities={activities}
+              onActivityPress={toggle}
+              onActivityUpdate={activityUpdate}
+              onActivityDelete={activityDelete}
+            />
+          )
+        }
       </View>
       <View
         style={activeProjectViewStyles.footer}
@@ -429,6 +552,12 @@ export function ActiveProjectView(): JSX.Element {
         onConfirm={finishConfirm}
         onCancel={finishCancel}
       />
+      {
+        showConfigModal
+        && (
+          <ProjectSettingsModal />
+        )
+      }
     </View>
   );
 }

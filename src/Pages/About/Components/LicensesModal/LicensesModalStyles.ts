@@ -1,31 +1,7 @@
 import { StyleSheet } from "react-native";
-import { colors, styles } from "@styles";
+import { spaceBetweenButtons, styles } from "@styles";
 
 export const licensesModalStyles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalView: {
-    flex: 1,
-    margin: 24,
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 24,
-    justifyContent: "center",
-    shadowColor: colors.shadowColor,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: "90%",
-    minWidth: 250,
-  },
   footer: {
     alignItems: "center",
     justifyContent: "center",
@@ -42,6 +18,7 @@ export const licensesModalStyles = StyleSheet.create({
     width: 100,
     maxWidth: 100,
     minWidth: 100,
+    marginLeft: spaceBetweenButtons,
   },
   url: {
     ...styles.textSmall,

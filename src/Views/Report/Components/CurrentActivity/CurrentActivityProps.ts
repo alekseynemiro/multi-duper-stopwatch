@@ -12,4 +12,6 @@ export type CurrentActivityProps = {
   // TODO: use common type instead
   onPress(e: ReportViewItemPressEventArgs): void;
 
+  onLongPress(e: ReportViewItemPressEventArgs): void;
+
 };

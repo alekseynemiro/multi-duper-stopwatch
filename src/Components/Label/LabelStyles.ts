@@ -6,4 +6,7 @@ export const labelStyles = StyleSheet.create({
     marginBottom: 4,
     color: colors.text,
   },
+  bold: {
+    fontWeight: "600",
+  },
 });

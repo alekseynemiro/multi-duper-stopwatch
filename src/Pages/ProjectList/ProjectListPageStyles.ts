@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { styles } from "@styles";
+import { spaceBetweenButtons, styles } from "@styles";
 
 export const projectListPageStyles = StyleSheet.create({
   contentView: {
@@ -28,7 +28,7 @@ export const projectListPageStyles = StyleSheet.create({
     minWidth: 48,
     minHeight: 48,
     justifyContent: "center",
-    marginLeft: 10,
+    marginLeft: spaceBetweenButtons,
   },
   buttonIcon: {
   },

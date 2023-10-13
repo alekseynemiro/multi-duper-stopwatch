@@ -7,6 +7,8 @@ import { Button } from "@components/Button";
 import {
   Routes,
   useActiveProjectService,
+  useAppActions,
+  useAppDispatch,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -29,6 +31,12 @@ export function HomePage(): JSX.Element {
   const projectService = useProjectService();
   const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
+  const appDispatch = useAppDispatch();
+  const {
+    resetColor,
+    showConfigButton,
+    hideConfigButton,
+  } = useAppActions();
 
   const reportViewRef = useRef<ReportViewProps>();
 
@@ -98,6 +106,19 @@ export function HomePage(): JSX.Element {
           await activeProjectService.useLastProjectId();
         }
 
+        if (projectId && !activeProjectService.project) {
+          navigation.navigate(
+            Routes.Home,
+            {
+              projectId: undefined,
+              sessionId: undefined,
+            }
+          );
+
+          setProjectId(undefined);
+          setSessionId(undefined);
+        }
+
         if (activeProjectService.session?.state === SessionState.Finished) {
           navigation.navigate(
             Routes.Home,
@@ -162,6 +183,21 @@ export function HomePage(): JSX.Element {
     },
     [
       activeProjectService,
+    ]
+  );
+
+  const scrollEndHandler = useCallback(
+    (index: number): void => {
+      if (index === 0) {
+        appDispatch(showConfigButton());
+      } else {
+        appDispatch(hideConfigButton());
+      }
+    },
+    [
+      showConfigButton,
+      hideConfigButton,
+      appDispatch,
     ]
   );
 
@@ -305,6 +341,23 @@ export function HomePage(): JSX.Element {
     ]
   );
 
+  useEffect(
+    (): { (): void } => {
+      appDispatch(showConfigButton());
+
+      return (): void => {
+        appDispatch(hideConfigButton());
+        appDispatch(resetColor());
+      };
+    },
+    [
+      appDispatch,
+      hideConfigButton,
+      showConfigButton,
+      resetColor,
+    ]
+  );
+
   useFocusEffect(
     useCallback(
       (): void => {
@@ -368,6 +421,7 @@ export function HomePage(): JSX.Element {
       renderItem={({ item }: CarouselRenderItemInfo<JSX.Element>) => {
         return item;
       }}
+      onScrollEnd={scrollEndHandler}
     />
   );
 }

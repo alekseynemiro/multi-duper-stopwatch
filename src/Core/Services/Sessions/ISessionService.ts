@@ -8,6 +8,7 @@ import {
   PauseRequest,
   PauseResult,
   RenameRequest,
+  ReplaceActivityRequest,
   ToggleRequest,
   ToggleResult,
 } from "@dto/Sessions";
@@ -31,5 +32,7 @@ export interface ISessionService {
   get(sessionId: string): Promise<GetResult>;
 
   recalculate(sessionId: string): Promise<void>;
+
+  replaceActivity(request: ReplaceActivityRequest): Promise<void>;
 
 }

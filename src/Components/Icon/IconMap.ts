@@ -19,4 +19,11 @@ export const iconMap = new Map<IconName, string>()
   .set("home-page", "house-user")
   .set("add", "plus")
   .set("cancel", "window-close")
-  .set("replace", "exchange-alt");
+  .set("replace", "exchange-alt")
+  .set("split", "code-branch")
+  .set("layout", "table")
+  .set("layout-tiles", "square-full")
+  .set("layout-stack", "bars")
+  .set("layout-default", "grip-horizontal")
+  .set("menu-item-checked", "dot-circle")
+;

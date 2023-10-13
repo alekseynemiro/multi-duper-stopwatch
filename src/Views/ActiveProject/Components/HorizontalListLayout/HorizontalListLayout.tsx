@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
-import { useLocalizationService } from "@config";
+import { ScrollView, View } from "react-native";
+import { useAlertService, useLocalizationService } from "@config";
 import { Activity as ActivityModel, ActivityStatus } from "@dto/ActiveProject";
 import { Activity } from "../Activity";
 import { ActivityEditModal, ActivityEditModel } from "../ActivityEditModal";
@@ -18,6 +18,7 @@ const defaultActivity: ActivityModel = {
 
 export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Element {
   const localization = useLocalizationService();
+  const alertService = useAlertService();
 
   const {
     activities,
@@ -88,16 +89,17 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
         throw new Error(`Activity #${activityId} not found.`);
       }
 
-      Alert.alert(
+      alertService.show(
         localization.get("activeProject.activityDeleteConfirmation.title"),
         localization.get("activeProject.activityDeleteConfirmation.message", { activityName: activity.name }),
         [
           {
             text: localization.get("activeProject.activityDeleteConfirmation.cancel"),
-            style: "cancel",
+            variant: "secondary",
           },
           {
             text: localization.get("activeProject.activityDeleteConfirmation.delete"),
+            variant: "danger",
             onPress: (): void => {
               onActivityDelete({
                 activityId,
@@ -110,6 +112,7 @@ export function HorizontalListLayout(props:HorizontalListLayoutProps): JSX.Eleme
     [
       activities,
       localization,
+      alertService,
       onActivityDelete,
     ]
   );

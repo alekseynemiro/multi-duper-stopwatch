@@ -76,6 +76,20 @@
       "message": "Are you sure you want to delete activity {{activityName}}?\n\nIt will be impossible to restore the activity after deletion.",
       "cancel": "Cancel",
       "delete": "Delete"
+    },
+    "projectSettingsModal": {
+      "layout": {
+        "title": "Layout",
+        "default": "Default",
+        "tiles": "Tiles",
+        "stack": "Stack"
+      },
+      "style": {
+        "title": "Style",
+        "colorized": "use current activity color"
+      },
+      "save": "Save",
+      "cancel": "Cancel"
     }
   },
   "report": {
@@ -99,6 +113,7 @@
     },
     "itemPopupMenu": {
       "replace": "Replace",
+      "split": "Split",
       "delete": "Delete",
       "cancel": "Cancel"
     },
@@ -109,8 +124,13 @@
       "cancel": "Cancel"
     },
     "replaceModal": {
-      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\" ({{elapsedTime}}) with.",
+      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\"{{elapsedTime}} with.",
       "replace": "Replace",
+      "cancel": "Cancel"
+    },
+    "splitModal": {
+      "helpMessage": "Select the size to split the \"{{activityName}}\" ({{elapsedTime}}) activity entry into.",
+      "split": "Split",
       "cancel": "Cancel"
     }
   },
@@ -124,7 +144,8 @@
     },
     "deleteConfirmation": {
       "title": "Confirmation",
-      "message": "Are you sure you want to delete project {{projectName}}?\n\nIt will be impossible to restore the project after deletion.",
+      "message": "Are you sure you want to delete project \"{{projectName}}\"?\n\nIt will be impossible to restore the project after deletion.",
+      "activeProjectMessage": "You have an active session running for the project \"{{projectName}}\".\n\nIf you delete this project, the session will be automatically finished.\n\nAre you sure you want to delete project \"{{projectName}}\"?\n\nIt will be impossible to restore the project after deletion.",
       "cancel": "Cancel",
       "delete": "Delete"
     },
@@ -191,6 +212,7 @@
     "license": "The software is supplied under the terms of the MIT License.",
     "details": "Details",
     "licensesModal": {
+      "title": "License information",
       "license": "The Multi-duper Stopwatch software is licensed under the MIT license.",
       "showLicense": "Show",
       "thirdParty": "This software uses the following third-party components:",
@@ -260,5 +282,8 @@
       "color47": "Very dark gray",
       "color48": "Black"
     }
+  },
+  "popupMenu": {
+    "cancel": "Cancel"
   }
 }

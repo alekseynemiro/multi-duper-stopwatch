@@ -1,4 +1,4 @@
-import { GetAllResult } from "@dto/SessionLogs";
+import { GetAllResult, SplitResult } from "@dto/SessionLogs";
 
 export interface ISessionLogService {
 
@@ -7,5 +7,7 @@ export interface ISessionLogService {
   delete(id: string): Promise<void>;
 
   replaceWithActivity(id: string, newActivityId: string): Promise<void>;
+
+  split(id: string, elapsedTimeSlice: number): Promise<SplitResult>;
 
 }

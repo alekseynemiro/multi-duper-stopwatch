@@ -8,6 +8,7 @@ export function Label(props: LabelProps): JSX.Element {
   const {
     style,
     variant,
+    bold,
     children,
   } = props;
 
@@ -21,6 +22,7 @@ export function Label(props: LabelProps): JSX.Element {
             ? colors[variant]
             : colors.text,
         },
+        bold ? labelStyles.bold : undefined,
       ]}
     >
       {children}

@@ -381,7 +381,7 @@ export function ProjectEditorPage(): JSX.Element {
                         <Button
                           variant="primary"
                           title={localization.get("projectEditor.save")}
-                          style={projectEditorPageStyles.footerButton}
+                          style={projectEditorPageStyles.footerButtonSave}
                           onPress={handleSubmit}
                         />
                         <Button

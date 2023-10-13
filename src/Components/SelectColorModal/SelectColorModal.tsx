@@ -1,7 +1,8 @@
 import React from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Button } from "@components/Button";
 import { HorizontalLine } from "@components/HorizontalLine";
+import { Modal } from "@components/Modal";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
 import { getColorByCode } from "@utils/ColorPaletteUtils";
@@ -13,46 +14,39 @@ export function SelectColorModal(props: SelectColorModalProps): JSX.Element {
 
   return (
     <Modal
-      animationType="fade"
-      transparent={true}
-      visible={true}
+      show={true}
+      size="lg"
+      title={localization.get("selectColor.title")}
     >
-      <View style={selectColorModalStyles.centeredView}>
-        <View style={selectColorModalStyles.modalView}>
-          <View style={selectColorModalStyles.row}>
-            <Text>
-              {localization.get("selectColor.title")}
-            </Text>
-            <View style={selectColorModalStyles.colorListContainer}>
-              {
-                colors.palette.map((x: typeof colors.palette[0], index: number): JSX.Element => {
-                  return (
-                    <TouchableOpacity
-                      key={x.color}
-                      accessible={false}
-                      accessibilityLabel={localization.get(`selectColor.accessibility.color${index + 1}` as any)}
-                      style={{
-                        ...selectColorModalStyles.color,
-                        backgroundColor: x.color,
-                      }}
-                      onPress={(): void => {
-                        props.onSelect(props.activityCode, getColorByCode(x.color));
-                      }}
-                    />
-                  );
-                })
-              }
-            </View>
-            <HorizontalLine />
-          </View>
-          <View style={selectColorModalStyles.footer}>
-            <Button
-              variant="secondary"
-              title={localization.get("selectColor.close")}
-              onPress={props.onClose}
-            />
-          </View>
+      <View style={selectColorModalStyles.row}>
+        <View style={selectColorModalStyles.colorListContainer}>
+          {
+            colors.palette.map((x: typeof colors.palette[0], index: number): JSX.Element => {
+              return (
+                <TouchableOpacity
+                  key={x.color}
+                  accessible={false}
+                  accessibilityLabel={localization.get(`selectColor.accessibility.color${index + 1}` as any)}
+                  style={{
+                    ...selectColorModalStyles.color,
+                    backgroundColor: x.color,
+                  }}
+                  onPress={(): void => {
+                    props.onSelect(props.activityCode, getColorByCode(x.color));
+                  }}
+                />
+              );
+            })
+          }
         </View>
+        <HorizontalLine />
+      </View>
+      <View style={selectColorModalStyles.footer}>
+        <Button
+          variant="secondary"
+          title={localization.get("selectColor.close")}
+          onPress={props.onClose}
+        />
       </View>
     </Modal>
   );

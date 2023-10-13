@@ -1,12 +1,12 @@
-import { ActivityModel, ReportItemModel } from "@views/Report/Models";
+import { ActivityModel, SelectedItemModel } from "@views/Report/Models";
 
 export type ReplaceModalProps = {
 
-  reportItem: ReportItemModel;
+  model: SelectedItemModel;
 
   activities: Array<ActivityModel>;
 
-  onReplace(reportItemId: string, newActivityId: string): void;
+  onReplace(reportItemId: string | undefined, newActivityId: string): void;
 
   onCancel(): void;
 

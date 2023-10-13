@@ -1,16 +1,16 @@
 import { Activity as ActivityModel } from "@dto/ActiveProject";
-import { HorizontalListLayoutActivityDeleteEventArgs } from "./HorizontalListLayoutActivityDeleteEventArgs";
-import { HorizontalListLayoutActivityPressEventArgs } from "./HorizontalListLayoutActivityPressEventArgs";
-import { HorizontalListLayoutActivityUpdateEventArgs } from "./HorizontalListLayoutActivityUpdateEventArgs";
+import { ListLayoutActivityDeleteEventArgs } from "../../Types/ListLayoutActivityDeleteEventArgs";
+import { ListLayoutActivityPressEventArgs } from "../../Types/ListLayoutActivityPressEventArgs";
+import { ListLayoutActivityUpdateEventArgs } from "../../Types/ListLayoutActivityUpdateEventArgs";
 
 export type HorizontalListLayoutProps = {
 
   activities: Array<ActivityModel> | undefined;
 
-  onActivityPress(e: HorizontalListLayoutActivityPressEventArgs): Promise<void>;
+  onActivityPress(e: ListLayoutActivityPressEventArgs): Promise<void>;
 
-  onActivityUpdate(e: HorizontalListLayoutActivityUpdateEventArgs): void;
+  onActivityUpdate(e: ListLayoutActivityUpdateEventArgs): void;
 
-  onActivityDelete(e: HorizontalListLayoutActivityDeleteEventArgs): Promise<void>;
+  onActivityDelete(e: ListLayoutActivityDeleteEventArgs): Promise<void>;
 
 };

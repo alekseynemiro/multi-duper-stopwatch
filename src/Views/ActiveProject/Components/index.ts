@@ -3,5 +3,8 @@ export * from "./ActivityEditModal";
 export * from "./ActivityPopupMenu";
 export * from "./AddActivity";
 export * from "./HorizontalListLayout";
+export * from "./ProjectSettingsModal";
 export * from "./SessionNameModal";
 export * from "./StopwatchDisplay";
+export * from "./TilesListLayout";
+export * from "./VerticalListLayout";

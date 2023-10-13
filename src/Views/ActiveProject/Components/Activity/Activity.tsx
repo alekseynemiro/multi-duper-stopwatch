@@ -4,7 +4,7 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { ActivityStatus } from "@dto/ActiveProject";
 import { colors, defaultFontSize } from "@styles";
-import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, getContrastColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { ActivityProps } from "./ActivityProps";
 import { activityStyles } from "./ActivityStyles";
 
@@ -14,28 +14,35 @@ export function Activity(props: ActivityProps): JSX.Element {
     name,
     color,
     status,
+    styles,
     onPress,
     onLongPress,
+    onLayout,
   } = props;
 
   const textColor = {
-    color: color
-      ? getContrastColorCode(color)
+    color: isNotEmptyColor(color)
+      ? getContrastColorCode(color!)
       : colors.text,
+  };
+
+  const mergedStyles = {
+    ...activityStyles,
+    ...styles,
   };
 
   return (
     <Button
       style={[
-        activityStyles.buttonContainer,
+        mergedStyles.buttonContainer,
         {
-          backgroundColor: color
-            ? getColorCode(color)
+          backgroundColor: isNotEmptyColor(color)
+            ? getColorCode(color!)
             : colors.white,
         },
       ]}
       childWrapperStyle={[
-        activityStyles.button,
+        mergedStyles.button,
       ]}
       onPress={(): void => {
         onPress(id);
@@ -43,10 +50,11 @@ export function Activity(props: ActivityProps): JSX.Element {
       onLongPress={(): void => {
         onLongPress(id);
       }}
+      onLayout={onLayout}
     >
       <View
         style={[
-          activityStyles.iconContainer,
+          mergedStyles.iconContainer,
         ]}
       >
         {
@@ -76,14 +84,14 @@ export function Activity(props: ActivityProps): JSX.Element {
       </View>
       <Text
         style={[
-          activityStyles.title,
+          mergedStyles.title,
           textColor,
         ]}
       >
         {name}
       </Text>
       <View
-        style={activityStyles.padding}
+        style={mergedStyles.padding}
       />
     </Button>
   );

@@ -6,10 +6,14 @@
 
 Записи, которые были сделаны в процессе работы над проектом:
 
+* https://vk.com/@aleksey.nemiro-multiduperstopwatch - Страница проекта в VK
+* https://vk.com/aleksey.nemiro?w=wall103639273_384 - Анонс Multi-duper Stopwatch v1.1
+* https://vk.com/aleksey.developer?w=wall-96983816_262 - Технический анонс Multi-duper Stopwatch v1.1
+* https://vk.com/aleksey.developer?w=wall-96983816_261 - Сколько все сделано в v1.1
 * https://vk.com/aleksey.developer?w=wall-96983816_260 - Google ругает сам себя
 * https://vk.com/aleksey.developer?w=wall-96983816_257 - 900+ пикселей импорта
 * https://vk.com/aleksey.developer?w=wall-96983816_256 - Программирование - создание миров
-* https://vk.com/aleksey.developer?w=wall-96983816_248 - Анонс Multi-duper Stopwatch
+* https://vk.com/aleksey.developer?w=wall-96983816_248 - Технический анонс Multi-duper Stopwatch
 * https://vk.com/aleksey.developer?w=wall-96983816_247 - Приходится проверять сочетания цветов :)
 * https://vk.com/aleksey.developer?w=wall-96983816_244 - Проблема чтения значений приватных свойств в Gradle
 * https://vk.com/aleksey.developer?w=wall-96983816_243 - Сканер доступности для приложений Android

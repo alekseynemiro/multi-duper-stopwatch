@@ -2,6 +2,7 @@ import { ActivityModel } from "./ActivityModel";
 import { CurrentActivityModel } from "./CurrentActivityModel";
 import { FilteredActivityModel } from "./FilteredActivityModel";
 import { ReportItemModel } from "./ReportItemModel";
+import { SelectedItemModel } from "./SelectedItemModel";
 
 export type ReportViewStateModel = {
 
@@ -27,6 +28,8 @@ export type ReportViewStateModel = {
 
   showReplaceModal: boolean;
 
-  selectedReportItem: ReportItemModel | undefined;
+  showSplitModal: boolean;
+
+  selectedItem: SelectedItemModel | undefined;
 
 };

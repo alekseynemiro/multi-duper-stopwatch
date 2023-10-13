@@ -9,19 +9,25 @@ import
     useState,
   } from "react";
 import {
-  Alert,
   FlatList,
   ListRenderItemInfo,
   ScrollView,
   Text,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { Button } from "@components/Button";
 import { ContentLoadIndicator } from "@components/ContentLoadIndicator";
 import { Icon } from "@components/Icon";
 import { PluralFormatter } from "@components/PluralFormatter";
 import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
+  AppState,
+  Routes,
+  useActiveProjectService,
+  useAlertService,
+  useAppActions,
+  useAppDispatch,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -29,12 +35,18 @@ import {
   useSessionService,
   useSessionStorageService,
 } from "@config";
+import { ColorPalette } from "@data";
 import { GetResultActivity } from "@dto/Projects";
 import { GetAllResultItem } from "@dto/SessionLogs";
 import { SessionStorageKeys } from "@types";
+import { getBackdropColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
+import { useRoute } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
   CurrentActivity,
+  CurrentActivityPopupMenu,
+  CurrentActivityPopupMenuEventArgs,
+  CurrentActivityPopupMenuMethods,
   FilterModal,
   ReplaceModal,
   ReportViewItem,
@@ -42,6 +54,7 @@ import {
   ReportViewItemPopupMenuMethods,
   ReportViewItemPopupMenuPressEventArgs,
   ReportViewItemPressEventArgs,
+  SplitModal,
   Total,
 } from "./Components";
 import {
@@ -50,6 +63,7 @@ import {
   FilteredActivityModel,
   ReportItemModel,
   ReportViewStateModel,
+  SelectedItemModel,
 } from "./Models";
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
@@ -63,15 +77,29 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     onReportItemDeleted,
   } = props;
 
+  const route = useRoute();
   const localization = useLocalizationService();
   const projectService = useProjectService();
   const sessionService = useSessionService();
   const sessionLogService = useSessionLogService();
   const sessionStorageService = useSessionStorageService();
+  const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
+  const alertService = useAlertService();
+  const appDispatch = useAppDispatch();
+
+  const isHome = !route.path || route.path === Routes.Home;
+  const colorized = useSelector((x: AppState): boolean => x.common.colorized);
+  const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
+
+  const {
+    setColor,
+    resetColor,
+  } = useAppActions();
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reportViewItemPopupMenuRef = useRef<ReportViewItemPopupMenuMethods>();
+  const currentActivityPopupMenuRef = useRef<CurrentActivityPopupMenuMethods>();
 
   const [state, setState] = useState<ReportViewStateModel>({
     showLoadingIndicator: true,
@@ -85,7 +113,8 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     currentActivity: undefined,
     showFilterModal: false,
     showReplaceModal: false,
-    selectedReportItem: undefined,
+    showSplitModal: false,
+    selectedItem: undefined,
   });
 
   loggerService.debug(
@@ -448,7 +477,18 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error("Popup menu ref is empty.");
       }
 
-      reportViewItemPopupMenuRef.current.open(id);
+      reportViewItemPopupMenuRef.current.open(id!);
+    },
+    []
+  );
+
+  const currentActivityLongPressHandler = useCallback(
+    ({ id }: ReportViewItemPressEventArgs): void => {
+      if (!currentActivityPopupMenuRef.current) {
+        throw new Error("Popup menu ref is empty.");
+      }
+
+      currentActivityPopupMenuRef.current.open(id!);
     },
     []
   );
@@ -498,7 +538,14 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     (): JSX.Element => {
       return (
         <View
-          style={reportViewStyles.tableRowHeader}
+          style={[
+            reportViewStyles.tableRowHeader,
+            isHome && colorized && isNotEmptyColor(color)
+              ? {
+                backgroundColor: getBackdropColorCode(color!),
+              }
+              : undefined,
+          ]}
         >
           <View
             style={reportViewStyles.nameCol}
@@ -527,6 +574,9 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     },
     [
       localization,
+      colorized,
+      color,
+      isHome,
     ]
   );
 
@@ -556,6 +606,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
                     activityColor={state.currentActivity.color}
                     activityName={state.currentActivity.name}
                     onPress={renderItemPressHandler}
+                    onLongPress={currentActivityLongPressHandler}
                   />
                 </>
               )
@@ -635,6 +686,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       state,
       localization,
       renderItemPressHandler,
+      currentActivityLongPressHandler,
       clearFilter,
     ]
   );
@@ -759,7 +811,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error(`Log entry #${id} not found.`);
       }
 
-      Alert.alert(
+      alertService.show(
         localization.get("report.reportItemDeleteConfirmation.title"),
         localization.get(
           "report.reportItemDeleteConfirmation.message",
@@ -771,10 +823,11 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         [
           {
             text: localization.get("report.reportItemDeleteConfirmation.cancel"),
-            style: "cancel",
+            variant: "secondary",
           },
           {
             text: localization.get("report.reportItemDeleteConfirmation.delete"),
+            variant: "danger",
             onPress: (): Promise<void> => {
               return deleteItem(id);
             },
@@ -785,6 +838,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     [
       state,
       localization,
+      alertService,
       deleteItem,
     ]
   );
@@ -888,18 +942,131 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     ]
   );
 
+  const replaceCurrentActivity = useCallback(
+    async(newActivityId: string): Promise<void> => {
+      if (!state.currentActivity) {
+        throw new Error("currentActivity is required.");
+      }
+
+      await activeProjectService.replaceCurrentActivity(newActivityId);
+
+      const newCurrentActivity = state.activities.find(
+        (x): boolean => {
+          return x.id === newActivityId;
+        }
+      );
+
+      setState({
+        ...state,
+        currentActivity: newCurrentActivity,
+        showReplaceModal: false,
+      });
+
+      if (newCurrentActivity!.color != null) {
+        appDispatch(setColor(newCurrentActivity!.color));
+      } else {
+        appDispatch(resetColor());
+      }
+    },
+    [
+      state,
+      activeProjectService,
+      appDispatch,
+      resetColor,
+      setColor,
+    ]
+  );
+
+  const split = useCallback(
+    async(reportItemId: string, slice: number): Promise<void> => {
+      const splitResult = await sessionLogService.split(reportItemId, slice);
+
+      let newOutputLogs: Array<ReportItemModel> = [];
+
+      const newLogs = [...state.logs];
+      const index = newLogs.findIndex(
+        (x: ReportItemModel): boolean => {
+          return x.id === reportItemId;
+        }
+      );
+
+      newLogs[index].elapsedTime = splitResult.slice1.elapsedTime;
+      newLogs[index].startDate = splitResult.slice1.startDate;
+      newLogs[index].finishDate = splitResult.slice1.finishDate;
+
+      const newLogEntry = {
+        ...newLogs[index],
+        id: splitResult.slice2.id,
+        elapsedTime: splitResult.slice2.elapsedTime,
+        startDate: splitResult.slice2.startDate,
+        finishDate: splitResult.slice2.finishDate,
+      };
+
+      newLogs.splice(index + 1, 0, newLogEntry);
+
+      if (state.filterByActivities.length > 0) {
+        newOutputLogs = newLogs.filter(
+          (x: ReportItemModel): boolean => {
+            return state.filterByActivities.some(
+              (xx: FilteredActivityModel): boolean => {
+                return xx.id === x.activityId;
+              }
+            );
+          }
+        );
+      } else {
+        newOutputLogs = newLogs;
+      }
+
+      setState({
+        ...state,
+        logs: newLogs,
+        outputLogs: newOutputLogs,
+        showSplitModal: false,
+      });
+    },
+    [
+      state,
+      sessionLogService,
+    ]
+  );
+
   const handleReportItemPopupMenuItemPress = useCallback(
     (e: ReportViewItemPopupMenuPressEventArgs): void => {
+      const findItem = (id: string): SelectedItemModel | undefined => {
+        const reportItem = state.logs.find(
+          (x: ReportItemModel): boolean => {
+            return x.id === id;
+          }
+        );
+
+        if (!reportItem) {
+          return undefined;
+        }
+
+        return {
+          activityId: reportItem.activityId,
+          color: reportItem.color,
+          elapsedTime: reportItem.elapsedTime,
+          name: reportItem.name,
+          reportItemId: reportItem.id,
+        };
+      };
+
       switch (e.action) {
         case "replace": {
           setState({
             ...state,
-            selectedReportItem: state.logs.find(
-              (x: ReportItemModel): boolean => {
-                return x.id === e.id;
-              }
-            ),
+            selectedItem: findItem(e.id!),
             showReplaceModal: true,
+          });
+          break;
+        }
+        case "split": {
+          setState({
+            ...state,
+            selectedItem: findItem(e.id!),
+            showSplitModal: true,
           });
           break;
         }
@@ -920,6 +1087,32 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       state,
       requestToDeleteReportItem,
       deleteItem,
+    ]
+  );
+
+  const handleCurrentActivityPopupMenuItemPress = useCallback(
+    (e: CurrentActivityPopupMenuEventArgs): void => {
+      switch (e.action) {
+        case "replace": {
+          setState({
+            ...state,
+            selectedItem: {
+              name: state.currentActivity!.name,
+              activityId: state.currentActivity!.id,
+              color: state.currentActivity!.color,
+            },
+            showReplaceModal: true,
+          });
+          break;
+        }
+
+        default: {
+          throw new Error(`Unknown action ${e.action}.`);
+        }
+      }
+    },
+    [
+      state,
     ]
   );
 
@@ -952,7 +1145,14 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
   return (
     <View
-      style={reportViewStyles.container}
+      style={[
+        reportViewStyles.container,
+        isHome && colorized && isNotEmptyColor(color)
+          ? {
+            backgroundColor: getBackdropColorCode(color!),
+          }
+          : undefined,
+      ]}
     >
       {
         state.outputLogs.length > 0
@@ -1103,9 +1303,21 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         state.showReplaceModal
         && (
           <ReplaceModal
-            reportItem={state.selectedReportItem!}
+            model={{
+              activityId: state.selectedItem!.activityId,
+              color: state.selectedItem!.color,
+              elapsedTime: state.selectedItem!.elapsedTime,
+              name: state.selectedItem!.name,
+              reportItemId: state.selectedItem!.reportItemId,
+            }}
             activities={state.activities}
-            onReplace={replaceWithActivity}
+            onReplace={(reportItemId: string | undefined, newActivityId: string): Promise<void> => {
+              if (reportItemId) {
+                return replaceWithActivity(reportItemId, newActivityId);
+              }
+
+              return replaceCurrentActivity(newActivityId);
+            }}
             onCancel={(): void => {
               setState({
                 ...state,
@@ -1116,9 +1328,29 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         )
       }
 
+      {
+        state.showSplitModal
+        && (
+          <SplitModal
+            model={state.selectedItem!}
+            onSplit={split}
+            onCancel={(): void => {
+              setState({
+                ...state,
+                showSplitModal: false,
+              });
+            }}
+          />
+        )
+      }
+
       <ReportViewItemPopupMenu
         ref={reportViewItemPopupMenuRef}
         onPress={handleReportItemPopupMenuItemPress}
+      />
+      <CurrentActivityPopupMenu
+        ref={currentActivityPopupMenuRef}
+        onPress={handleCurrentActivityPopupMenuItemPress}
       />
     </View>
   );

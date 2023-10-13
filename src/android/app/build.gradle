@@ -111,8 +111,8 @@ android {
         applicationId "ru.nemiro.apps.multiduperstopwatch"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20230830
-        versionName "1.1"
+        versionCode 20231013
+        versionName "1.2"
     }
 
     splits {

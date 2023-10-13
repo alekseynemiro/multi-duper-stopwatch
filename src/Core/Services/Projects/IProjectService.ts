@@ -21,6 +21,8 @@ export interface IProjectService {
 
   delete(id: ProjectId): Promise<void>;
 
+  isAvailableToRun(id: ProjectId): Promise<boolean>;
+
   addActivity(request: AddActivityRequest): Promise<void>;
 
   updateActivity(request: UpdateActivityRequest): Promise<void>;

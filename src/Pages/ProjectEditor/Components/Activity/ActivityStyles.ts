@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, styles } from "@styles";
+import { colors, spaceBetweenButtons, styles } from "@styles";
 
 export const activityStyles = StyleSheet.create({
   container: {
@@ -32,12 +32,12 @@ export const activityStyles = StyleSheet.create({
     borderWidth: 1,
     minWidth: 48,
     minHeight: 48,
-    marginLeft: 10,
+    marginLeft: spaceBetweenButtons,
   },
   deleteButton: {
     minWidth: 48,
     minHeight: 48,
-    marginLeft: 10,
+    marginLeft: spaceBetweenButtons,
   },
   dragging: {
     zIndex: 1000,
