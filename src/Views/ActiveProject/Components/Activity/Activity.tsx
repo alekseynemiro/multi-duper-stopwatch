@@ -4,7 +4,7 @@ import { Button } from "@components/Button";
 import { Icon } from "@components/Icon";
 import { ActivityStatus } from "@dto/ActiveProject";
 import { colors, defaultFontSize } from "@styles";
-import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, getContrastColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { ActivityProps } from "./ActivityProps";
 import { activityStyles } from "./ActivityStyles";
 
@@ -21,8 +21,8 @@ export function Activity(props: ActivityProps): JSX.Element {
   } = props;
 
   const textColor = {
-    color: color
-      ? getContrastColorCode(color)
+    color: isNotEmptyColor(color)
+      ? getContrastColorCode(color!)
       : colors.text,
   };
 
@@ -36,8 +36,8 @@ export function Activity(props: ActivityProps): JSX.Element {
       style={[
         mergedStyles.buttonContainer,
         {
-          backgroundColor: color
-            ? getColorCode(color)
+          backgroundColor: isNotEmptyColor(color)
+            ? getColorCode(color!)
             : colors.white,
         },
       ]}

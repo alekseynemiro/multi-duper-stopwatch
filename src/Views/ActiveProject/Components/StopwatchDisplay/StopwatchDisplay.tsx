@@ -10,7 +10,7 @@ import { ColorPalette } from "@data";
 import { Activity as ActivityModel } from "@dto/ActiveProject";
 import { colors } from "@styles";
 import { SessionStorageKeys } from "@types";
-import { getColorCode, getContrastColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, getContrastColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { ElapsedTime } from "./ElapsedTime";
 import { StopwatchDisplayProps } from "./StopwatchDisplayProps";
 import { stopwatchDisplayStyles } from "./StopwatchDisplayStyles";
@@ -97,11 +97,11 @@ export function StopwatchDisplay(props: StopwatchDisplayProps): JSX.Element {
                     style={[
                       stopwatchDisplayStyles.mode,
                       {
-                        backgroundColor: currentActivity?.color
-                          ? getColorCode((currentActivity as ActivityModel).color as ColorPalette)
+                        backgroundColor: isNotEmptyColor(currentActivity?.color)
+                          ? getColorCode((currentActivity as ActivityModel).color! as ColorPalette)
                           : colors.white,
-                        color: currentActivity?.color
-                          ? getContrastColorCode((currentActivity as ActivityModel).color as ColorPalette)
+                        color: isNotEmptyColor(currentActivity?.color)
+                          ? getContrastColorCode((currentActivity as ActivityModel).color! as ColorPalette)
                           : colors.text,
                       },
                     ]}

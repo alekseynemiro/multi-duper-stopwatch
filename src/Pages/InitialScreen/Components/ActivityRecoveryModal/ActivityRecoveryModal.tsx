@@ -5,7 +5,7 @@ import { HorizontalLine } from "@components/HorizontalLine";
 import { Modal } from "@components/Modal";
 import { useLocalizationService } from "@config";
 import { colors } from "@styles";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { ActivityRecoveryModalProps } from "./ActivityRecoveryModalProps";
 import { activityRecoveryModalStyles } from "./ActivityRecoveryModalStyles";
@@ -21,8 +21,8 @@ export function ActivityRecoveryModal(props: ActivityRecoveryModalProps): JSX.El
 
   const timeSpan = getTimeSpan(activity.currentDate.getTime() - activity.startDate.getTime());
 
-  const backgroundColor = activity.color
-    ? getColorCode(activity.color)
+  const backgroundColor = isNotEmptyColor(activity.color)
+    ? getColorCode(activity.color!)
     : colors.background;
 
   return (

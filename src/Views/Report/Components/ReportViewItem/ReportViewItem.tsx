@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { colors } from "@styles";
-import { getColorCode } from "@utils/ColorPaletteUtils";
+import { getColorCode, isNotEmptyColor } from "@utils/ColorPaletteUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import { reportViewStyles } from "@views/Report/ReportViewStyles";
 import { ReportViewItemProps } from "./ReportViewItemProps";
@@ -19,8 +19,8 @@ function ReportViewItemComponent(props: ReportViewItemProps): JSX.Element {
 
   const color = useMemo(
     (): string => {
-      if (activityColor) {
-        return getColorCode(activityColor);
+      if (isNotEmptyColor(activityColor)) {
+        return getColorCode(activityColor!);
       }
 
       return colors.white;

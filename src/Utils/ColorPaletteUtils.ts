@@ -3,6 +3,14 @@ import { colors } from "@styles";
 
 type Color = typeof colors.palette[0];
 
+export const isEmptyColor = (color: ColorPalette | null | undefined): boolean => {
+  return (color ?? null) === null || (color?.toString() ?? "") === "";
+};
+
+export const isNotEmptyColor = (color: ColorPalette | null | undefined): boolean => {
+  return !isEmptyColor(color);
+};
+
 export const getColorByCode = (colorCode: string): ColorPalette => {
   const index = colors.palette.findIndex(
     (x: Color): boolean => {
