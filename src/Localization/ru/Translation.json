@@ -124,7 +124,7 @@
       "cancel": "Отмена"
     },
     "replaceModal": {
-      "helpMessage": "Выберите активность, на которую будет заменена запись \"{{activityName}}\" ({{elapsedTime}}).",
+      "helpMessage": "Выберите активность, на которую будет заменена запись \"{{activityName}}\"{{elapsedTime}}.",
       "replace": "Заменить",
       "cancel": "Отмена"
     },

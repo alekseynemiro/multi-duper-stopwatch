@@ -98,7 +98,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
             "report.replaceModal.helpMessage",
             {
               activityName: model.name,
-              elapsedTime: getTimeSpan(model.elapsedTime!).displayValue,
+              elapsedTime: model.elapsedTime ? ` (${getTimeSpan(model.elapsedTime!).displayValue})` : undefined,
             }
           )}
         </Text>

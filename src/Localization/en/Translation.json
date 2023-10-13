@@ -124,7 +124,7 @@
       "cancel": "Cancel"
     },
     "replaceModal": {
-      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\" ({{elapsedTime}}) with.",
+      "helpMessage": "Select the activity to replace the activity entry \"{{activityName}}\"{{elapsedTime}} with.",
       "replace": "Replace",
       "cancel": "Cancel"
     },
