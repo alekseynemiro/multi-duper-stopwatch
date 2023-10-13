@@ -350,11 +350,14 @@ export function ActiveProjectView(): JSX.Element {
     (): void => {
       const newActivities = [...activeProjectService.activities ?? []];
       setActivities(newActivities);
-      setCurrentActivity(newActivities.find(currentActivityPredicate));
+      setCurrentActivity(newActivities.find(
+        (x: ActivityModel): boolean => {
+          return x.id === activeProjectService.currentActivityId;
+        })
+      );
     },
     [
       activeProjectService,
-      currentActivityPredicate,
     ]
   );
 

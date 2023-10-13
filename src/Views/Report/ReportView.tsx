@@ -24,7 +24,10 @@ import { TableRowSeparator } from "@components/TableRowSeparator";
 import {
   AppState,
   Routes,
+  useActiveProjectService,
   useAlertService,
+  useAppActions,
+  useAppDispatch,
   useLocalizationService,
   useLoggerService,
   useProjectService,
@@ -41,6 +44,9 @@ import { useRoute } from "@utils/NavigationUtils";
 import { getTimeSpan } from "@utils/TimeUtils";
 import {
   CurrentActivity,
+  CurrentActivityPopupMenu,
+  CurrentActivityPopupMenuEventArgs,
+  CurrentActivityPopupMenuMethods,
   FilterModal,
   ReplaceModal,
   ReportViewItem,
@@ -57,6 +63,7 @@ import {
   FilteredActivityModel,
   ReportItemModel,
   ReportViewStateModel,
+  SelectedItemModel,
 } from "./Models";
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
@@ -76,15 +83,23 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
   const sessionService = useSessionService();
   const sessionLogService = useSessionLogService();
   const sessionStorageService = useSessionStorageService();
+  const activeProjectService = useActiveProjectService();
   const loggerService = useLoggerService();
   const alertService = useAlertService();
+  const appDispatch = useAppDispatch();
 
   const isHome = !route.path || route.path === Routes.Home;
   const colorized = useSelector((x: AppState): boolean => x.common.colorized);
   const color = useSelector((x: AppState): ColorPalette | null => x.common.color);
 
+  const {
+    setColor,
+    resetColor,
+  } = useAppActions();
+
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reportViewItemPopupMenuRef = useRef<ReportViewItemPopupMenuMethods>();
+  const currentActivityPopupMenuRef = useRef<CurrentActivityPopupMenuMethods>();
 
   const [state, setState] = useState<ReportViewStateModel>({
     showLoadingIndicator: true,
@@ -99,7 +114,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     showFilterModal: false,
     showReplaceModal: false,
     showSplitModal: false,
-    selectedReportItem: undefined,
+    selectedItem: undefined,
   });
 
   loggerService.debug(
@@ -462,7 +477,18 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         throw new Error("Popup menu ref is empty.");
       }
 
-      reportViewItemPopupMenuRef.current.open(id);
+      reportViewItemPopupMenuRef.current.open(id!);
+    },
+    []
+  );
+
+  const currentActivityLongPressHandler = useCallback(
+    ({ id }: ReportViewItemPressEventArgs): void => {
+      if (!currentActivityPopupMenuRef.current) {
+        throw new Error("Popup menu ref is empty.");
+      }
+
+      currentActivityPopupMenuRef.current.open(id!);
     },
     []
   );
@@ -580,6 +606,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
                     activityColor={state.currentActivity.color}
                     activityName={state.currentActivity.name}
                     onPress={renderItemPressHandler}
+                    onLongPress={currentActivityLongPressHandler}
                   />
                 </>
               )
@@ -659,6 +686,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       state,
       localization,
       renderItemPressHandler,
+      currentActivityLongPressHandler,
       clearFilter,
     ]
   );
@@ -914,6 +942,41 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     ]
   );
 
+  const replaceCurrentActivity = useCallback(
+    async(newActivityId: string): Promise<void> => {
+      if (!state.currentActivity) {
+        throw new Error("currentActivity is required.");
+      }
+
+      await activeProjectService.replaceCurrentActivity(newActivityId);
+
+      const newCurrentActivity = state.activities.find(
+        (x): boolean => {
+          return x.id === newActivityId;
+        }
+      );
+
+      setState({
+        ...state,
+        currentActivity: newCurrentActivity,
+        showReplaceModal: false,
+      });
+
+      if (newCurrentActivity!.color != null) {
+        appDispatch(setColor(newCurrentActivity!.color));
+      } else {
+        appDispatch(resetColor());
+      }
+    },
+    [
+      state,
+      activeProjectService,
+      appDispatch,
+      resetColor,
+      setColor,
+    ]
+  );
+
   const split = useCallback(
     async(reportItemId: string, slice: number): Promise<void> => {
       const splitResult = await sessionLogService.split(reportItemId, slice);
@@ -970,15 +1033,31 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
   const handleReportItemPopupMenuItemPress = useCallback(
     (e: ReportViewItemPopupMenuPressEventArgs): void => {
+      const findItem = (id: string): SelectedItemModel | undefined => {
+        const reportItem = state.logs.find(
+          (x: ReportItemModel): boolean => {
+            return x.id === id;
+          }
+        );
+
+        if (!reportItem) {
+          return undefined;
+        }
+
+        return {
+          activityId: reportItem.activityId,
+          color: reportItem.color,
+          elapsedTime: reportItem.elapsedTime,
+          name: reportItem.name,
+          reportItemId: reportItem.id,
+        };
+      };
+
       switch (e.action) {
         case "replace": {
           setState({
             ...state,
-            selectedReportItem: state.logs.find(
-              (x: ReportItemModel): boolean => {
-                return x.id === e.id;
-              }
-            ),
+            selectedItem: findItem(e.id!),
             showReplaceModal: true,
           });
           break;
@@ -986,11 +1065,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         case "split": {
           setState({
             ...state,
-            selectedReportItem: state.logs.find(
-              (x: ReportItemModel): boolean => {
-                return x.id === e.id;
-              }
-            ),
+            selectedItem: findItem(e.id!),
             showSplitModal: true,
           });
           break;
@@ -1012,6 +1087,32 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       state,
       requestToDeleteReportItem,
       deleteItem,
+    ]
+  );
+
+  const handleCurrentActivityPopupMenuItemPress = useCallback(
+    (e: CurrentActivityPopupMenuEventArgs): void => {
+      switch (e.action) {
+        case "replace": {
+          setState({
+            ...state,
+            selectedItem: {
+              name: state.currentActivity!.name,
+              activityId: state.currentActivity!.id,
+              color: state.currentActivity!.color,
+            },
+            showReplaceModal: true,
+          });
+          break;
+        }
+
+        default: {
+          throw new Error(`Unknown action ${e.action}.`);
+        }
+      }
+    },
+    [
+      state,
     ]
   );
 
@@ -1202,9 +1303,21 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         state.showReplaceModal
         && (
           <ReplaceModal
-            reportItem={state.selectedReportItem!}
+            model={{
+              activityId: state.selectedItem!.activityId,
+              color: state.selectedItem!.color,
+              elapsedTime: state.selectedItem!.elapsedTime,
+              name: state.selectedItem!.name,
+              reportItemId: state.selectedItem!.reportItemId,
+            }}
             activities={state.activities}
-            onReplace={replaceWithActivity}
+            onReplace={(reportItemId: string | undefined, newActivityId: string): Promise<void> => {
+              if (reportItemId) {
+                return replaceWithActivity(reportItemId, newActivityId);
+              }
+
+              return replaceCurrentActivity(newActivityId);
+            }}
             onCancel={(): void => {
               setState({
                 ...state,
@@ -1219,7 +1332,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         state.showSplitModal
         && (
           <SplitModal
-            reportItem={state.selectedReportItem!}
+            model={state.selectedItem!}
             onSplit={split}
             onCancel={(): void => {
               setState({
@@ -1234,6 +1347,10 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
       <ReportViewItemPopupMenu
         ref={reportViewItemPopupMenuRef}
         onPress={handleReportItemPopupMenuItemPress}
+      />
+      <CurrentActivityPopupMenu
+        ref={currentActivityPopupMenuRef}
+        onPress={handleCurrentActivityPopupMenuItemPress}
       />
     </View>
   );

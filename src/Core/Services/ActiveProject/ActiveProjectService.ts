@@ -1204,6 +1204,48 @@ export class ActiveProjectService implements IActiveProjectService {
     }
   }
 
+  public async replaceCurrentActivity(newActivityId: string): Promise<void> {
+    this._loggerService.debug(
+      ActiveProjectService.name,
+      this.replaceCurrentActivity.name,
+      newActivityId
+    );
+
+    if (!newActivityId) {
+      throw new Error("`newActivityId` is required.");
+    }
+
+    if (!this._currentActivityId) {
+      throw new Error("Current activity is required.");
+    }
+
+    const oldActivityId = this._currentActivityId;
+
+    const oldActivity = this._activities!.find(
+      (x: Activity): boolean => {
+        return x.id === oldActivityId;
+      }
+    );
+
+    const newActivity = this._activities!.find(
+      (x: Activity): boolean => {
+        return x.id === newActivityId;
+      }
+    );
+
+    await this._sessionService.replaceActivity({
+      newActivityId,
+      sessionId: this._session!.id,
+    });
+
+    this._currentActivityId = newActivityId;
+
+    oldActivity!.status = ActivityStatus.Idle;
+    newActivity!.status = ActivityStatus.Running;
+
+    this.on("activity-list-updated");
+  }
+
   public addEventListener<TEventArgs extends Object = Record<string, any>>(
     type: ActiveProjectServiceEventType,
     callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent

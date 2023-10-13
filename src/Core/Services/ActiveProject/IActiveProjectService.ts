@@ -50,6 +50,8 @@ export interface IActiveProjectService {
 
   deleteActivity(activityId: string): Promise<void>;
 
+  replaceCurrentActivity(newActivityId: string): Promise<void>;
+
   addEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): NativeEventSubscription;
 
   removeEventListener<TEventArgs extends Object = Record<string, any>>(type: ActiveProjectServiceEventType, callback: ActiveProjectServiceEvent<TEventArgs> | ActiveProjectStopwatchTickEvent): void;

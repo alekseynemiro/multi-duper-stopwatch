@@ -1,8 +1,8 @@
-import { ReportItemModel } from "@views/Report/Models";
+import { SelectedItemModel } from "@views/Report/Models";
 
 export type SplitModalProps = {
 
-  reportItem: ReportItemModel;
+  model: SelectedItemModel;
 
   onSplit(reportItemId: string, slice: number): void;
 

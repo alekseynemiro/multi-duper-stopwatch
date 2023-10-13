@@ -19,7 +19,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
 
   const {
     activities,
-    reportItem,
+    model,
     onReplace,
     onCancel,
   } = props;
@@ -95,8 +95,8 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
           {localization.get(
             "report.replaceModal.helpMessage",
             {
-              activityName: reportItem.name,
-              elapsedTime: getTimeSpan(reportItem.elapsedTime).displayValue,
+              activityName: model.name,
+              elapsedTime: getTimeSpan(model.elapsedTime!).displayValue,
             }
           )}
         </Text>
@@ -107,7 +107,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
             activities
               .filter(
                 (x: ActivityModel): boolean => {
-                  return x.id !== reportItem.activityId;
+                  return x.id !== model.activityId;
                 }
               )
               .sort(
@@ -131,7 +131,7 @@ export function ReplaceModal(props: ReplaceModalProps): JSX.Element {
             title={localization.get("report.replaceModal.replace")}
             style={replaceModalStyles.buttonReplace}
             onPress={(): void => {
-              onReplace(reportItem.id, selectedActivityId!);
+              onReplace(model.reportItemId, selectedActivityId!);
             }}
           />
           <Button

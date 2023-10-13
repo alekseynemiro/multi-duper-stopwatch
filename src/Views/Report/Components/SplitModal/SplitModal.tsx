@@ -15,13 +15,21 @@ export function SplitModal(props: SplitModalProps): JSX.Element {
   const localization = useLocalizationService();
 
   const {
-    reportItem,
+    model,
     onSplit,
     onCancel,
   } = props;
 
-  const [splitValue, setSplitValue] = useState(reportItem.elapsedTime / 2);
-  const [slices, setSlices] = useState([reportItem.elapsedTime / 2, reportItem.elapsedTime / 2]);
+  if (!model.reportItemId) {
+    throw new Error("'reportItemId' is required.");
+  }
+
+  if (model.elapsedTime === undefined) {
+    throw new Error("'elapsedTime' is required.");
+  }
+
+  const [splitValue, setSplitValue] = useState(model.elapsedTime! / 2);
+  const [slices, setSlices] = useState([model.elapsedTime! / 2, model.elapsedTime! / 2]);
 
   return (
     <Modal
@@ -33,8 +41,8 @@ export function SplitModal(props: SplitModalProps): JSX.Element {
           {localization.get(
             "report.splitModal.helpMessage",
             {
-              activityName: reportItem.name,
-              elapsedTime: getTimeSpan(reportItem.elapsedTime).displayValue,
+              activityName: model.name,
+              elapsedTime: getTimeSpan(model.elapsedTime!).displayValue,
             }
           )}
         </Text>
@@ -42,7 +50,7 @@ export function SplitModal(props: SplitModalProps): JSX.Element {
       <View style={splitModalStyles.row}>
         <SplitBar
           split={splitValue}
-          value={reportItem.elapsedTime}
+          value={model.elapsedTime!}
           onSelect={(e: Array<number>): void => {
             setSlices(e);
           }}
@@ -64,10 +72,10 @@ export function SplitModal(props: SplitModalProps): JSX.Element {
                   variant="light"
                   style={splitModalStyles.suggestButton}
                   onPress={(): void => {
-                    const newSplitValue = (reportItem.elapsedTime * x) / 100;
+                    const newSplitValue = (model.elapsedTime! * x) / 100;
 
                     setSplitValue(newSplitValue);
-                    setSlices([newSplitValue, reportItem.elapsedTime - newSplitValue]);
+                    setSlices([newSplitValue, model.elapsedTime! - newSplitValue]);
                   }}
                 />
               );
@@ -84,7 +92,7 @@ export function SplitModal(props: SplitModalProps): JSX.Element {
           title={localization.get("report.splitModal.split")}
           style={splitModalStyles.buttonSplit}
           onPress={(): void => {
-            onSplit(reportItem.id, slices[0]);
+            onSplit(model.reportItemId!, slices[0]);
           }}
         />
         <Button
