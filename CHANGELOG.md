@@ -4,14 +4,14 @@
 
 This release contains new features and bug fixes.
 
-### Added
+**Added**
 
 * Added the ability to split log entries into parts (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/59>).
 * Added the ability to customize the layout (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/58>).
 * Added application background lighting depending on the color of the running activity (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/6>).
 * Added the ability to replace the current activity (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/97>).
 
-### Fixed
+**Fixed**
 
 * Fixed an issue where multiple activities could have a Play icon at the same time (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/80>).
 * Fixed a bug due to which a project that was previously deleted could be automatically loaded (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/78>).
@@ -23,7 +23,7 @@ This release contains new features and bug fixes.
 
 This release contains important fixes and improvements.
 
-### Added
+**Added**
 
 * Added the ability to add, edit and delete activities in real time (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/12>, <https://github.com/alekseynemiro/multi-duper-stopwatch/issues/13>).
 * Added the ability to replace and delete entries from reports (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/18>, <https://github.com/alekseynemiro/multi-duper-stopwatch/issues/19>).
@@ -34,7 +34,7 @@ This release contains important fixes and improvements.
 * Added the ability to filter report entries by several activities (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/20>).
 * Added information about licenses (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/32>).
 
-### Fixed
+**Fixed**
 
 * Fixed display of the report when the session is not started (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/21>).
 * Fixed bug with access to the Finish button (<https://github.com/alekseynemiro/multi-duper-stopwatch/issues/62>).
