@@ -57,6 +57,7 @@ import {
   FilteredActivityModel,
   ReportItemModel,
   ReportViewStateModel,
+  SelectedItemModel,
 } from "./Models";
 import { ReportViewProps } from "./ReportViewProps";
 import { reportViewStyles } from "./ReportViewStyles";
@@ -99,7 +100,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
     showFilterModal: false,
     showReplaceModal: false,
     showSplitModal: false,
-    selectedReportItem: undefined,
+    selectedItem: undefined,
   });
 
   loggerService.debug(
@@ -970,15 +971,31 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
 
   const handleReportItemPopupMenuItemPress = useCallback(
     (e: ReportViewItemPopupMenuPressEventArgs): void => {
+      const findItem = (id: string): SelectedItemModel | undefined => {
+        const reportItem = state.logs.find(
+          (x: ReportItemModel): boolean => {
+            return x.id === id;
+          }
+        );
+
+        if (!reportItem) {
+          return undefined;
+        }
+
+        return {
+          activityId: reportItem.activityId,
+          color: reportItem.color,
+          elapsedTime: reportItem.elapsedTime,
+          name: reportItem.name,
+          reportItemId: reportItem.id,
+        };
+      };
+
       switch (e.action) {
         case "replace": {
           setState({
             ...state,
-            selectedReportItem: state.logs.find(
-              (x: ReportItemModel): boolean => {
-                return x.id === e.id;
-              }
-            ),
+            selectedItem: findItem(e.id!),
             showReplaceModal: true,
           });
           break;
@@ -986,11 +1003,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         case "split": {
           setState({
             ...state,
-            selectedReportItem: state.logs.find(
-              (x: ReportItemModel): boolean => {
-                return x.id === e.id;
-              }
-            ),
+            selectedItem: findItem(e.id!),
             showSplitModal: true,
           });
           break;
@@ -1202,7 +1215,13 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         state.showReplaceModal
         && (
           <ReplaceModal
-            reportItem={state.selectedReportItem!}
+            model={{
+              activityId: state.selectedItem!.activityId,
+              color: state.selectedItem!.color,
+              elapsedTime: state.selectedItem!.elapsedTime,
+              name: state.selectedItem!.name,
+              reportItemId: state.selectedItem!.reportItemId,
+            }}
             activities={state.activities}
             onReplace={replaceWithActivity}
             onCancel={(): void => {
@@ -1219,7 +1238,7 @@ export const ReportView = forwardRef((props: ReportViewProps, ref: React.Forward
         state.showSplitModal
         && (
           <SplitModal
-            reportItem={state.selectedReportItem!}
+            model={state.selectedItem!}
             onSplit={split}
             onCancel={(): void => {
               setState({

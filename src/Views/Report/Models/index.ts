@@ -4,3 +4,4 @@ export type { FilteredActivityModel } from "./FilteredActivityModel";
 export type { ReportItemModel } from "./ReportItemModel";
 export type { ReportViewItemDeletedEventArgs } from "./ReportViewItemDeletedEventArgs";
 export type { ReportViewStateModel } from "./ReportViewStateModel";
+export type { SelectedItemModel } from "./SelectedItemModel";
